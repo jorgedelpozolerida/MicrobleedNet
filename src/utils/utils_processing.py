@@ -164,7 +164,7 @@ def region_growing_3d_seed(volume, seed_points, tolerance, size_threshold,
 
 def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_voxels,
                                         tolerance_range=(0, 100, 1), connectivity=26, 
-                                        intensity_mode="point"):
+                                        intensity_mode="point", show_progress=False):
     """ 
     Calculates results for several tolerance values and yields optimal based on 
     elbow-method
@@ -173,8 +173,11 @@ def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_v
     len_list = []
 
     # Loop over the tolerance values and perform region growing
-    # for tolerance in tqdm(np.arange(*tolerance_range), desc="Looping over tolerances"):
-    for tolerance in np.arange(*tolerance_range):
+    iterator = np.arange(*tolerance_range)
+    if show_progress:
+        iterator = tqdm(iterator, desc="Looping over tolerances")
+
+    for tolerance in iterator:
         grown_region, exceeded = region_growing_3d_seed(volume, seeds, tolerance,
                                                         size_threshold, max_dist_voxels, 
                                                         connectivity,  intensity_mode)

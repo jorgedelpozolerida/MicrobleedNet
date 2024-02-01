@@ -54,6 +54,7 @@ import sys
 # Utils
 import utils.utils_datasets as utils_datasets
 import utils.utils_processing as utils_process
+import utils.utils_general as utils_general
 
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
@@ -64,61 +65,6 @@ logger_nib = logging.getLogger('nibabel')
 # Set the log level to CRITICAL to deactivate normal logging
 logger_nib.setLevel(logging.CRITICAL)
 
-def ensure_directory_exists(dir_path):
-    """ Create directory if non-existent """
-    if not os.path.exists(dir_path):
-        os.makedirs(dir_path)
-
-def write_to_log_file(msg, log_file_path):
-    '''
-    Writes message to the log file.
-    Args:
-        msg (str): Message to be written to log file.
-        log_file_path (str): Path to log file.
-    '''
-    current_time = datetime.now()
-    with open(log_file_path, 'a+') as f:
-        f.write(f'\n{current_time}\n{msg}')
-
-def check_for_duplicates(lst):
-    seen = set()
-    for element in lst:
-        if element in seen:
-            print(f"Duplicate found: {element}")
-            raise ValueError(f"Duplicate element found: {element}")
-        seen.add(element)
-
-def get_dataset_subjects(args):
-    """ 
-    Returns studies fomr dataset making sure some QCs
-    """
-    if args.dataset_name == "VALDO":
-        assert "VALDO" in args.input_dir
-        subjects = [d for d in os.listdir(args.input_dir) if os.path.isdir(os.path.join(args.input_dir, d))]
-    elif args.dataset_name == "cerebriu":
-        assert "CEREBRIU" in args.input_dir
-        subjects1 = os.listdir(os.path.join(args.input_dir))
-        subjects2 = os.listdir(os.path.join(args.input_dir))
-        if set(subjects1) == set(subjects2):
-            subjects = subjects1
-        else:
-            raise ValueError(f"Not all subjects contain annotations, check data")
-    elif args.dataset_name == "momeni":
-        assert "momeni" in args.input_dir
-        raise NotImplementedError
-    elif args.dataset_name == "momeni-synth":
-        assert "momeni" in args.input_dir
-        raise NotImplementedError
-    elif args.dataset_name == "dou":
-        assert "cmb-3dcnn-data" in args.input_dir
-        raise NotImplementedError
-    else:
-        raise NotImplemented
-    
-    check_for_duplicates(subjects)
-
-    return subjects
-    
 
 def get_largest_cc(segmentation):
     """
@@ -326,6 +272,7 @@ def resample_mris_and_annotations(mris, annotations, primary_sequence, isotropic
 
     return mris, annotations, msg
 
+
 def get_brain_mask(image):
     """
     Computes brain mask using Otsu's thresholding and morphological operations.
@@ -454,8 +401,7 @@ def process_study(args, subject, msg=''):
     
     # Create dirs
     for sub_d in [args.mris_subdir, args.annotations_subdir, args.annotations_metadata_subdir]:
-        ensure_directory_exists(os.path.join(args.data_dir_path, subject, sub_d))
-    
+        utils_general.ensure_directory_exists(os.path.join(args.data_dir_path, subject, sub_d))
     
     try:
 
@@ -515,7 +461,7 @@ def process_study(args, subject, msg=''):
     # Finalize
     end = time.time()
     msg += f'Finished processing of {subject} in {end - start} seconds!\n\n'
-    write_to_log_file(msg, args.log_file_path)
+    utils_general.write_to_log_file(msg, args.log_file_path)
 
 
 def main(args):
@@ -526,14 +472,14 @@ def main(args):
     args.annotations_metadata_subdir = 'Annotations_metadata'
     
     for dir_p in [args.output_dir, args.output_dir, args.data_dir_path]:
-        ensure_directory_exists(dir_p)
+        utils_general.ensure_directory_exists(dir_p)
 
     current_time = datetime.now()
     current_datetime = current_time.strftime("%d%m%Y_%H%M%S")
     args.log_file_path = os.path.join(args.output_dir, f'log_{current_datetime}.txt')
 
     # Get subject list
-    subjects = get_dataset_subjects(args)
+    subjects = utils_datasets.get_dataset_subjects(args.dataset_name, args.input_dir)
 
     # Determine number of worker processes
     available_cpu_count = multiprocessing.cpu_count()

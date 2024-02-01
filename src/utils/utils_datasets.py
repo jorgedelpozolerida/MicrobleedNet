@@ -37,11 +37,90 @@ parent_dir_path = os.path.abspath(os.path.join(current_dir_path, os.pardir))
 sys.path.append(parent_dir_path)
 
 import utils.utils_processing as utils_process
-
+import utils.utils_general as utils_general
 
 
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
+
+
+##############################################################################
+###################                 GENERAL                ###################
+##############################################################################
+
+def check_for_duplicates(lst):
+    seen = set()
+    for element in lst:
+        if element in seen:
+            print(f"Duplicate found: {element}")
+            raise ValueError(f"Duplicate element found: {element}")
+        seen.add(element)
+
+def get_dataset_subjects(dataset_name, input_dir):
+    """ 
+    Returns studies fomr dataset making sure some QCs
+    """
+    if dataset_name == "VALDO":
+        assert "VALDO" in input_dir
+        subjects = [d for d in os.listdir(input_dir) if os.path.isdir(os.path.join(input_dir, d))]
+    elif dataset_name == "cerebriu":
+        assert "CEREBRIU" in input_dir
+        subjects1 = os.listdir(os.path.join(input_dir))
+        subjects2 = os.listdir(os.path.join(input_dir))
+        if set(subjects1) == set(subjects2):
+            subjects = subjects1
+        else:
+            raise ValueError(f"Not all subjects contain annotations, check data")
+    elif dataset_name == "momeni":
+        assert "momeni" in input_dir
+        raise NotImplementedError
+    elif dataset_name == "momeni-synth":
+        assert "momeni" in input_dir
+        raise NotImplementedError
+    elif dataset_name == "dou":
+        assert "cmb-3dcnn-data" in input_dir
+        raise NotImplementedError
+    else:
+        raise NotImplemented
+    
+    check_for_duplicates(subjects)
+
+    return subjects
+
+def get_files_metadata_from_processed(data_dir, subjects_selected=None):
+    """ 
+    Args:
+    
+    data_dir:  .../Data/ dir of processed dataset
+    subjects (optional): list of subjects to get metadata from
+    
+    Retrieves for all or selected subjects in a processed dataset directory all
+    relevant data related to mri and annotations files among others
+    """
+    all_subjects = os.listdir(data_dir)
+    if subjects_selected is not None:
+        all_subjects = [s for s in all_subjects if s in subjects_selected]
+    
+    all_metadata = []
+    
+    for sub in all_subjects:
+        metadata_dict = utils_general.read_json_to_dict(os.path.join(data_dir, sub, "Annotations_metadata", f"{sub}_raw.json"))
+        metadata_dict_keys = list(metadata_dict.keys())
+        
+        all_metadata.append(
+            {
+                "id": sub,
+                "anno_path": os.path.join(data_dir, sub, "Annotations", f"{sub}.nii.gz"),
+                "mri_path": os.path.join(data_dir, sub, "MRIs", f"{sub}.nii.gz"),
+                "seq_type": metadata_dict_keys[0],
+                "raw_metadata_path": os.path.join(data_dir, sub, "Annotations_metadata", f"{sub}_raw.json"),
+                "processed_metadata_path": os.path.join(data_dir, sub, "Annotations_metadata", f"{sub}_processed.json")
+            }
+        )
+    
+    
+    return all_metadata
+
 
 ##############################################################################
 ###################                   VALDO                ###################
@@ -208,23 +287,6 @@ def load_CEREBRIU_raw(input_dir, study):
 
     return sequences_raw, labels_raw, seq_type, cmb_filename
 
-def read_json_to_dict(file_path):
-    """
-    Reads a JSON file and converts it into a Python dictionary.
-
-    Args:
-        file_path (str): The path to the JSON file.
-
-    Returns:
-        dict: The JSON file content as a Python dictionary.
-    """
-    try:
-        with open(file_path, 'r') as file:
-            return json.load(file)
-    except Exception as e:
-        print(f"Error reading the JSON file: {e}")
-        return None
-
 
 def process_CEREBRIU_cmb(label_im: nib.Nifti1Image, 
                             labelid: int, 
@@ -232,7 +294,8 @@ def process_CEREBRIU_cmb(label_im: nib.Nifti1Image,
                             size_threshold: int,
                             max_dist_voxels: int, 
                             msg: str, 
-                            multiple: bool = False) -> Tuple[nib.Nifti1Image, nib.Nifti1Image, List[Tuple[int]], List[Dict], str]:
+                            multiple: bool = False,
+                            show_progress: bool = False) -> Tuple[nib.Nifti1Image, nib.Nifti1Image, List[Tuple[int]], List[Dict], str]:
     """
     Processes Cerebriu CMB data using region growing and other operations.
 
@@ -244,6 +307,7 @@ def process_CEREBRIU_cmb(label_im: nib.Nifti1Image,
         max_dist_voxels (int): The voxel distance threshold for region growing
         msg (str): Log message string.
         multiple (bool): Flag indicating if multiple processing is required.
+        show_progress (bool): Flag indicating if tqdm progress bar desired.
 
     Returns:
         Tuple[.., .., , List[Tuple[int]], List[Dict], str]: 
@@ -269,7 +333,13 @@ def process_CEREBRIU_cmb(label_im: nib.Nifti1Image,
     final_processed_mask = np.zeros_like(mask_data, dtype=bool)
     msg += f'\t\t\tNumber of CMBs found in label id {str(labelid)}: {str(len(mask_filt_single_list))}.\n'
 
-    for i, cmb_single_mask in enumerate(mask_filt_single_list):
+    # Processing loop with optional progress bar
+    iterator = range(len(mask_filt_single_list))
+    if show_progress:
+        iterator = tqdm(iterator, total=len(mask_filt_single_list), desc="Processing CMBs")
+
+    for i in iterator:
+        cmb_single_mask = mask_filt_single_list[i]
         seeds = [tuple(seed) for seed in np.array(np.where(cmb_single_mask)).T]
         seeds_calculated.extend(seeds)
 
@@ -280,6 +350,7 @@ def process_CEREBRIU_cmb(label_im: nib.Nifti1Image,
             max_dist_voxels=max_dist_voxels,
             tolerance_range=(0, 150, 0.5),
             connectivity=6,
+            show_progress=show_progress,
             # intensity_mode="point"
             # intensity_mode="average"
         )
@@ -317,7 +388,7 @@ def process_cerebriu_anno(args: Any,
     Returns:
         Tuple[nib.Nifti1Image, Dict, str]: Processed annotation image, metadata, and log message.
     """
-    tasks_dict = read_json_to_dict(os.path.join(args.input_dir, subject, "tasks.json"))
+    tasks_dict = utils_general.read_json_to_dict(os.path.join(args.input_dir, subject, "tasks.json"))
     task_item = next((it for it in tasks_dict if it['name'] == subject), None)
     series_data = next((seq for seq in task_item['series'] if seq['name'] == seq_folder), None) if task_item else None
 
