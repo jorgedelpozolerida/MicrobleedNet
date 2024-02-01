@@ -93,6 +93,14 @@ def load_clearml_predictions(args):
                 }
             )
         return metadata
+    elif args.pred_dir_struct == "post-process":
+        metadata = [
+            {
+                    "id": f.split("_")[0],
+                    "pred_path": os.path.join(pred_dir, f)
+                } for f in os.listdir(pred_dir)
+        ]
+        return metadata
     else:
         raise NotImplementedError
 
@@ -258,7 +266,7 @@ def parse_args():
                         help='Type of structure for saved ground truth masks')
     parser.add_argument('--predictions_dir', type=str, default=None,
                         help='Path to the directory with predictions')
-    parser.add_argument('--pred_dir_struct', type=str, default=None, choices= ['clearml'],
+    parser.add_argument('--pred_dir_struct', type=str, default=None, choices= ['clearml', 'post-process'],
                         help='Type of structure for saved predictions')
     parser.add_argument('--evaluations', nargs='+', type=str,
                         default=['segmentation', 'classification', 'detection'],
