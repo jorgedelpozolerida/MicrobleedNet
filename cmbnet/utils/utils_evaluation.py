@@ -154,7 +154,7 @@ def combine_evaluate_detection(df):
         'FNavg': [FNavg]
     })
 
-    return detection_metrics.round(2)
+    return detection_metrics.round(4)
 
 def combine_evaluate_classification(df):
     # Counting occurrences of each metric
@@ -179,7 +179,7 @@ def combine_evaluate_classification(df):
         'ACC': [ACC]
     })
 
-    return classification_metrics.round(2)
+    return classification_metrics.round(4)
 
 def combine_evaluate_segmentation(df):
     # Assuming 'segmentation' is a dictionary column in df
@@ -193,4 +193,4 @@ def combine_evaluate_segmentation(df):
     # Create a DataFrame for segmentation results
     segmentation_results = pd.DataFrame([segmentation_metrics])
 
-    return segmentation_results.round(2)
+    return segmentation_results.round(4)

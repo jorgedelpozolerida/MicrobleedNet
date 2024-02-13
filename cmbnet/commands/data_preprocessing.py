@@ -19,11 +19,14 @@ NOTE:
 - Also retrieves and saves metadata for masks before and after processing
 
 TODO:
+- Save metadata nicely in the process
+- Save plots in the process to ensure correct processing
 - Registration?
 - Implement for 3 extra datasets:
-    * CRBR
-    * 20-SWI
-    * 72-SWI
+    - DOU
+    - CEREBRIU
+    - MONEMI
+
 
 
 @author: jorgedelpozolerida
@@ -36,25 +39,22 @@ import traceback
 
 import logging                                                                      
 import numpy as np                                                                  
-import pandas as pd                                                                 
 from tqdm import tqdm
 import nibabel as nib
 import multiprocessing
 import time 
 from nilearn.image import resample_to_img, resample_img
-from scipy.ndimage import generate_binary_structure, binary_closing, binary_dilation
-from scipy.ndimage import label as nd_label
 import json
-from skimage.measure import label
-from skimage.filters import threshold_otsu
 from datetime import datetime
 from functools import partial
 import sys
 
+
 # Utils
-import utils.utils_datasets as utils_datasets
-import utils.utils_processing as utils_process
-import utils.utils_general as utils_general
+import cmbnet.preprocessing.loading as utils_datasets
+import cmbnet.preprocessing.process_masks as utils_process
+import cmbnet.utils.utils_general as utils_general
+import cmbnet.visualization.utils_plotting as utils_plt
 
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
@@ -66,98 +66,10 @@ logger_nib = logging.getLogger('nibabel')
 logger_nib.setLevel(logging.CRITICAL)
 
 
-def get_largest_cc(segmentation):
-    """
-    Gets the largest connected component in image.
-    Args:
-        segmentation (np.ndarray): Image with blobs.
-    Returns:
-        largest_cc (np.ndarray): A binary image containing nothing but the largest
-                                    connected component.
-    """
-    labels = label(segmentation)
-    bincount = np.array(np.bincount(labels.flat))
-    ind_large = np.argmax(bincount)  # Background is initially largest
-    bincount[ind_large] = 0  # Remove background
-    ind_large = np.argmax(bincount)  # This should now be largest connected component
-    largest_cc = labels == ind_large
 
-    return np.double(largest_cc)
-
-
-def load_mris_and_annotations(args, subject, msg=''):
-    '''
-    Loads MRI scans and their corresponding annotations for a given subject 
-    from a specific dataset and performs orientation fix.    
-    
-    Args:
-        args (object): Contains configuration parameters, including input directory and dataset name.
-        subject (str): Identifier of the subject whose MRI scans and annotations are to be loaded.
-        msg (str, optional): A string for logging purposes. Default is an empty string.
-        
-    Returns:
-        mris (dict): Dictionary where keys are sequence names (e.g., "T1", "T2") and values are 
-                        the corresponding MRI scans loaded as nibabel.Nifti1Image objects.
-        annotations (dict): Dictionary where keys are sequence names and values are the corresponding 
-                            annotations loaded as nibabel.Nifti1Image objects.
-        labels_metadata (dict): Dictionary containing metadata related to labels (annotations).
-        prim_seq (str): Primry sequence used for this subject
-        msg (str): Updated log message.
-
-    '''
-    msg += '\tLoading MRI scans and annotations...\n'
-
-
-    if args.dataset_name == "VALDO":
-        sequences_raw, labels_raw, labels_metadata,  msg = utils_datasets.load_VALDO_data(args, subject, msg)
-    if args.dataset_name == "cerebriu":
-        sequences_raw, labels_raw, labels_metadata,  msg = utils_datasets.load_CEREBRIU_data(args, subject, msg)
-    else:
-        # Implement here for other datasets
-        raise NotImplementedError
-    
-    start = time.time()
-
-    mris = {}
-    annotations = {}
-
-    # Fill MRIs dict
-    for sequence_name in sequences_raw:
-        mris[sequence_name] = sequences_raw[sequence_name]
-        msg += f'\t\tFound {sequence_name} MRI sequence of shape {mris[sequence_name].shape}\n'
-
-        # fix orientation and data type
-        mris[sequence_name] = nib.as_closest_canonical(mris[sequence_name])
-        mris[sequence_name].set_data_dtype(np.float32) 
-
-
-    # Handle primary sequence
-    options = args.primary_sequence.split('|')
-    if len(options) == 1:
-        prim_seq = options[0] if options[0] in mris.keys() else next(iter(mris.keys()), None)
-    else:
-        prim_seq = next((option for option in options if option in mris.keys()), next(iter(mris.keys()), None))
-
-    # Fill annotations dict
-    for sequence_name in sequences_raw:
-        if sequence_name in labels_raw.keys():
-            annotations[sequence_name] = labels_raw[sequence_name]
-            msg += f'\t\tFound {sequence_name} annotation of shape {annotations[sequence_name].shape}\n'
-        else:
-            annotations[sequence_name] = nib.Nifti1Image(np.zeros(shape=mris[prim_seq].shape),
-                                                    affine=mris[prim_seq].affine,
-                                                    header=mris[prim_seq].header)
-            msg += f'\t\tMissing {sequence_name} annotation, filling with 0s\n'
-
-        # fix orientation adn data type
-        annotations[sequence_name] = nib.as_closest_canonical(annotations[sequence_name])
-        annotations[sequence_name].set_data_dtype(np.uint8)
-
-
-    end = time.time()
-    msg += f'\t\tLoading of MRIs and annotations took {end - start} seconds!\n\n'
-
-    return mris, annotations, labels_metadata, prim_seq, msg
+##############################################################################
+###################            PROCESSING STEPS            ###################
+##############################################################################
 
 def resample(source_image, target_image, interpolation, is_annotation=False,
             isotropic=False, source_sequence=None, target_sequence=None, msg=''):
@@ -273,30 +185,6 @@ def resample_mris_and_annotations(mris, annotations, primary_sequence, isotropic
     return mris, annotations, msg
 
 
-def get_brain_mask(image):
-    """
-    Computes brain mask using Otsu's thresholding and morphological operations.
-    Args:
-        image (nib.Nifti1Image): Primary sequence image.
-    Returns:
-        mask (np.ndarray): Computed brain mask.
-    """
-    # TODO: investigate if this a good fit for brain mask in all cases. Play around
-    image_data = image.get_fdata()
-    
-    # Otsu's thresholding
-    threshold = threshold_otsu(image_data)
-    mask = image_data > threshold
-
-    # Apply morphological operations
-    struct = generate_binary_structure(3, 2)  # this defines the connectivity
-    mask = binary_closing(mask, structure=struct)
-    mask = get_largest_cc(mask)
-    mask = binary_dilation(mask, iterations=5, structure=struct)
-
-    return mask
-
-
 def crop_and_concatenate(mris, annotations, primary_sequence, save_sequence_order, msg=''):
     '''
     Crops and concatenates MRIs and annotations to non-zero region.
@@ -316,7 +204,7 @@ def crop_and_concatenate(mris, annotations, primary_sequence, save_sequence_orde
     start = time.time()
 
     # get brain mask from primary sequence
-    mask = get_brain_mask(image=mris[primary_sequence])
+    mask = utils_process.get_brain_mask(image=mris[primary_sequence])
 
     x, y, z = np.where(mask == 1)
     coordinates = {'x': [np.min(x), np.max(x)], 'y': [np.min(y), np.max(y)],
@@ -406,7 +294,7 @@ def process_study(args, subject, msg=''):
     try:
 
         # 1. Perform QC while loading data
-        mris, annotations, labels_metadata, prim_seq, msg = load_mris_and_annotations(args, subject, msg)
+        mris, annotations, labels_metadata, prim_seq, msg = utils_datasets.load_mris_and_annotations(args, subject, msg)
         msg += f'\tUsing {prim_seq} as primary sequence\n'
 
         # 2. Resample and Standardize
@@ -494,8 +382,6 @@ def parse_args():
     Parses all script arguments.
     '''
     parser = argparse.ArgumentParser()
-    parser.add_argument('--primary_sequence', type=str, default='T2S|SWI',
-                        help='Primary sequence (to which the rest will be conformed to). Default T2S.')
     parser.add_argument('--voxel_size', type=float, default=0.5,
                         help='Voxel size of isotropic space. default 0.5')
     parser.add_argument('--input_dir', type=str, default=None, required=True,
@@ -504,8 +390,9 @@ def parse_args():
                         help='Full path to the directory where processed files will be saved')
     parser.add_argument('--num_workers', type=int, default=5,
                             help='Number of workers running in parallel')
-    parser.add_argument('--dataset_name', type=str, default=None, required=True, choices=['VALDO', 'cerebriu','momeni', 'momeni-synth', 'dou'], 
-                        help='Raw dataset name, to know what preprocessign to do')
+    parser.add_argument('--dataset_name', type=str, default=None, required=True, 
+                        choices=['valdo', 'cerebriu', 'momeni', 'momeni-synth', 'dou', 'rodeja'], 
+                        help='Raw dataset name, to know what type of preprocessing is needed')
 
     return parser.parse_args()
 

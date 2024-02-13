@@ -48,8 +48,8 @@ from functools import partial
 import sys
 
 # Utils
-import utils.utils_datasets as utils_datasets
-import utils.utils_processing as utils_process
+import cmbnet.utils.utils_datasets.utils_datasets as utils_datasets
+import cmbnet.preprocessing.process_masks as utils_process
 import utils.utils_general as utils_general
 import utils.utils_evaluation as utils_eval
 
@@ -199,6 +199,7 @@ def main(args):
 
     current_time = datetime.now()
     current_datetime = current_time.strftime("%d%m%Y_%H%M%S")
+    utils_general.ensure_directory_exists(args.output_dir)
     args.log_file_path = os.path.join(args.output_dir, f'log_{current_datetime}.txt')
 
     # Get subject list

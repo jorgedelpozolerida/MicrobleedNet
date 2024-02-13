@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 # -*-coding:utf-8 -*-
-""" {Short Description of Script}
-
-
-{Long Description of Script}
-
+""" Functions to process CMB masks
 
 @author: jorgedelpozolerida
 @date: 16/01/2024
@@ -16,35 +12,73 @@ import argparse
 import traceback
 
 
-import logging                                                                      # NOQA E402
-import numpy as np                                                                  # NOQA E402
-import pandas as pd                                                                 # NOQA E402
-
+import logging
 import numpy as np
+
 import nibabel as nib
-import nilearn as nil
-import pandas as pd
-import SimpleITK as sitk
 from tqdm import tqdm
-import pickle
-import os
 from collections import deque
 from scipy.ndimage import binary_dilation, binary_erosion, generate_binary_structure, \
     center_of_mass, binary_fill_holes
 from scipy.ndimage import generate_binary_structure, binary_closing, binary_dilation, binary_erosion, center_of_mass
-from scipy.ndimage import label as nd_label
+from scipy.ndimage import label as nd_label # to avoid conflict below
+from skimage.measure import label
+from skimage.filters import threshold_otsu
 from scipy.cluster.hierarchy import fcluster, linkage
 from scipy.spatial.distance import pdist
-from scipy.spatial.distance import cdist
-import heapq
 from kneed import KneeLocator
-
-current_dir_path = os.path.dirname(os.path.abspath(__file__))
-parent_dir_path = os.path.abspath(os.path.join(current_dir_path, os.pardir))
-sys.path.append(parent_dir_path)
 
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
+
+
+
+
+##############################################################################
+###################                General                 ###################
+##############################################################################
+
+def get_largest_cc(segmentation):
+    """
+    Gets the largest connected component in image.
+    Args:
+        segmentation (np.ndarray): Image with blobs.
+    Returns:
+        largest_cc (np.ndarray): A binary image containing nothing but the largest
+                                    connected component.
+    """
+    labels = label(segmentation)
+    bincount = np.array(np.bincount(labels.flat))
+    ind_large = np.argmax(bincount)  # Background is initially largest
+    bincount[ind_large] = 0  # Remove background
+    ind_large = np.argmax(bincount)  # This should now be largest connected component
+    largest_cc = labels == ind_large
+
+    return np.double(largest_cc)
+
+
+def get_brain_mask(image):
+    """
+    Computes brain mask using Otsu's thresholding and morphological operations.
+    Args:
+        image (nib.Nifti1Image): Primary sequence image.
+    Returns:
+        mask (np.ndarray): Computed brain mask.
+    """
+    # TODO: investigate if this a good fit for brain mask in all cases. Play around
+    image_data = image.get_fdata()
+    
+    # Otsu's thresholding
+    threshold = threshold_otsu(image_data)
+    mask = image_data > threshold
+
+    # Apply morphological operations
+    struct = generate_binary_structure(3, 2)  # this defines the connectivity
+    mask = binary_closing(mask, structure=struct)
+    mask = get_largest_cc(mask)
+    mask = binary_dilation(mask, iterations=5, structure=struct)
+
+    return mask
 
 
 
@@ -112,7 +146,9 @@ def get_current_intensity(point_intensity, seed_avg_intensity, total_intensity, 
     
 
 def region_growing_3d_seed(volume, seed_points, tolerance, size_threshold,
-                            max_dist_voxels, connectivity=26, intensity_mode="point"):
+                            max_dist_voxels, connectivity=26, 
+                            intensity_mode="point", difference_mode = "relative"
+                            ):
     """
     Grow a region in a 3D volume based on intensity differences with multiple seed points.
     Allows selection between point intensity, average intensity, and running average intensity for region comparison.
@@ -141,11 +177,18 @@ def region_growing_3d_seed(volume, seed_points, tolerance, size_threshold,
             if is_within_bounds(neighbor, volume.shape) and not region[neighbor]:
                 # Get reference intensity to compare with potential point intensity
                 current_intensity = get_current_intensity(point_intensity, seed_avg_int, total_intensity, total_points, intensity_mode)
-                # neighbor_dist = np.linalg.norm(seed_points_cm - neighbor)
+                if max_dist_voxels is not None:
+                    neighbor_dist = np.linalg.norm(seed_points_cm - neighbor)
+                else:
+                    max_dist_voxels = 50 # large number
+                    neighbor_dist = 0 # large number
 
-                # if (abs(volume[neighbor] - current_intensity) <= tolerance) and (neighbor_dist < max_dist_voxels):
-                if (abs(volume[neighbor] - current_intensity) <= tolerance):
-
+                if difference_mode == "relative":
+                    intensity_diff = abs((volume[neighbor] - current_intensity) / current_intensity )
+                else: 
+                    intensity_diff = abs((volume[neighbor] - current_intensity))
+                if (intensity_diff <= tolerance) and (neighbor_dist < max_dist_voxels):
+                # if (intensity_diff <= tolerance):
                     region[neighbor] = True  # Include the neighbor in the region
                     queue.append(neighbor)  # Add the neighbor to the queue for further exploration
                     total_intensity += volume[neighbor]
@@ -164,7 +207,9 @@ def region_growing_3d_seed(volume, seed_points, tolerance, size_threshold,
 
 def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_voxels,
                                         tolerance_range=(0, 100, 1), connectivity=26, 
-                                        intensity_mode="point", show_progress=False):
+                                        intensity_mode="point", show_progress=False, 
+                                        diff_mode="normal",
+                                        log_level="\t\t\t", msg=""):
     """ 
     Calculates results for several tolerance values and yields optimal based on 
     elbow-method
@@ -180,8 +225,8 @@ def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_v
     for tolerance in iterator:
         grown_region, exceeded = region_growing_3d_seed(volume, seeds, tolerance,
                                                         size_threshold, max_dist_voxels, 
-                                                        connectivity,  intensity_mode)
-        
+                                                        connectivity,  intensity_mode,
+                                                        diff_mode)
         grown_regions.append(grown_region)
         len_list.append(np.sum(grown_region))
 
@@ -192,7 +237,12 @@ def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_v
     # Determine the selected tolerance based on the sudden rise (exceeded signal)
     tolerances = np.arange(*tolerance_range)[:len(len_list)]
     knee_locator = KneeLocator(tolerances, len_list, curve='convex', direction='increasing', interp_method='interp1d')
-    selected_tolerance = knee_locator.knee
+
+    if knee_locator.knee is None:
+        msg += f"{log_level}Knee could not be found, selecting second to last tolerance"
+        selected_tolerance = tolerances[-2]  # or any default tolerance
+    else:
+        selected_tolerance = knee_locator.knee
     knee_index = np.where(tolerances == selected_tolerance)[0][0]
 
     # selected_tolerance_index = knee_index if exceeded_size_threshold else len(grown_regions) - 1
@@ -206,8 +256,8 @@ def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_v
     struct = generate_binary_structure(volume.ndim, connectivity)
     
     # Perform one final dilation and then erosion (closing)
-    closed_mask = binary_dilation(selected_mask, structure=struct, iterations=2)
-    closed_mask = binary_erosion(closed_mask, structure=struct, iterations=2)
+    closed_mask = binary_dilation(selected_mask, structure=struct, iterations=4)
+    closed_mask = binary_erosion(closed_mask, structure=struct, iterations=4)
     
     # Fill holes in the mask to ensure it's solid
     closed_mask = binary_fill_holes(closed_mask, structure=struct)
@@ -217,7 +267,8 @@ def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_v
 
     # If there are multiple features, select the largest one
     if num_features > 1:
-        print(f"More than one CC found, a total of {num_features}")
+        counts = np.bincount(labeled_mask.ravel())
+        msg += f"{log_level}Found {num_features} CCs in one CMB. Counts: {counts[1:]}"
         max_label = 1 + np.argmax([np.sum(labeled_mask == i) for i in range(1, num_features + 1)])
         cleaned_mask = (labeled_mask == max_label)
     else:
@@ -232,7 +283,7 @@ def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_v
         'elbow_i': knee_index 
     }
 
-    return cleaned_mask, metadata
+    return cleaned_mask, metadata, msg
 
 
 
@@ -240,7 +291,7 @@ def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_v
 ###################            CMB processing              ###################
 ##############################################################################
 
-def calculate_size_threshold(image: nib.Nifti1Image) -> int:
+def calculate_size_threshold(image: nib.Nifti1Image, radius_mm=5) -> int:
     """
     Calculate the maximum size limit for a mask based on the voxel size of the image.
 
@@ -250,9 +301,6 @@ def calculate_size_threshold(image: nib.Nifti1Image) -> int:
     Returns:
         int: The calculated size threshold in number of voxels.
     """
-    # Radius of the sphere in mm
-    radius_mm = 5
-
     # Get voxel dimensions from the image header
     voxel_dims = image.header.get_zooms()
     voxel_volume_mm3 = np.prod(voxel_dims)

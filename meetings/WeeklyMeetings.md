@@ -1,7 +1,7 @@
 # Jorge's Weekly Meeting Notes
 
-* [29 January 2024](#date-29-january-2024)
 * [05 February 2024](#date-05-february-2024)
+<!-- *
 * [12 February 2024](#date-12-february-2024)
 * [19 February 2024](#date-19-february-2024)
 * [26 February 2024](#date-26-february-2024)
@@ -24,7 +24,7 @@
 * [24 June 2024](#date-24-june-2024)
 * [01 July 2024](#date-01-july-2024)
 
-* [Template](#date-template)
+* [Template](#date-template) -->
 
 <br><br><br><br><br>
 
@@ -98,16 +98,23 @@ This space is yours to add to as needed.
 ### Date: 05 February 2024
 
 #### What did you achieve/do?
-* n/a
+
+* Code for pre-processing CEREBRIU annotations finished -> possible improvements in future
+* Code for post-processing with SynthSeg created
+* Code for evaluating locally created
+* Restructured repo with utility functions scripts
+
+* Extra evalaution on CRBR data + Submitted Abstract to KDD
 
 #### What did you struggle with?
 * n/a
 
 #### What would you like to work on next ?
-* n/a
+* KDD paper writing to be sent early in the week
+* Code for processing all datasets
 
 #### Where do you need help from Veronika?
-* n/a
+* KDD draft feedback
 
 #### Others
 

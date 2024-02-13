@@ -32,7 +32,7 @@ logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 import re
 
-import utils.utils_datasets as utils_datasets
+import cmbnet.utils.utils_datasets.utils_datasets as utils_datasets
 
 
 def ensure_directory_exists(dir_path):
