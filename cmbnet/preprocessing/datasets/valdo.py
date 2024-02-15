@@ -21,7 +21,7 @@ import glob
 import sys
 from typing import Tuple, Dict, List, Any
 
-import cmbnet.preprocessing.process_masks as utils_process
+import cmbnet.preprocessing.process_masks as process_masks
 import cmbnet.utils.utils_general as utils_general
 
 
@@ -97,7 +97,7 @@ def perform_VALDO_QC(mris, annotations, msg):
 
     # Quality Control of Labels
     for anno_sequence, anno_im in annotations.items():
-        annotations_qc[anno_sequence], metadata, msg = utils_process.process_cmb_mask(anno_im, msg)
+        annotations_qc[anno_sequence], metadata, msg = process_masks.process_cmb_mask(anno_im, msg)
         annotations_metadata[anno_sequence] = metadata
 
     # Quality Control of MRI Sequences

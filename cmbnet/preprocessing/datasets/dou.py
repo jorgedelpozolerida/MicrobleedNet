@@ -21,7 +21,7 @@ import glob
 import sys
 from typing import Tuple, Dict, List, Any
 
-import cmbnet.preprocessing.process_masks as utils_process
+import cmbnet.preprocessing.process_masks as process_masks
 import cmbnet.utils.utils_general as utils_general
 
 
@@ -95,11 +95,8 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
                                             metadata about the processing, and an updated log message.
     """
     # Compute size threshold and maximum distance in voxels
-    max_dist_mm = 10  # Millimeters, diameter
-    size_th = utils_process.calculate_size_threshold(mri_im, radius_mm=max_dist_mm/2)
-    voxel_size = np.mean(mri_im.header.get_zooms())
-    max_dist_voxels = int(max_dist_mm / voxel_size)
-    msg += f"{log_level}Maximum distance allowed (voxels)={max_dist_voxels} Size threshold={size_th}.\n"
+    size_th, max_dist_voxels = process_masks.calculate_size_and_distance_thresholds(mri_im, max_dist_mm=10)
+    msg = f"{log_level}Thresholds for RegionGrowing --> Max. distance ={max_dist_voxels}, Max Size={size_th}\n"
 
     # Initialize the final processed mask
     final_processed_mask = np.zeros_like(mri_im.get_fdata(), dtype=bool)
@@ -121,7 +118,7 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
             for intensity_mode in ['point', 'running_average']:
                 for diff_mode in ['relative', 'normal']:
                     msg_temp = ""
-                    processed_mask, metadata, msg_temp = utils_process.region_growing_with_auto_tolerance(
+                    processed_mask, metadata, msg_temp = process_masks.region_growing_with_auto_tolerance(
                         volume=mri_im.get_fdata(),
                         seeds=seeds,
                         size_threshold=size_th,
@@ -150,7 +147,7 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
         best_msg += f"{log_level}Optimization selected connectivity={bestconnectivity}, " \
                     f"intensity_mode={best_intensity_mode}, diff_mode={best_diff_mode} " \
                     f"with n_pixels={best_n_pixels}."
-        msg += msg_temp
+        msg += best_msg
 
         # Ensure there's no overlap with previously processed masks
         if np.any(final_processed_mask & best_processed_mask):
@@ -225,7 +222,7 @@ def load_DOU_data(args, subject, msg):
     # 1. Load raw data
     sequences_raw, labels_raw, sequence_type, com_list = load_DOU_raw(args.input_dir, subject)
 
-    # 2. Perform Quality Control (QC) and Data Cleaning
+    # 2. Perform Quality Control and Data Cleaning
     sequences_qc, labels_qc, labels_metadata, msg = perform_DOU_QC(args, subject, sequences_raw, labels_raw, com_list, msg)
     
     return sequences_qc, labels_qc, labels_metadata, sequence_type, msg

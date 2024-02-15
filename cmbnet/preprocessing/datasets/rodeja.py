@@ -22,7 +22,7 @@ import glob
 import sys
 from typing import Tuple, Dict, List, Any
 
-import cmbnet.preprocessing.process_masks as utils_process
+import cmbnet.preprocessing.process_masks as process_masks
 import cmbnet.utils.utils_general as utils_general
 
 

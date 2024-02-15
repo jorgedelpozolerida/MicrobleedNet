@@ -20,7 +20,7 @@ import glob
 import sys
 from typing import Tuple, Dict, List, Any
 
-import cmbnet.preprocessing.process_masks as utils_process
+import cmbnet.preprocessing.process_masks as process_masks
 import cmbnet.utils.utils_general as utils_general
 
 
@@ -119,7 +119,7 @@ def process_CEREBRIU_cmb(label_im: nib.Nifti1Image,
     mask_filt = mask_data == int(labelid)
 
     voxel_size = label_im.header.get_zooms()  # Extract voxel size from the image
-    mask_filt_single_list = utils_process.isolate_single_CMBs(mask_filt, voxel_size)
+    mask_filt_single_list = process_masks.isolate_single_CMBs(mask_filt, voxel_size)
 
     rg_metadata = []
     seeds_calculated = []
@@ -136,7 +136,7 @@ def process_CEREBRIU_cmb(label_im: nib.Nifti1Image,
         seeds = [tuple(seed) for seed in np.array(np.where(cmb_single_mask)).T]
         seeds_calculated.extend(seeds)
 
-        processed_mask, metadata, msg = utils_process.region_growing_with_auto_tolerance(
+        processed_mask, metadata, msg = process_masks.region_growing_with_auto_tolerance(
             volume=mri_data,
             seeds=seeds,    
             size_threshold=size_threshold,
@@ -200,14 +200,11 @@ def process_cerebriu_anno(args: Any,
 
     assert extracted_data["segmentMap"], "segmentMap is empty"
 
-    # Thresholds ---
-    size_th = utils_process.calculate_size_threshold(label_im)
-    label_mask_all = np.zeros_like(label_im.get_fdata(), dtype=bool)
+    # Compute size threshold and maximum distance in voxels
+    size_th, max_dist_voxels = process_masks.calculate_size_and_distance_thresholds(mri_im, max_dist_mm=10)
+    msg = f"{log_level}Thresholds for RegionGrowing --> Max. distance ={max_dist_voxels}, Max Size={size_th}\n"
 
-    max_dist_mm = 9 # mm
-    voxel_size = np.mean(label_im.header.get_zooms())  # Adjust as needed
-    max_dist_voxels = max_dist_mm / voxel_size
-    msg += f"{log_level}Computed maximum distance allowed in voxels: {max_dist_voxels}.\n"
+    label_mask_all = np.zeros_like(label_im.get_fdata(), dtype=bool)
 
     for labelid, mask_dict in extracted_data["segmentMap"].items():
         multiple = mask_dict['attributes'].get('Multiple', False)
@@ -223,7 +220,7 @@ def process_cerebriu_anno(args: Any,
         label_mask_all |= label_mask
 
     annotation_processed_nib = nib.Nifti1Image(label_mask_all.astype(np.int16), label_im.affine, label_im.header)
-    processed_mask_nib, metadata, msg = utils_process.process_cmb_mask(annotation_processed_nib, msg, log_level="\t\t")
+    processed_mask_nib, metadata, msg = process_masks.process_cmb_mask(annotation_processed_nib, msg, log_level="\t\t")
 
     return processed_mask_nib, metadata, msg
 

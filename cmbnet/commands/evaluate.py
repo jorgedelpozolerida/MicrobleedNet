@@ -49,7 +49,7 @@ import sys
 
 # Utils
 import cmbnet.utils.utils_datasets.utils_datasets as utils_datasets
-import cmbnet.preprocessing.process_masks as utils_process
+import cmbnet.preprocessing.process_masks as process_masks
 import utils.utils_general as utils_general
 import utils.utils_evaluation as utils_eval
 

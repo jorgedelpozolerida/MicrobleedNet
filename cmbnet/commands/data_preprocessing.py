@@ -52,7 +52,7 @@ import sys
 
 # Utils
 import cmbnet.preprocessing.loading as utils_datasets
-import cmbnet.preprocessing.process_masks as utils_process
+import cmbnet.preprocessing.process_masks as process_masks
 import cmbnet.utils.utils_general as utils_general
 import cmbnet.visualization.utils_plotting as utils_plt
 
@@ -204,7 +204,7 @@ def crop_and_concatenate(mris, annotations, primary_sequence, save_sequence_orde
     start = time.time()
 
     # get brain mask from primary sequence
-    mask = utils_process.get_brain_mask(image=mris[primary_sequence])
+    mask = process_masks.get_brain_mask(image=mris[primary_sequence])
 
     x, y, z = np.where(mask == 1)
     coordinates = {'x': [np.min(x), np.max(x)], 'y': [np.min(y), np.max(y)],
@@ -286,11 +286,11 @@ def process_study(args, subject, msg=''):
     # Initialize
     start = time.time()
     msg = f'Started processing {subject}...\n\n'
-    
+
     # Create dirs
     for sub_d in [args.mris_subdir, args.annotations_subdir, args.annotations_metadata_subdir]:
         utils_general.ensure_directory_exists(os.path.join(args.data_dir_path, subject, sub_d))
-    
+
     try:
 
         # 1. Perform QC while loading data
@@ -302,11 +302,11 @@ def process_study(args, subject, msg=''):
                                                                 primary_sequence=prim_seq, 
                                                                 isotropic=True, 
                                                                 msg=msg)
-        
+
         # Save affine after resampling
         affine_after_resampling = mris[prim_seq].affine
         header_after_resampling = mris[prim_seq].header
-        
+
         # 3. Crop and Concatenate
         save_seq_order = [prim_seq] + [seq for seq in mris.keys() if seq != prim_seq]
         msg += f'\tCocatenating MRIs in the following order: {save_seq_order}\n'
@@ -314,24 +314,40 @@ def process_study(args, subject, msg=''):
         mris_array, annotations_array, msg = crop_and_concatenate(
             mris, annotations, primary_sequence=prim_seq, 
             save_sequence_order=save_seq_order, msg=msg)
-        
+
         # 4. Combine annotations
         annotations_array, msg = combine_annotations(annotations_array, None, msg)
-        
+
         # Convert to Nifti1Image
         mris_image = nib.Nifti1Image(mris_array.astype(np.float32), affine_after_resampling, header_after_resampling)
         annotations_image = nib.Nifti1Image(annotations_array.astype(np.uint8), affine_after_resampling, header_after_resampling)
-        
+
         # Check Annotations Stats
         msg += "\tChecking new stats for annotations after transforms\n"
-        _, metadata, msg = utils_process.process_cmb_mask(annotations_image, msg)
+        _, metadata, msg = process_masks.process_cmb_mask(annotations_image, msg)
         annotations_metadata_new = {prim_seq: metadata}
 
 
         # Save to Disk
-        nib.save(mris_image, os.path.join(args.data_dir_path, subject, args.mris_subdir, subject + '.nii.gz'))
-        nib.save(annotations_image, os.path.join(args.data_dir_path, subject, args.annotations_subdir, subject + '.nii.gz'))
-        
+        nib.save(
+            mris_image,
+            os.path.join(
+                args.data_dir_path,
+                subject,
+                args.mris_subdir,
+                f'{subject}.nii.gz',
+            ),
+        )
+        nib.save(
+            annotations_image,
+            os.path.join(
+                args.data_dir_path,
+                subject,
+                args.annotations_subdir,
+                f'{subject}.nii.gz',
+            ),
+        )
+
         # Convert numpy arrays to lists
         labels_metadata_listed = numpy_to_list(labels_metadata)
         annotations_metadata_new_listed = numpy_to_list(annotations_metadata_new)
@@ -341,11 +357,11 @@ def process_study(args, subject, msg=''):
             json.dump(labels_metadata_listed, file, indent=4)
         with open(os.path.join(args.data_dir_path, subject, args.annotations_metadata_subdir, f'{subject}_processed.json'), "w") as file:
             json.dump(annotations_metadata_new_listed, file, indent=4)
-    
+
     except Exception:
-            
+
         msg += f'Failed to process {subject}!\n\nException caught: {traceback.format_exc()}'
-    
+
     # Finalize
     end = time.time()
     msg += f'Finished processing of {subject} in {end - start} seconds!\n\n'

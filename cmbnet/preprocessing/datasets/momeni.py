@@ -24,7 +24,7 @@ import glob
 import sys
 from typing import Tuple, Dict, List, Any
 
-import cmbnet.preprocessing.process_masks as utils_process
+import cmbnet.preprocessing.process_masks as process_masks
 import cmbnet.utils.utils_general as utils_general
 
 
@@ -105,11 +105,8 @@ def process_MOMENI_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, conne
     """
     Process annotations for a Momeni dataset subject by applying region growing algorithm on CMBs based on their COM.
     """
-    max_dist_mm = 8
-    size_th = utils_process.calculate_size_threshold(mri_im, radius_mm=max_dist_mm/2)
-    voxel_size = np.mean(mri_im.header.get_zooms())
-    max_dist_voxels = int(max_dist_mm / voxel_size)
-    msg += f"{log_level}Maximum distance allowed (voxels)={max_dist_voxels} Size threshold={size_th}.\n"
+    size_th, max_dist_voxels = process_masks.calculate_size_and_distance_thresholds(mri_im, max_dist_mm=10)
+    msg = f"{log_level}Thresholds for RegionGrowing --> Max. distance ={max_dist_voxels}, Max Size={size_th}\n"
 
     final_processed_mask = np.zeros_like(mri_im.get_fdata(), dtype=bool)
     rg_metadata = []
@@ -117,7 +114,7 @@ def process_MOMENI_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, conne
 
     for i, com in enumerate(com_list):
         seeds = [com]
-        processed_mask, metadata, msg = utils_process.region_growing_with_auto_tolerance(
+        processed_mask, metadata, msg = process_masks.region_growing_with_auto_tolerance(
             volume=mri_im.get_fdata(),
             seeds=seeds,
             size_threshold=size_th,
@@ -143,7 +140,7 @@ def process_MOMENI_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, conne
     return annotation_processed_nib, rg_metadata, msg
 
 
-def process_MOMENI_mri(args, subject, mri_im, msg):
+def process_MOMENI_mri(subject, mri_im, msg):
     """
     Process MRI sequences specific to the Momeni dataset. Placeholder for actual processing logic.
 
@@ -161,7 +158,7 @@ def process_MOMENI_mri(args, subject, mri_im, msg):
     return mri_im, msg
 
 
-def perform_MOMENI_QC(args, subject, mris, annotations, com_list, msg):
+def perform_MOMENI_QC(subject, mris, annotations, com_list, msg):
     """
     Perform Quality Control (QC) specific to the Momeni dataset on MRI sequences and labels.
 
@@ -182,7 +179,7 @@ def perform_MOMENI_QC(args, subject, mris, annotations, com_list, msg):
     mris_qc, annotations_qc, annotations_metadata = {}, {}, {}
 
     for mri_sequence, mri_im in mris.items():
-        mris_qc[mri_sequence], msg = process_MOMENI_mri(args, subject, mri_im, msg)
+        mris_qc[mri_sequence], msg = process_MOMENI_mri(subject, mri_im, msg)
     
     for anno_sequence, anno_im in annotations.items():
         annotations_qc[anno_sequence], metadata, msg = process_MOMENI_anno(anno_im, com_list, msg)
@@ -191,7 +188,7 @@ def perform_MOMENI_QC(args, subject, mris, annotations, com_list, msg):
     return mris_qc, annotations_qc, annotations_metadata, msg
 
 
-def load_MOMENI_data(args, subject, msg):
+def load_MOMENI_data(args, input_dir, subject, msg):
     """
     Load MRI sequences and labels specific to the Momeni dataset. Performs QC in the process.
 
@@ -206,9 +203,9 @@ def load_MOMENI_data(args, subject, msg):
         labels_metadata (dict): Metadata associated with the labels.
         msg (str): Updated log message.
     """
-    sequences_raw, labels_raw, sequence_type, com_list = load_MOMENI_raw(args.input_dir, subject)
+    sequences_raw, labels_raw, sequence_type, com_list = load_MOMENI_raw(input_dir, subject)
 
-    sequences_qc, labels_qc, labels_metadata, msg = perform_MOMENI_QC(args, subject, sequences_raw, labels_raw, com_list, msg)
+    sequences_qc, labels_qc, labels_metadata, msg = perform_MOMENI_QC(subject, sequences_raw, labels_raw, com_list, msg)
     
     return sequences_qc, labels_qc, labels_metadata, sequence_type, msg
 

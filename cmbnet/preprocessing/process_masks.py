@@ -291,9 +291,37 @@ def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_v
 ###################            CMB processing              ###################
 ##############################################################################
 
+def calculate_size_and_distance_thresholds(mri_im: nib.Nifti1Image, max_dist_mm: int = 10) -> tuple:
+    """
+    Calculate the maximum size limit and maximum distance allowed for an MRI image based on the voxel size.
+
+    Parameters:
+    - mri_im (nibabel.Nifti1Image): The MRI image.
+    - max_dist_mm (int, optional): The maximum distance in millimeters allowed between any two points. Defaults to 10 mm.
+
+    Returns:
+    - tuple: A tuple containing the calculated size threshold in number of voxels and the maximum distance allowed in voxels.
+    """
+    # Get voxel dimensions from the image header
+    voxel_dims = mri_im.header.get_zooms()
+    voxel_volume_mm3 = np.prod(voxel_dims)
+
+    # Volume of the sphere in mm^3 based on the radius (half of max_dist_mm, which is supposed to be diameter)
+    sphere_volume_mm3 = (4/3) * np.pi * ((max_dist_mm / 2) ** 3)
+
+    # Calculate the number of voxels that fit into the sphere (size threshold)
+    size_threshold = int(sphere_volume_mm3 / voxel_volume_mm3)
+
+    # Calculate the maximum distance allowed in voxels
+    voxel_size = np.amax(voxel_dims) # we allow for maximum distance possible to not constrain growth to much
+    max_dist_voxels = int(max_dist_mm / voxel_size)
+
+
+    return size_threshold, max_dist_voxels
+
 def calculate_size_threshold(image: nib.Nifti1Image, radius_mm=5) -> int:
     """
-    Calculate the maximum size limit for a mask based on the voxel size of the image.
+    Calculate the maximum size limit for a CMB mask based on the voxel size of the image.
 
     Args:
         image (nibabel.Nifti1Image): The MRI image.
@@ -313,6 +341,23 @@ def calculate_size_threshold(image: nib.Nifti1Image, radius_mm=5) -> int:
 
     return size_threshold
 
+def calculate_max_size_and_distance(mri_im, log_level, max_dist_mm = 10):
+    """
+    Calculate and return the maximum size threshold and maximum distance allowed for an MRI image.
+
+    Parameters:
+    - mri_im: The MRI nibabel image object
+    - log_level: A string indicating the number of tabs for logging
+    - max_dist_mm: mm of max distance allowed between any two points (max can be diameter)
+    Returns:
+    - size_th: The calculated size threshold.
+    - max_dist_voxels: The maximum distance allowed, measured in voxels.
+    """
+    size_th = calculate_size_threshold(mri_im, radius_mm=max_dist_mm/2)
+    voxel_size = np.mean(mri_im.header.get_zooms())
+    max_dist_voxels = int(max_dist_mm / voxel_size)
+
+    return size_th, max_dist_voxels
 
 def isolate_single_CMBs(mask: np.ndarray, voxel_size: list, max_dist_mm: float = 10.0) -> list:
     """

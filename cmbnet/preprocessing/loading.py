@@ -29,7 +29,7 @@ parent_dir_path = os.path.abspath(os.path.join(current_dir_path, os.pardir))
 sys.path.append(parent_dir_path)
 
 import cmbnet.preprocessing.datasets as dat_load
-import cmbnet.preprocessing.process_masks as utils_process
+import cmbnet.preprocessing.process_masks as process_masks
 import cmbnet.utils.utils_general as utils_general
 
 
@@ -101,7 +101,7 @@ def get_dataset_subjects(dataset_name, input_dir):
 def load_mris_and_annotations(args, subject, msg='', log_level='\t'):
     '''
     Loads MRI scans and their corresponding annotations for a given subject 
-    from a specific dataset and performs orientation fix.    
+    from a specific dataset performing data cleaning and orientation fix.    
     
     Args:
         args (object): Contains configuration parameters, including input directory and dataset name.

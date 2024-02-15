@@ -1,9 +1,10 @@
 # Jorge's Weekly Meeting Notes
 
 * [05 February 2024](#date-05-february-2024)
+* [19 February 2024](#date-19-february-2024)
+
 <!-- *
 * [12 February 2024](#date-12-february-2024)
-* [19 February 2024](#date-19-february-2024)
 * [26 February 2024](#date-26-february-2024)
 * [04 March 2024](#date-04-march-2024)
 * [11 March 2024](#date-11-march-2024)
@@ -150,21 +151,42 @@ This space is yours to add to as needed.
 
 ### Date: 19 February 2024
 
+(I cannot attend to this meeting)
+
 #### What did you achieve/do?
-* n/a
+
+For KDD (also useful for thesis):
+* Code for post-processing with SynthSeg created
+* Code for pre-processing CEREBRIU annotations finished
+* Code for evaluating locally created
+* Extra evaluation on CRBR data
+* KDD report
+
+For thesis only:
+* Code for pre-processing DOU dataset finished
+* Code for pre-processing MOMENI dataset finished
+* Restructured repo with python modules as package
+
 
 #### What did you struggle with?
-* n/a
+* Hard to apply Region Growing when contrast is bad, like in MOMENI dataset
+* Specific paraemters of region growing to every dataset
 
 #### What would you like to work on next ?
-* n/a
+* Polish dataset preprocessing, manually check visually all results
+* Code for pre-processing MOMENI-synthetic dataset
+* Code for processing KU dataset (i call it "RODEJA")
+* Think of how to combine all datasets, specially when
+it comes to negative samples and possible use of synthestic dataset from MOMENI
 
 #### Where do you need help from Veronika?
-* n/a
+* What is your opinion on the use of synthetic microbleeds as created in this paper?:
+[Momeni paper](../docs/papers/Synthetic%20microbleeds%20generation%20for%20classifier%20training%20without.pdf) --> basically there are 3,700 scans from 118 patients with synthetic CMBs modelled with a random Gaussian shape and added to healthy brain locations
+
 
 #### Others
 
-* n/a
+* I name datasets by the first author of their papers
 
 <br><br><br><br><br>
 
