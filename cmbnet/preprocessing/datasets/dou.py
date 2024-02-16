@@ -23,6 +23,7 @@ from typing import Tuple, Dict, List, Any
 
 import cmbnet.preprocessing.process_masks as process_masks
 import cmbnet.utils.utils_general as utils_general
+import cmbnet.visualization.utils_plotting as utils_plt
 
 
 logging.basicConfig(level=logging.INFO)
@@ -100,14 +101,13 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
 
     # Initialize the final processed mask
     final_processed_mask = np.zeros_like(mri_im.get_fdata(), dtype=bool)
-    rg_metadata = []  # To collect metadata from region growing
+    rg_metadata = {}  # To collect metadata from region growing
     msg += f"{log_level}Processing CMB annotations \n"
 
     # Process each CMB based on its center of mass
     for i, com in enumerate(com_list):
-        print(com)
         seeds = [com]
-        
+
         best_n_pixels = 1
         best_processed_mask = None
         best_metadata = None
@@ -117,22 +117,25 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
         for connectivity in [6, 26]:
             for intensity_mode in ['point', 'running_average']:
                 for diff_mode in ['relative', 'normal']:
+                    if diff_mode == "relative":
+                        range_temp = np.concatenate((np.arange(0, 20, 0.05), np.arange(20, 100, 1), np.arange(100, 10000, 100)))
+                    else:
+                        range_temp = np.arange(0, 100, 0.05)
                     msg_temp = ""
                     processed_mask, metadata, msg_temp = process_masks.region_growing_with_auto_tolerance(
                         volume=mri_im.get_fdata(),
                         seeds=seeds,
                         size_threshold=size_th,
                         max_dist_voxels=None,
-                        tolerance_range=(0, 100, 0.05),
+                        tolerance_values=range_temp,
                         connectivity=connectivity,
-                        show_progress=True,
+                        show_progress=False,
                         intensity_mode=intensity_mode,
                         diff_mode=diff_mode,
                         log_level=f"{log_level}\t",
                         msg=msg_temp
                     )
                     n_pixels = metadata['n_pixels']
-
                     # Update best results if this combination yielded more pixels
                     if n_pixels > best_n_pixels:
                         best_n_pixels = n_pixels
@@ -155,19 +158,73 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
 
         # Update the final mask and metadata
         final_processed_mask |= best_processed_mask
-        rg_metadata.append(best_metadata)
-        msg += f"{log_level}Finished processing CMB {i}. com={com}, new_size={np.sum(processed_mask)}\n"
 
-    # Convert the final mask into a Nifti1Image
+        # save metadata for CMB i
+        rg_metadata[i] = {
+            "size": best_metadata['n_pixels'],
+            "CM": com,
+            "region_growing": {
+                "selected_tolerance": best_metadata['tolerance_selected'],
+                "n_tolerances": best_metadata['tolerances_inspected'], 
+                "elbow_i": best_metadata['elbow_i'], 
+                "elbow2end_tol": best_metadata['elbow2end_tol'],
+                'connectivity': bestconnectivity,
+                "intensity_mode": best_intensity_mode,
+                "diff_mode": best_diff_mode ,
+                "distance_th": max_dist_voxels,
+                "size_th": size_th,
+
+            }
+        }
+    # Save if healthy or not
+    metadata_out = {
+        "healthy": "no" if com_list else "yes",
+        "CMBs_old": rg_metadata
+    }
     annotation_processed_nib = nib.Nifti1Image(final_processed_mask.astype(np.int16), mri_im.affine, mri_im.header)
-    # processed_mask_nib, metadata, msg = utils_process.process_cmb_mask(annotation_processed_nib, msg, log_level="\t\t", connectivity=26)
+    
+    return annotation_processed_nib, metadata_out, msg
 
-    return annotation_processed_nib, rg_metadata, msg
 
+def process_DOU_mri(mri_im, msg='', log_level='\t\t'):
+    """
+    Process a VALDO MRI image to handle NaNs by replacing them with the background value.
 
-def process_DOU_mri(args, subject, mri_im, msg):
+    Args:
+    - mri_im (nibabel.Nifti1Image): The nibabel object of the MRI.
 
-    return mri_im, msg
+    Returns:
+    - nibabel.Nifti1Image: Processed MRI as a nibabel object.
+    - str: Updated log message.
+    """
+    
+    # Extract data from nibabel object
+    data = mri_im.get_fdata().copy()
+    
+    # Identify NaNs
+    nan_mask = np.isnan(data)
+    num_nans = np.sum(nan_mask)
+    perc_nans = num_nans/len(data.flatten())*100
+    
+    if num_nans > 0:
+        # Compute the background value using small patches from the edges
+        edge_patches = [data[:10, :10, :5], data[-10:, :10, :5], 
+                        data[:10, -10:, :5], data[-10:, -10:, :5], 
+                        data[:10, :10, -5:], data[-10:, :10, -5:], 
+                        data[:10, -10:, -5:], data[-10:, -10:, -5:]]
+        background_value = np.nanmedian(np.concatenate(edge_patches))
+        if np.isnan(background_value):
+            background_value = 0
+            msg += f'{log_level}Forced background value to 0 as region selected is full of nan\n'
+        # Replace NaNs with the background value
+        data[nan_mask] = background_value
+
+        msg += f'{log_level}Found {round(perc_nans, 2)}% of NaNs and replaced with background value: {background_value}\n'
+    
+    # Convert processed data back to Nifti1Image
+    processed_mri_im = nib.Nifti1Image(data, mri_im.affine, mri_im.header)
+
+    return processed_mri_im, msg
 
 def perform_DOU_QC(args, subject, mris, annotations, com_list, msg):
     """
@@ -192,14 +249,13 @@ def perform_DOU_QC(args, subject, mris, annotations, com_list, msg):
 
     # Quality Control of MRI Sequences
     for mri_sequence, mri_im in mris.items():
-        mris_qc[mri_sequence], msg = process_DOU_mri(args, subject, mri_im, msg)
+        mris_qc[mri_sequence], msg = process_DOU_mri(mri_im, msg)
     
     # Quality Control of Labels
     for anno_sequence, anno_im in annotations.items():
         annotations_qc[anno_sequence], metadata, msg = process_DOU_anno(mris_qc[anno_sequence], com_list, msg)
         annotations_metadata[anno_sequence] = metadata
 
-    
     return mris_qc, annotations_qc, annotations_metadata, msg
 
 
@@ -224,5 +280,18 @@ def load_DOU_data(args, subject, msg):
 
     # 2. Perform Quality Control and Data Cleaning
     sequences_qc, labels_qc, labels_metadata, msg = perform_DOU_QC(args, subject, sequences_raw, labels_raw, com_list, msg)
+    
+    
+    # 3. Save plots for debugging
+    for i, CM in enumerate(com_list):
+        filename_temp = os.path.join( args.plots_path, f"{subject}_CMB_{i}.png")                  
+        metadata_str = f"""\
+        sub: {subject}
+        {sequence_type}, shape: {sequences_raw[sequence_type].shape}
+        CMBloc: {CM}   CMBsize: {labels_metadata[sequence_type]["CMBs_old"][i]['size']}
+        "connectivity": {labels_metadata[sequence_type]["CMBs_old"][i]['region_growing']['connectivity']}, "intensity_mode": {labels_metadata[sequence_type]["CMBs_old"][i]['region_growing']['intensity_mode']}, 
+        "diff_mode": {labels_metadata[sequence_type]["CMBs_old"][i]['region_growing']['diff_mode']}, 
+        "distance_th": {labels_metadata[sequence_type]["CMBs_old"][i]['region_growing']['distance_th']},"size_th": {labels_metadata[sequence_type]["CMBs_old"][i]['region_growing']['size_th']}"""
+        utils_plt.plot_processed_mask(sequences_raw[sequence_type], labels_raw[sequence_type], labels_qc[sequence_type], CM, 100, metadata_str=metadata_str, save_path=filename_temp)
     
     return sequences_qc, labels_qc, labels_metadata, sequence_type, msg

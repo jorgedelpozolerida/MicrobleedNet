@@ -155,6 +155,7 @@ def region_growing_3d_seed(volume, seed_points, tolerance, size_threshold,
     """
     region = np.zeros_like(volume, dtype=bool)  # The resulting binary mask
     queue = deque()  # Initialize the queue with the seed points
+    visited = set()  # Track visited points
     stop_signal = False  # Signal to indicate whether to stop investigating further tolerances
     total_intensity = 0
     total_points = 0
@@ -163,6 +164,7 @@ def region_growing_3d_seed(volume, seed_points, tolerance, size_threshold,
         if is_within_bounds(seed_point, volume.shape):
             region[seed_point] = True  # Mark the seed point as included in the region
             queue.append(seed_point)
+            visited.add(seed_point)
             total_intensity += volume[seed_point]
             total_points += 1
     seed_avg_int = total_intensity / total_points
@@ -174,7 +176,8 @@ def region_growing_3d_seed(volume, seed_points, tolerance, size_threshold,
         point_intensity = volume[point]
 
         for neighbor in get_neighbors(point):
-            if is_within_bounds(neighbor, volume.shape) and not region[neighbor]:
+            if is_within_bounds(neighbor, volume.shape) and neighbor not in visited:
+                visited.add(neighbor)  # Mark the neighbor as visited
                 # Get reference intensity to compare with potential point intensity
                 current_intensity = get_current_intensity(point_intensity, seed_avg_int, total_intensity, total_points, intensity_mode)
                 if max_dist_voxels is not None:
@@ -206,7 +209,7 @@ def region_growing_3d_seed(volume, seed_points, tolerance, size_threshold,
 
 
 def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_voxels,
-                                        tolerance_range=(0, 100, 1), connectivity=26, 
+                                        tolerance_values, connectivity=26, 
                                         intensity_mode="point", show_progress=False, 
                                         diff_mode="normal",
                                         log_level="\t\t\t", msg=""):
@@ -218,9 +221,9 @@ def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_v
     len_list = []
 
     # Loop over the tolerance values and perform region growing
-    iterator = np.arange(*tolerance_range)
+    iterator = tolerance_values
     if show_progress:
-        iterator = tqdm(iterator, desc="Looping over tolerances")
+        iterator = tqdm(tolerance_values, desc="Looping over tolerances")
 
     for tolerance in iterator:
         grown_region, exceeded = region_growing_3d_seed(volume, seeds, tolerance,
@@ -235,7 +238,7 @@ def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_v
             break  # Exit if the size threshold is exceeded
 
     # Determine the selected tolerance based on the sudden rise (exceeded signal)
-    tolerances = np.arange(*tolerance_range)[:len(len_list)]
+    tolerances = tolerance_values[:len(len_list)]
     knee_locator = KneeLocator(tolerances, len_list, curve='convex', direction='increasing', interp_method='interp1d')
 
     if knee_locator.knee is None:
@@ -280,7 +283,8 @@ def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_v
         'tolerance_selected': selected_tolerance,
         'tolerance_pixel_counts': len_list,
         'tolerances_inspected': len(len_list), 
-        'elbow_i': knee_index 
+        'elbow_i': knee_index,
+        'elbow2end_tol': len_list[knee_index-1:]
     }
 
     return cleaned_mask, metadata, msg
@@ -454,7 +458,7 @@ def process_cmb_mask(label_im, msg, log_level="\t\t"):
 
     metadata = {
         'centers_of_mass': com_list,
-        'pixel_counts': pixel_counts,
+        'pixel_counts': [int(p) for p in pixel_counts],
         'radii': radii
     }
 

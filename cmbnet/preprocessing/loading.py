@@ -138,7 +138,7 @@ def load_mris_and_annotations(args, subject, msg='', log_level='\t'):
     else:
         # Implement here for other datasets
         raise NotImplementedError
-    
+
     start = time.time()
 
     mris = {}
@@ -153,8 +153,11 @@ def load_mris_and_annotations(args, subject, msg='', log_level='\t'):
         mris[sequence_name] = nib.as_closest_canonical(mris[sequence_name])
         mris[sequence_name].set_data_dtype(np.float32) 
 
+        orientation = nib.aff2axcodes(mris[sequence_name].affine)
+        if orientation != ('R', 'A', 'S'):
+            raise ValueError("Image does not have RAS orientation.")
 
-    assert prim_seq in mris.keys()
+    assert prim_seq in mris
 
     # Fill annotations dict
     for sequence_name in sequences_raw:
@@ -171,11 +174,60 @@ def load_mris_and_annotations(args, subject, msg='', log_level='\t'):
         annotations[sequence_name] = nib.as_closest_canonical(annotations[sequence_name])
         annotations[sequence_name].set_data_dtype(np.uint8)
 
+        orientation = nib.aff2axcodes(annotations[sequence_name].affine)
+
+        if orientation != ('R', 'A', 'S'):
+            raise ValueError("Image does not have RAS orientation.")
 
     end = time.time()
     msg += f'{log_level}Loading of MRIs and annotations took {end - start} seconds!\n\n'
 
     return mris, annotations, labels_metadata, prim_seq, msg
+
+import numpy as np
+
+import numpy as np
+
+def convert_numpy(obj):
+    if isinstance(obj, np.integer):
+        if isinstance(obj, np.int64):
+            return int(obj)
+        else:
+            return obj.item()
+    elif isinstance(obj, np.floating):
+        return float(obj)
+    elif isinstance(obj, np.ndarray):
+        return obj.tolist()
+    elif isinstance(obj, np.bool_):
+        return bool(obj)
+    elif isinstance(obj, np.complexfloating):
+        return complex(obj)
+    elif isinstance(obj, (np.void, np.record)):
+        return obj.tobytes().hex()
+    elif isinstance(obj, np.datetime64):
+        return np.datetime_as_string(obj)
+    elif isinstance(obj, np.timedelta64):
+        return np.timedelta64(obj, 'ms').astype('timedelta64[ms]').astype('int64')
+    return obj
+
+
+
+
+
+def extract_im_specs(image_path):
+    img = nib.load(image_path)
+
+    return {
+        'shape': img.shape,
+        'voxel_dim': img.header.get_zooms(),
+        'orientation': nib.aff2axcodes(img.affine),
+        'data_type': img.header.get_data_dtype().name,
+    }
+
+
+###############################################################################
+# Old
+###############################################################################
 
 def get_files_metadata_from_processed(data_dir, subjects_selected=None):
     """ 
@@ -207,8 +259,7 @@ def get_files_metadata_from_processed(data_dir, subjects_selected=None):
                 "processed_metadata_path": os.path.join(data_dir, sub, "Annotations_metadata", f"{sub}_processed.json")
             }
         )
-    
-    
+
     return all_metadata
 
 

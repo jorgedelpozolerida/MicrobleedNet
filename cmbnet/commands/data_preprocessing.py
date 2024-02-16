@@ -51,7 +51,7 @@ import sys
 
 
 # Utils
-import cmbnet.preprocessing.loading as utils_datasets
+import cmbnet.preprocessing.loading as loading
 import cmbnet.preprocessing.process_masks as process_masks
 import cmbnet.utils.utils_general as utils_general
 import cmbnet.visualization.utils_plotting as utils_plt
@@ -294,7 +294,7 @@ def process_study(args, subject, msg=''):
     try:
 
         # 1. Perform QC while loading data
-        mris, annotations, labels_metadata, prim_seq, msg = utils_datasets.load_mris_and_annotations(args, subject, msg)
+        mris, annotations, labels_metadata, prim_seq, msg = loading.load_mris_and_annotations(args, subject, msg)
         msg += f'\tUsing {prim_seq} as primary sequence\n'
 
         # 2. Resample and Standardize
@@ -347,16 +347,23 @@ def process_study(args, subject, msg=''):
                 f'{subject}.nii.gz',
             ),
         )
-
-        # Convert numpy arrays to lists
-        labels_metadata_listed = numpy_to_list(labels_metadata)
-        annotations_metadata_new_listed = numpy_to_list(annotations_metadata_new)
-
+        # METADATA handling
+        metadata_out = {
+            "subject": subject,
+            "seq_type": prim_seq,
+            **labels_metadata[prim_seq],
+            "n_CMB_old": len(labels_metadata[prim_seq]["CMBs_old"].keys()),
+            "CMBs_new": annotations_metadata_new[prim_seq],
+            "n_CMB_new": len(annotations_metadata_new[prim_seq]['centers_of_mass']),
+            # TODO: add more metadata
+            "old_specs": loading.extract_im_specs(mris[prim_seq]),
+            "new_specs": loading.extract_im_specs(mris_image)
+        }
+        metadata_out_processed = loading.convert_numpy(metadata_out) 
+        print(metadata_out_processed)
         # Save Metadata for CMBs using JSON format
-        with open(os.path.join(args.data_dir_path, subject, args.annotations_metadata_subdir, f'{subject}_raw.json'), "w") as file:
-            json.dump(labels_metadata_listed, file, indent=4)
-        with open(os.path.join(args.data_dir_path, subject, args.annotations_metadata_subdir, f'{subject}_processed.json'), "w") as file:
-            json.dump(annotations_metadata_new_listed, file, indent=4)
+        with open(os.path.join(args.data_dir_path, subject, args.annotations_metadata_subdir, f'{subject}_metadata.json'), "w") as file:
+            json.dump(metadata_out_processed, file, indent=4)
 
     except Exception:
 
@@ -374,8 +381,10 @@ def main(args):
     args.mris_subdir = 'MRIs'
     args.annotations_subdir = 'Annotations'
     args.annotations_metadata_subdir = 'Annotations_metadata'
+    args.plots_path = os.path.join(args.output_dir, 'plots')
+
     
-    for dir_p in [args.output_dir, args.output_dir, args.data_dir_path]:
+    for dir_p in [args.output_dir, args.output_dir, args.data_dir_path, args.plots_path]:
         utils_general.ensure_directory_exists(dir_p)
 
     current_time = datetime.now()
@@ -383,7 +392,7 @@ def main(args):
     args.log_file_path = os.path.join(args.output_dir, f'log_{current_datetime}.txt')
 
     # Get subject list
-    subjects = utils_datasets.get_dataset_subjects(args.dataset_name, args.input_dir)
+    subjects = loading.get_dataset_subjects(args.dataset_name, args.input_dir)
 
     # Determine number of worker processes
     available_cpu_count = multiprocessing.cpu_count()

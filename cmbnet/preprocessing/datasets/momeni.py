@@ -26,7 +26,7 @@ from typing import Tuple, Dict, List, Any
 
 import cmbnet.preprocessing.process_masks as process_masks
 import cmbnet.utils.utils_general as utils_general
-
+import cmbnet.visualization.utils_plotting as utils_plt
 
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
@@ -91,8 +91,9 @@ def load_MOMENI_raw(input_dir: str, study: str) -> Tuple[Dict[str, nib.Nifti1Ima
     com_list = []
     cmb_mask = np.zeros_like(mri_nib.get_fdata())
     for center in centers_of_mass:
-        cmb_mask[center] = 1
-        com_list.append(center)
+        new_center = tuple(int(c)-1 for c in center) # correct indexing
+        cmb_mask[new_center] = 1
+        com_list.append(new_center)
     cmb_nib = nib.Nifti1Image(cmb_mask, affine=mri_nib.affine, header=mri_nib.header)
 
     seq_type = "SWI"
@@ -105,57 +106,136 @@ def process_MOMENI_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, conne
     """
     Process annotations for a Momeni dataset subject by applying region growing algorithm on CMBs based on their COM.
     """
+    # Compute size threshold and maximum distance in voxels
     size_th, max_dist_voxels = process_masks.calculate_size_and_distance_thresholds(mri_im, max_dist_mm=10)
     msg = f"{log_level}Thresholds for RegionGrowing --> Max. distance ={max_dist_voxels}, Max Size={size_th}\n"
 
+    # Initialize the final processed mask
     final_processed_mask = np.zeros_like(mri_im.get_fdata(), dtype=bool)
-    rg_metadata = []
+    rg_metadata = {}  # To collect metadata from region growing
     msg += f"{log_level}Processing CMB annotations \n"
 
+    # Process each CMB based on its center of mass
     for i, com in enumerate(com_list):
         seeds = [com]
-        processed_mask, metadata, msg = process_masks.region_growing_with_auto_tolerance(
-            volume=mri_im.get_fdata(),
-            seeds=seeds,
-            size_threshold=size_th,
-            max_dist_voxels=max_dist_voxels,
-            tolerance_range=(0, 100, 0.05),
-            connectivity=connectivity,
-            show_progress=True,
-            intensity_mode="point",
-            diff_mode="normal",
-            log_level=f"{log_level}\t",
-            msg=msg
-        )
 
-        if np.any(final_processed_mask & processed_mask):
+        best_n_pixels = 1
+        best_processed_mask = None
+        best_metadata = None
+        best_msg = ""
+
+        # Iterate over combinations of parameters
+        for connectivity in [6, 26]:
+            for intensity_mode in ['point', 'running_average']:
+                for diff_mode in ['relative', 'normal']:
+                    if diff_mode == "relative":
+                        range_temp = np.concatenate((np.arange(0, 20, 0.05), np.arange(20, 100, 1), np.arange(100, 10000, 100)))
+                    else:
+                        range_temp = np.arange(0, 100, 0.05)
+                    msg_temp = ""
+                    processed_mask, metadata, msg_temp = process_masks.region_growing_with_auto_tolerance(
+                        volume=mri_im.get_fdata(),
+                        seeds=seeds,
+                        size_threshold=size_th,
+                        max_dist_voxels=None,
+                        tolerance_values=range_temp,
+                        connectivity=connectivity,
+                        show_progress=False,
+                        intensity_mode=intensity_mode,
+                        diff_mode=diff_mode,
+                        log_level=f"{log_level}\t",
+                        msg=msg_temp
+                    )
+                    n_pixels = metadata['n_pixels']
+                    # Update best results if this combination yielded more pixels
+                    if n_pixels > best_n_pixels:
+                        best_n_pixels = n_pixels
+                        bestconnectivity = connectivity
+                        best_processed_mask = processed_mask
+                        best_metadata = metadata
+                        best_msg = msg_temp
+                        best_intensity_mode = intensity_mode
+                        best_diff_mode = diff_mode
+
+        # Construct a final message summarizing the optimization result
+        best_msg += f"{log_level}Optimization selected connectivity={bestconnectivity}, " \
+                    f"intensity_mode={best_intensity_mode}, diff_mode={best_diff_mode} " \
+                    f"with n_pixels={best_n_pixels}."
+        msg += best_msg
+
+        # Ensure there's no overlap with previously processed masks
+        if np.any(final_processed_mask & best_processed_mask):
             raise RuntimeError("Overlap detected between individual processed masks.")
 
-        final_processed_mask |= processed_mask
-        rg_metadata.append(metadata)
-        msg += f"{log_level}Processed CMB {i}. center of mass={com}, new_size={np.sum(processed_mask)}\n"
+        # Update the final mask and metadata
+        final_processed_mask |= best_processed_mask
 
+        # save metadata for CMB i
+        rg_metadata[i] = {
+            "size": best_metadata['n_pixels'],
+            "CM": com,
+            "region_growing": {
+                "selected_tolerance": best_metadata['tolerance_selected'],
+                "n_tolerances": best_metadata['tolerances_inspected'], 
+                "elbow_i": best_metadata['elbow_i'], 
+                "elbow2end_tol": best_metadata['elbow2end_tol'],
+                'connectivity': bestconnectivity,
+                "intensity_mode": best_intensity_mode,
+                "diff_mode": best_diff_mode ,
+                "distance_th": max_dist_voxels,
+                "size_th": size_th,
+
+            }
+        }
+    # Save if healthy or not
+    metadata_out = {
+        "healthy": "no" if com_list else "yes",
+        "CMBs_old": rg_metadata,
+    }
     annotation_processed_nib = nib.Nifti1Image(final_processed_mask.astype(np.int16), mri_im.affine, mri_im.header)
 
-    return annotation_processed_nib, rg_metadata, msg
+    return annotation_processed_nib, metadata_out, msg
 
 
-def process_MOMENI_mri(subject, mri_im, msg):
+def process_MOMENI_mri(mri_im, msg='', log_level='\t\t'):
     """
-    Process MRI sequences specific to the Momeni dataset. Placeholder for actual processing logic.
+    Process a VALDO MRI image to handle NaNs by replacing them with the background value.
 
     Args:
-        args: Configuration or parameters passed for processing.
-        subject (str): The subject identifier.
-        mri_im (nibabel.Nifti1Image): The MRI image to process.
-        msg (str): Log message to be updated.
+    - mri_im (nibabel.Nifti1Image): The nibabel object of the MRI.
 
     Returns:
-        mri_im (nibabel.Nifti1Image): Processed MRI image.
-        msg (str): Updated log message.
+    - nibabel.Nifti1Image: Processed MRI as a nibabel object.
+    - str: Updated log message.
     """
-    # Placeholder for processing logic, adjust as necessary for Momeni dataset specifics
-    return mri_im, msg
+    
+    # Extract data from nibabel object
+    data = mri_im.get_fdata().copy()
+    
+    # Identify NaNs
+    nan_mask = np.isnan(data)
+    num_nans = np.sum(nan_mask)
+    perc_nans = num_nans/len(data.flatten())*100
+    
+    if num_nans > 0:
+        # Compute the background value using small patches from the edges
+        edge_patches = [data[:10, :10, :5], data[-10:, :10, :5], 
+                        data[:10, -10:, :5], data[-10:, -10:, :5], 
+                        data[:10, :10, -5:], data[-10:, :10, -5:], 
+                        data[:10, -10:, -5:], data[-10:, -10:, -5:]]
+        background_value = np.nanmedian(np.concatenate(edge_patches))
+        if np.isnan(background_value):
+            background_value = 0
+            msg += f'{log_level}Forced background value to 0 as region selected is full of nan\n'
+        # Replace NaNs with the background value
+        data[nan_mask] = background_value
+
+        msg += f'{log_level}Found {round(perc_nans, 2)}% of NaNs and replaced with background value: {background_value}\n'
+    
+    # Convert processed data back to Nifti1Image
+    processed_mri_im = nib.Nifti1Image(data, mri_im.affine, mri_im.header)
+
+    return processed_mri_im, msg
 
 
 def perform_MOMENI_QC(subject, mris, annotations, com_list, msg):
@@ -173,22 +253,22 @@ def perform_MOMENI_QC(subject, mris, annotations, com_list, msg):
     Returns:
         mris_qc (dict): Dictionary of QC'ed MRI sequences.
         annotations_qc (dict): Dictionary of QC'ed labels.
-        annotations_metadata (dict): Metadata associated with the QC'ed labels.
+        annotations_metadata (dict): Metadata associated with the CMBs
         msg (str): Updated log message.
     """
     mris_qc, annotations_qc, annotations_metadata = {}, {}, {}
 
     for mri_sequence, mri_im in mris.items():
-        mris_qc[mri_sequence], msg = process_MOMENI_mri(subject, mri_im, msg)
+        mris_qc[mri_sequence], msg = process_MOMENI_mri(mri_im, msg)
     
     for anno_sequence, anno_im in annotations.items():
         annotations_qc[anno_sequence], metadata, msg = process_MOMENI_anno(anno_im, com_list, msg)
         annotations_metadata[anno_sequence] = metadata
-
+    
     return mris_qc, annotations_qc, annotations_metadata, msg
 
 
-def load_MOMENI_data(args, input_dir, subject, msg):
+def load_MOMENI_data(args, subject, msg):
     """
     Load MRI sequences and labels specific to the Momeni dataset. Performs QC in the process.
 
@@ -203,11 +283,27 @@ def load_MOMENI_data(args, input_dir, subject, msg):
         labels_metadata (dict): Metadata associated with the labels.
         msg (str): Updated log message.
     """
-    sequences_raw, labels_raw, sequence_type, com_list = load_MOMENI_raw(input_dir, subject)
+    # 1. Load raw data
+    sequences_raw, labels_raw, sequence_type, com_list = load_MOMENI_raw(args.input_dir, subject)
 
+    # 2. Perform Quality Control and Data Cleaning
     sequences_qc, labels_qc, labels_metadata, msg = perform_MOMENI_QC(subject, sequences_raw, labels_raw, com_list, msg)
-    
+
+    # 3. Save plots for debugging
+    for i, CM in enumerate(com_list):
+        filename_temp = os.path.join( args.plots_path, f"{subject}_CMB_{i}.png")                  
+        metadata_str = f"""\
+        sub: {subject}
+        {sequence_type}, shape: {sequences_raw[sequence_type].shape}
+        CMBloc: {CM}   CMBsize: {labels_metadata[sequence_type]["CMBs_old"][i]['size']}
+        "connectivity": {labels_metadata[sequence_type]["CMBs_old"][i]['region_growing']['connectivity']}, "intensity_mode": {labels_metadata[sequence_type]["CMBs_old"][i]['region_growing']['intensity_mode']}, 
+        "diff_mode": {labels_metadata[sequence_type]["CMBs_old"][i]['region_growing']['diff_mode']}, 
+        "distance_th": {labels_metadata[sequence_type]["CMBs_old"][i]['region_growing']['distance_th']},"size_th": {labels_metadata[sequence_type]["CMBs_old"][i]['region_growing']['size_th']}"""
+        utils_plt.plot_processed_mask(sequences_raw[sequence_type], labels_raw[sequence_type], labels_qc[sequence_type], CM, 100, metadata_str=metadata_str, save_path=filename_temp)
     return sequences_qc, labels_qc, labels_metadata, sequence_type, msg
+
+
+
 
 
 ##############################################################################
