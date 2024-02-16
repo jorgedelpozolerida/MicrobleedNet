@@ -214,9 +214,7 @@ def convert_numpy(obj):
 
 
 
-def extract_im_specs(image_path):
-    img = nib.load(image_path)
-
+def extract_im_specs(img):
     return {
         'shape': img.shape,
         'voxel_dim': img.header.get_zooms(),

@@ -355,15 +355,12 @@ def process_study(args, subject, msg=''):
             "n_CMB_old": len(labels_metadata[prim_seq]["CMBs_old"].keys()),
             "CMBs_new": annotations_metadata_new[prim_seq],
             "n_CMB_new": len(annotations_metadata_new[prim_seq]['centers_of_mass']),
-            # TODO: add more metadata
             "old_specs": loading.extract_im_specs(mris[prim_seq]),
             "new_specs": loading.extract_im_specs(mris_image)
         }
-        metadata_out_processed = loading.convert_numpy(metadata_out) 
-        print(metadata_out_processed)
         # Save Metadata for CMBs using JSON format
         with open(os.path.join(args.data_dir_path, subject, args.annotations_metadata_subdir, f'{subject}_metadata.json'), "w") as file:
-            json.dump(metadata_out_processed, file, indent=4)
+            json.dump(metadata_out, file, default=loading.convert_numpy, indent=4)
 
     except Exception:
 

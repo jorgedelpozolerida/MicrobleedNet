@@ -129,7 +129,7 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
                         max_dist_voxels=None,
                         tolerance_values=range_temp,
                         connectivity=connectivity,
-                        show_progress=False,
+                        show_progress=True,
                         intensity_mode=intensity_mode,
                         diff_mode=diff_mode,
                         log_level=f"{log_level}\t",
