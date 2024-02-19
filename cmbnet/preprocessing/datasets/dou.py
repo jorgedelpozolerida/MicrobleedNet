@@ -101,7 +101,7 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
     # Initialize the final processed mask
     final_processed_mask = np.zeros_like(mri_im.get_fdata(), dtype=bool)
     rg_metadata = {}  # To collect metadata from region growing
-    msg += f"{log_level}Applying Region Growing with max_distance={max_dist_voxels}, max_size={size_th}\n \n"
+    msg += f"{log_level}Applying Region Growing with max_distance={max_dist_voxels}, max_size={size_th}\n\n"
 
     # Process each CMB based on its center of mass
     for i, com in enumerate(com_list):

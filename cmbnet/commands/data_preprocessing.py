@@ -427,8 +427,13 @@ def main(args):
     num_workers = min(args.num_workers, available_cpu_count)
     
     # Parallelizing using multiprocessing
-    with multiprocessing.Pool(processes=num_workers) as pool:
-        list(tqdm(pool.imap(partial(process_study, args), subjects), total=len(subjects)))
+    if num_workers > 1:
+        with multiprocessing.Pool(processes=num_workers) as pool:
+            list(tqdm(pool.imap(partial(process_study, args), subjects), total=len(subjects)))
+    else:
+        for sub in tqdm(subjects, total=len(subjects), desc="Processing all subjects"):
+            process_study(args, sub, "")
+        
 
 def parse_args():
     '''
