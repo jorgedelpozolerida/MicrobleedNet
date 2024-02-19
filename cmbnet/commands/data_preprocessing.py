@@ -314,9 +314,20 @@ def process_study(args, subject, msg=''):
         mris_array, annotations_array, msg = crop_and_concatenate(
             mris, annotations, primary_sequence=prim_seq, 
             save_sequence_order=save_seq_order, msg=msg)
+        
+        # Squeezing to get first seq only
+        if mris_array.ndim > 3:
+            mris_array = mris_array[:,:,:,0]
 
-        # 4. Combine annotations. NOTE: not needed but left just in case
-        annotations_array, msg = combine_annotations(annotations_array, None, msg)
+        if annotations_array.ndim > 3:
+            annotations_array = annotations_array[:,:,:, 0]
+        msg += f'\tSqueezed MRIs and Annotations (keeping {save_seq_order[0]})\n'
+        msg += f'\t\tMRIs shape after cropping: {mris_array.shape}\n'
+        msg += f'\t\tAnnotations shape after cropping: {annotations_array.shape}\n'
+
+
+        # # 4. Combine annotations. NOTE: not needed but left just in case
+        # annotations_array, msg = combine_annotations(annotations_array, None, msg)
 
         # Convert to Nifti1Image
         mris_image = nib.Nifti1Image(mris_array.astype(np.float32), affine_after_resampling, header_after_resampling)
