@@ -23,6 +23,7 @@ from typing import Tuple, Dict, List, Any
 
 import cmbnet.preprocessing.process_masks as process_masks
 import cmbnet.utils.utils_general as utils_general
+import cmbnet.visualization.utils_plotting as utils_plt
 
 
 logging.basicConfig(level=logging.INFO)
@@ -104,7 +105,13 @@ def perform_VALDO_QC(mris, annotations, msg):
     for mri_sequence, mri_im in mris.items():
         mris_qc[mri_sequence], msg = process_VALDO_mri(mri_im, msg)
     
-    return mris_qc, annotations_qc, annotations_metadata, msg
+    # Prepare metadta in correct format
+    metadata_out = {
+        "healthy": "no" if annotations_metadata.get("T2S") else "yes",
+        "CMBs_old": annotations_metadata.get("T2S", {}),
+    }
+
+    return mris_qc, annotations_qc, metadata_out, msg
 
 
 def load_VALDO_data(args, subject, msg):
@@ -139,4 +146,12 @@ def load_VALDO_data(args, subject, msg):
     # 3. Perform Quality Control (QC) on Loaded Data
     sequences_qc, labels_qc, labels_metadata, msg = perform_VALDO_QC(sequences_raw, labels_raw, msg)
     
-    return sequences_qc, labels_qc, labels_metadata, "T2S", msg
+    # 4. Save plots for debugging
+    utils_plt.generate_cmb_plots(
+        subject, sequences_raw['T2S'], labels_raw['T2S'], 
+        labels_qc['T2S'], labels_metadata['CMBs_old'], 
+        plots_path=utils_general.ensure_directory_exists(os.path.join(args.plots_path, "pre")),
+        zoom_size=100
+    )
+    metadata_out = {"T2S": labels_metadata }
+    return sequences_qc, labels_qc, metadata_out, "T2S", msg

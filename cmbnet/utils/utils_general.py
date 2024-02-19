@@ -31,6 +31,7 @@ def ensure_directory_exists(dir_path):
     """ Create directory if non-existent """
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
+    return dir_path
 
 def write_to_log_file(msg, log_file_path):
     '''

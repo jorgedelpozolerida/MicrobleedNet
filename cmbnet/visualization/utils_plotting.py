@@ -97,6 +97,14 @@ def plot_processed_mask(mri_im: Any, cmb_im: Any, processed_cmb_im: Any, cmb_coo
     cmb_data = cmb_im.get_fdata()
     out_mask = processed_cmb_im.get_fdata()
 
+    # Handle 4D data by selecting the first volume
+    if mri_data.ndim > 3:
+        mri_data = mri_data[..., 0]
+    if cmb_data.ndim > 3:
+        cmb_data = cmb_data[..., 0]
+    if out_mask.ndim > 3:
+        out_mask = out_mask[..., 0]
+
     # Calculate the start and end indices for the crop
     start_idx = [max(0, int(cm - half_size)) for cm in cmb_coords[:2]]  # Crop only in the first two dimensions
     end_idx = [min(dim, int(cm + half_size)) for cm, dim in zip(cmb_coords[:2], mri_data.shape[:2])]  # Crop only in the first two dimensions
@@ -143,3 +151,46 @@ def plot_processed_mask(mri_im: Any, cmb_im: Any, processed_cmb_im: Any, cmb_coo
         plt.close(fig)
     else:
         plt.show()
+
+
+def generate_cmb_plots(subject, mri_im, raw_cmb, processed_cmb, cmb_metadata, plots_path, zoom_size=100):
+    """
+    Saves plots for zoomed cerebral microbleeds
+
+    Parameters:
+    - subject: Subject identifier.
+    - mri_im: Nibabel image object for MRI data.
+    - raw_cmb: Nibabel image object for center of mass/unprocessed CMB.
+    - processed_cmb: Nibabel image object for processed CMB.
+    - cmb_metadata: Metadata about the CMB for the subject. Key must be CMB id, and
+        values metadata related.
+    - plots_path: Path to save the plots.
+    - zoom_size: in voxels
+    """
+    for i, met_i in cmb_metadata.items():
+        CM = met_i['CM']
+        filename_temp = os.path.join(plots_path, f"{subject}-CMB-{i}.png")
+
+        # Start generating the metadata string
+        metadata_str_parts = [
+            f"Image shape: {mri_im.shape}, zoom_size={zoom_size}",
+            f"CMB ---- CM={CM},  size={met_i['size']},  radius={met_i['radius']}",
+        ]
+        # Add optional parts only if they are present
+        if region_growing := met_i.get('region_growing', {}):
+            optional_keys = ['connectivity', 'intensity_mode', 'diff_mode', 'distance_th', 'size_th']
+            optional_parts = [
+                f'"{key}": {region_growing[key]}' for key in optional_keys if key in region_growing
+            ]
+
+            # Group the optional parts two by two and join each pair with a newline
+            # If the number of optional parts is odd, the last part will stand alone without a newline at the end
+            metadata_str_parts.extend(
+                "\n".join(optional_parts[i : i + 2])
+                for i in range(0, len(optional_parts), 2)
+            )
+        # Join all parts of the metadata string
+        metadata_str = "\n".join(metadata_str_parts)
+
+        # Plot and save the data
+        plot_processed_mask(mri_im, raw_cmb, processed_cmb, CM, zoom_size, metadata_str=metadata_str, save_path=filename_temp)

@@ -108,7 +108,7 @@ def process_MOMENI_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, conne
     """
     # Compute size threshold and maximum distance in voxels
     size_th, max_dist_voxels = process_masks.calculate_size_and_distance_thresholds(mri_im, max_dist_mm=10)
-    msg = f"{log_level}Thresholds for RegionGrowing --> Max. distance ={max_dist_voxels}, Max Size={size_th}\n"
+    msg += f"{log_level}Thresholds for RegionGrowing --> Max. distance ={max_dist_voxels}, Max Size={size_th}\n"
 
     # Initialize the final processed mask
     final_processed_mask = np.zeros_like(mri_im.get_fdata(), dtype=bool)
@@ -158,11 +158,10 @@ def process_MOMENI_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, conne
                         best_diff_mode = diff_mode
 
         # Construct a final message summarizing the optimization result
-        best_msg += f"{log_level}Optimization selected connectivity={bestconnectivity}, " \
-                    f"intensity_mode={best_intensity_mode}, diff_mode={best_diff_mode} " \
-                    f"with n_pixels={best_n_pixels}."
         msg += best_msg
-
+        msg += f"{log_level}Optimization selected connectivity={bestconnectivity}, " \
+                    f"intensity_mode={best_intensity_mode}, diff_mode={best_diff_mode} " \
+                    f"with n_pixels={best_n_pixels}.\n"
         # Ensure there's no overlap with previously processed masks
         if np.any(final_processed_mask & best_processed_mask):
             raise RuntimeError("Overlap detected between individual processed masks.")
@@ -170,10 +169,14 @@ def process_MOMENI_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, conne
         # Update the final mask and metadata
         final_processed_mask |= best_processed_mask
 
+        # radius
+        radius = (3 * int(best_metadata['n_pixels']) / (4 * np.pi))**(1/3)
+
         # save metadata for CMB i
         rg_metadata[i] = {
-            "size": best_metadata['n_pixels'],
             "CM": com,
+            "size": best_metadata['n_pixels'],
+            "radius": round(radius, ndigits=2),
             "region_growing": {
                 "selected_tolerance": best_metadata['tolerance_selected'],
                 "n_tolerances": best_metadata['tolerances_inspected'], 
@@ -290,16 +293,12 @@ def load_MOMENI_data(args, subject, msg):
     sequences_qc, labels_qc, labels_metadata, msg = perform_MOMENI_QC(subject, sequences_raw, labels_raw, com_list, msg)
 
     # 3. Save plots for debugging
-    for i, CM in enumerate(com_list):
-        filename_temp = os.path.join( args.plots_path, f"{subject}_CMB_{i}.png")                  
-        metadata_str = f"""\
-        sub: {subject}
-        {sequence_type}, shape: {sequences_raw[sequence_type].shape}
-        CMBloc: {CM}   CMBsize: {labels_metadata[sequence_type]["CMBs_old"][i]['size']}
-        "connectivity": {labels_metadata[sequence_type]["CMBs_old"][i]['region_growing']['connectivity']}, "intensity_mode": {labels_metadata[sequence_type]["CMBs_old"][i]['region_growing']['intensity_mode']}, 
-        "diff_mode": {labels_metadata[sequence_type]["CMBs_old"][i]['region_growing']['diff_mode']}, 
-        "distance_th": {labels_metadata[sequence_type]["CMBs_old"][i]['region_growing']['distance_th']},"size_th": {labels_metadata[sequence_type]["CMBs_old"][i]['region_growing']['size_th']}"""
-        utils_plt.plot_processed_mask(sequences_raw[sequence_type], labels_raw[sequence_type], labels_qc[sequence_type], CM, 100, metadata_str=metadata_str, save_path=filename_temp)
+    utils_plt.generate_cmb_plots(
+        subject, sequences_raw[sequence_type], labels_raw[sequence_type], 
+        labels_qc[sequence_type], labels_metadata[sequence_type]['CMBs_old'], 
+        plots_path=utils_general.ensure_directory_exists(os.path.join(args.plots_path, "pre")),
+        zoom_size=100
+    )
     return sequences_qc, labels_qc, labels_metadata, sequence_type, msg
 
 

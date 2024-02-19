@@ -18,9 +18,9 @@ import numpy as np
 import nibabel as nib
 from tqdm import tqdm
 from collections import deque
-from scipy.ndimage import binary_dilation, binary_erosion, generate_binary_structure, \
+from scipy.ndimage import binary_dilation, binary_erosion, binary_closing, generate_binary_structure, \
     center_of_mass, binary_fill_holes
-from scipy.ndimage import generate_binary_structure, binary_closing, binary_dilation, binary_erosion, center_of_mass
+from skimage.morphology import ball
 from scipy.ndimage import label as nd_label # to avoid conflict below
 from skimage.measure import label
 from skimage.filters import threshold_otsu
@@ -410,6 +410,9 @@ def isolate_single_CMBs(mask: np.ndarray, voxel_size: list, max_dist_mm: float =
 def process_cmb_mask(label_im, msg, log_level="\t\t"):
     """
     Process a nibabel object containing a mask of cerebral microbleeds (CMBs).
+    
+    Extracts connected components and performs morhpological operaitons to clean
+    mask. Then returns list of centers of mass, radius and size for each CMB.
 
     Args:
         label_im (nibabel.Nifti1Image): The nibabel object of the mask.
@@ -417,9 +420,7 @@ def process_cmb_mask(label_im, msg, log_level="\t\t"):
 
     Returns:
         processed_mask_nib (nibabel.Nifti1Image): Processed mask as a nibabel object.
-        com_list (list[tuple]): List of centers of mass for each connected component.
-        pixel_counts (list[int]): List of pixel counts for each connected component.
-        radii (list[float]): List of equivalent radii for each connected component.
+        metadata (dict): Metadata including centers of mass, pixel counts, and radii.
         msg (str): Updated log message.
     """
 
@@ -437,29 +438,33 @@ def process_cmb_mask(label_im, msg, log_level="\t\t"):
         majority_label, minority_label = unique_labels[np.argmax(counts)], unique_labels[np.argmin(counts)]
         data[data == majority_label], data[data == minority_label] = 0, 1
 
-    # Find connected components in the mask
+    # Perform dilation and erosion to clean the mask
+    struct_elem = ball(2)  # Using a spherical structuring element
+    data = binary_dilation(data, structure=struct_elem).astype(np.uint8)
+    data = binary_erosion(data, structure=struct_elem).astype(np.uint8)
+
+    # Fill holes in the mask
+    data = binary_fill_holes(data).astype(np.uint8)
+
+    # Find connected components in the cleaned mask
     labeled_array, num_features = nd_label(data)
 
-    # Calculate centers of mass and pixel counts
+    # Calculate centers of mass, pixel counts, and radii
     com_list = center_of_mass(data, labels=labeled_array, index=np.arange(1, num_features + 1))
     com_list = [(int(coord[0]), int(coord[1]), int(coord[2])) for coord in com_list]
     pixel_counts = np.bincount(labeled_array.ravel())[1:]
-
-    # Calculate radii assuming CMBs are spherical
     radii = [(3 * count / (4 * np.pi))**(1/3) for count in pixel_counts]
-    radii = [round(rad, 2) for rad in radii]
-
+    radii = [round(r, ndigits=2) for r in radii]
     # Convert the processed mask data back to a nibabel object
     processed_mask_nib = nib.Nifti1Image(data, label_im.affine, label_im.header)
 
     # Update the log message
-    msg += f'{log_level}Number of CMBs: {len(com_list)}. Sizes: {pixel_counts},' + \
-            f' Radii: {radii}, Unique labels: {unique_labels}, Counts: {counts}\n'
+    msg += f"{log_level}Number of CMBs: {num_features}. Sizes: {pixel_counts}, Radii: {radii}, Unique labels: {unique_labels}, Counts: {counts}\n"
 
+    # Generate metadata
     metadata = {
-        'centers_of_mass': com_list,
-        'pixel_counts': [int(p) for p in pixel_counts],
-        'radii': radii
+        i: {"CM": com, "size": pixel_counts[i], "radius": round(radii[i], 2)}
+        for i, com in enumerate(com_list)
     }
 
     return processed_mask_nib, metadata, msg

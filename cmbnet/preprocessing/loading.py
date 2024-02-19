@@ -98,7 +98,7 @@ def get_dataset_subjects(dataset_name, input_dir):
     return subjects
 
 
-def load_mris_and_annotations(args, subject, msg='', log_level='\t'):
+def load_mris_and_annotations(args, subject, msg='', log_level='\t\t'):
     '''
     Loads MRI scans and their corresponding annotations for a given subject 
     from a specific dataset performing data cleaning and orientation fix.    

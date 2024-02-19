@@ -294,7 +294,7 @@ def process_study(args, subject, msg=''):
     try:
 
         # 1. Perform QC while loading data
-        mris, annotations, labels_metadata, prim_seq, msg = loading.load_mris_and_annotations(args, subject, msg)
+        mris, annotations, labels_metadata, prim_seq, msg = loading.load_mris_and_annotations(args, subject, msg, log_level="\t\t")
         msg += f'\tUsing {prim_seq} as primary sequence\n'
 
         # 2. Resample and Standardize
@@ -315,18 +315,19 @@ def process_study(args, subject, msg=''):
             mris, annotations, primary_sequence=prim_seq, 
             save_sequence_order=save_seq_order, msg=msg)
 
-        # 4. Combine annotations
+        # 4. Combine annotations. NOTE: not needed but left just in case
         annotations_array, msg = combine_annotations(annotations_array, None, msg)
 
         # Convert to Nifti1Image
         mris_image = nib.Nifti1Image(mris_array.astype(np.float32), affine_after_resampling, header_after_resampling)
-        annotations_image = nib.Nifti1Image(annotations_array.astype(np.uint8), affine_after_resampling, header_after_resampling)
+        annotations_image_pre = nib.Nifti1Image(annotations_array.astype(np.uint8), affine_after_resampling, header_after_resampling)
 
-        # Check Annotations Stats
+        # Clean CMBs and save plots
         msg += "\tChecking new stats for annotations after transforms\n"
-        _, metadata, msg = process_masks.process_cmb_mask(annotations_image, msg)
+        processed_mask, metadata, msg = process_masks.process_cmb_mask(annotations_image_pre, msg)
         annotations_metadata_new = {prim_seq: metadata}
 
+        annotations_image = nib.Nifti1Image(processed_mask.get_fdata().astype(np.uint8), affine_after_resampling, header_after_resampling)
 
         # Save to Disk
         nib.save(
@@ -347,20 +348,39 @@ def process_study(args, subject, msg=''):
                 f'{subject}.nii.gz',
             ),
         )
-        # METADATA handling
+        # METADATA handling ---
         metadata_out = {
             "subject": subject,
             "seq_type": prim_seq,
             **labels_metadata[prim_seq],
             "n_CMB_old": len(labels_metadata[prim_seq]["CMBs_old"].keys()),
             "CMBs_new": annotations_metadata_new[prim_seq],
-            "n_CMB_new": len(annotations_metadata_new[prim_seq]['centers_of_mass']),
+            "n_CMB_new": len(annotations_metadata_new[prim_seq]),
             "old_specs": loading.extract_im_specs(mris[prim_seq]),
             "new_specs": loading.extract_im_specs(mris_image)
         }
         # Save Metadata for CMBs using JSON format
         with open(os.path.join(args.data_dir_path, subject, args.annotations_metadata_subdir, f'{subject}_metadata.json'), "w") as file:
             json.dump(metadata_out, file, default=loading.convert_numpy, indent=4)
+
+
+        # PLOTS debugging ---
+        mask_with_CMS = np.zeros_like(annotations_image.get_fdata())
+        for k_i, cm_i in annotations_metadata_new[prim_seq].items():
+            cm = tuple(cm_i['CM'])
+            mask_with_CMS[cm] = 1  # Mark the center of mass in the mask
+        mask_with_CMS_im = nib.Nifti1Image(mask_with_CMS.astype(np.uint8), affine_after_resampling, header_after_resampling)
+        utils_plt.generate_cmb_plots(
+            subject=subject, 
+            mri_im=mris_image, 
+            raw_cmb=mask_with_CMS_im, 
+            processed_cmb=annotations_image, 
+            cmb_metadata=metadata_out['CMBs_new'], 
+            plots_path=utils_general.ensure_directory_exists(os.path.join(args.plots_path, "post")),
+            zoom_size=100
+        )
+
+
 
     except Exception:
 
