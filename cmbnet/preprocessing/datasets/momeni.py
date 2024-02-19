@@ -80,13 +80,16 @@ def load_MOMENI_raw(input_dir: str, study: str) -> Tuple[Dict[str, nib.Nifti1Ima
     """
     Load raw MRI and segmentation data for a given Momeni study, including centers of mass for microbleeds.
     """
+    studies_w_cmb = os.listdir(os.path.join(input_dir, "data", "PublicDataShare_2020", "rCMB_DefiniteSubject"))
+    studies_w_cmb = [s.split(".")[0] for s in studies_w_cmb]
+    if study in studies_w_cmb:
+        mri_nib = nib.load(os.path.join(input_dir, "data", "PublicDataShare_2020", "rCMB_DefiniteSubject", f"{study}.nii.gz"))
+        cmb_metadata_excel = os.path.join(input_dir, "data", "PublicDataShare_2020", "rCMBInformationInfo.xlsx")
+        centers_of_mass = extract_microbleed_coordinates_from_excel(cmb_metadata_excel, f"{study}.nii.gz")
 
-    mri_dir = os.path.join(input_dir, "data", "PublicDataShare_2020", "rCMB_DefiniteSubject")
-    mri_file = os.path.join(mri_dir, f"{study}.nii.gz")
-    mri_nib = nib.load(mri_file)
-
-    cmb_metadata_excel = os.path.join(input_dir, "data", "PublicDataShare_2020", "rCMBInformationInfo.xlsx")
-    centers_of_mass = extract_microbleed_coordinates_from_excel(cmb_metadata_excel, f"{study}.nii.gz")
+    else:
+        mri_nib = nib.load(os.path.join(input_dir, "data", "PublicDataShare_2020", "NoCMBSubject", f"{study}.nii.gz")) 
+        centers_of_mass = []
 
     com_list = []
     cmb_mask = np.zeros_like(mri_nib.get_fdata())
@@ -108,12 +111,11 @@ def process_MOMENI_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, conne
     """
     # Compute size threshold and maximum distance in voxels
     size_th, max_dist_voxels = process_masks.calculate_size_and_distance_thresholds(mri_im, max_dist_mm=10)
-    msg += f"{log_level}Thresholds for RegionGrowing --> Max. distance ={max_dist_voxels}, Max Size={size_th}\n"
 
     # Initialize the final processed mask
     final_processed_mask = np.zeros_like(mri_im.get_fdata(), dtype=bool)
     rg_metadata = {}  # To collect metadata from region growing
-    msg += f"{log_level}Processing CMB annotations \n"
+    msg += f"{log_level}Applying Region Growing with max_distance={max_dist_voxels}, max_size={size_th}\n \n"
 
     # Process each CMB based on its center of mass
     for i, com in enumerate(com_list):
@@ -143,7 +145,7 @@ def process_MOMENI_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, conne
                         show_progress=False,
                         intensity_mode=intensity_mode,
                         diff_mode=diff_mode,
-                        log_level=f"{log_level}\t",
+                        log_level=f"{log_level}\t\t",
                         msg=msg_temp
                     )
                     n_pixels = metadata['n_pixels']
@@ -159,9 +161,9 @@ def process_MOMENI_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, conne
 
         # Construct a final message summarizing the optimization result
         msg += best_msg
-        msg += f"{log_level}Optimization selected connectivity={bestconnectivity}, " \
+        msg += f"{log_level}\tCMB-{i}. Optimization results: connectivity={bestconnectivity}, " \
                     f"intensity_mode={best_intensity_mode}, diff_mode={best_diff_mode} " \
-                    f"with n_pixels={best_n_pixels}.\n"
+                    f"size={best_n_pixels}.\n"
         # Ensure there's no overlap with previously processed masks
         if np.any(final_processed_mask & best_processed_mask):
             raise RuntimeError("Overlap detected between individual processed masks.")
@@ -296,7 +298,7 @@ def load_MOMENI_data(args, subject, msg):
     utils_plt.generate_cmb_plots(
         subject, sequences_raw[sequence_type], labels_raw[sequence_type], 
         labels_qc[sequence_type], labels_metadata[sequence_type]['CMBs_old'], 
-        plots_path=utils_general.ensure_directory_exists(os.path.join(args.plots_path, "pre")),
+        plots_path=utils_general.ensure_directory_exists(os.path.join(args.plots_path, "pre")) if args.plots_path is not None else None,
         zoom_size=100
     )
     return sequences_qc, labels_qc, labels_metadata, sequence_type, msg
@@ -309,5 +311,65 @@ def load_MOMENI_data(args, subject, msg):
 ##################          Momeni (synth)                 ###################
 ##############################################################################
 
-def load_MOMENIsynth_data():
-    raise NotImplementedError
+def load_MOMENIsynth_raw(input_dir: str, study: str) -> Tuple[Dict[str, nib.Nifti1Image], Dict[str, nib.Nifti1Image], str, list]:
+    """
+    Load raw MRI and segmentation data for a given Momeni synth study, 
+    including centers of mass for microbleeds.
+    """
+    if "_rsCMB_" in study:
+        excel_name, mri_dirname = "sCMBInformationInfo.xlsx", "sCMB_DefiniteSubject"
+    elif "_sCMB_" in study:
+        excel_name, mri_dirname = "sCMBLocationInformationInfoNocmb.xlsx", "sCMB_NoCMBSubject"
+    else:
+        raise ValueError(f"Incorrect sutdy for Momeni synth: {study}")
+
+    mri_dir = os.path.join(input_dir, "data", "PublicDataShare_2020", mri_dirname)
+    mri_file = os.path.join(mri_dir, f"{study}.nii.gz")
+    mri_nib = nib.load(mri_file)
+
+    cmb_metadata_excel = os.path.join(input_dir, "data", "PublicDataShare_2020", excel_name)
+    centers_of_mass = extract_microbleed_coordinates_from_excel(cmb_metadata_excel, f"{study}.nii.gz")
+
+    com_list = []
+    cmb_mask = np.zeros_like(mri_nib.get_fdata())
+    for center in centers_of_mass:
+        new_center = tuple(int(c)-1 for c in center) # correct indexing
+        cmb_mask[new_center] = 1
+        com_list.append(new_center)
+    cmb_nib = nib.Nifti1Image(cmb_mask, affine=mri_nib.affine, header=mri_nib.header)
+
+    seq_type = "SWI"
+    sequences_raw = {seq_type: mri_nib}
+    labels_raw = {seq_type: cmb_nib}
+
+    return sequences_raw, labels_raw, seq_type, com_list
+def load_MOMENIsynth_data(args, subject, msg):
+    """
+    Load MRI sequences and labels specific to the Momeni-synth dataset. 
+    Performs QC and clenaing in the process.
+
+    Args:
+        args: Configuration or parameters for loading data.
+        subject (str): The subject identifier.
+        msg (str): Log message to be updated.
+
+    Returns:
+        sequences_qc (dict): Dictionary of QC'ed MRI sequences.
+        labels_qc (dict): Dictionary of QC'ed labels.
+        labels_metadata (dict): Metadata associated with the labels.
+        msg (str): Updated log message.
+    """
+    # 1. Load raw data
+    sequences_raw, labels_raw, sequence_type, com_list = load_MOMENIsynth_raw(args.input_dir, subject)
+
+    # 2. Perform Quality Control and Data Cleaning
+    sequences_qc, labels_qc, labels_metadata, msg = perform_MOMENI_QC(subject, sequences_raw, labels_raw, com_list, msg)
+
+    # 3. Save plots for debugging
+    utils_plt.generate_cmb_plots(
+        subject, sequences_raw[sequence_type], labels_raw[sequence_type], 
+        labels_qc[sequence_type], labels_metadata[sequence_type]['CMBs_old'], 
+        plots_path=utils_general.ensure_directory_exists(os.path.join(args.plots_path, "pre")),
+        zoom_size=100
+    )
+    return sequences_qc, labels_qc, labels_metadata, sequence_type, msg

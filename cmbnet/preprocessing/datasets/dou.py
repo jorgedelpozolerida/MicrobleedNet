@@ -97,12 +97,11 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
     """
     # Compute size threshold and maximum distance in voxels
     size_th, max_dist_voxels = process_masks.calculate_size_and_distance_thresholds(mri_im, max_dist_mm=10)
-    msg += f"{log_level}Thresholds for RegionGrowing --> Max. distance ={max_dist_voxels}, Max Size={size_th}\n"
 
     # Initialize the final processed mask
     final_processed_mask = np.zeros_like(mri_im.get_fdata(), dtype=bool)
     rg_metadata = {}  # To collect metadata from region growing
-    msg += f"{log_level}Processing CMB annotations \n"
+    msg += f"{log_level}Applying Region Growing with max_distance={max_dist_voxels}, max_size={size_th}\n \n"
 
     # Process each CMB based on its center of mass
     for i, com in enumerate(com_list):
@@ -129,7 +128,7 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
                         max_dist_voxels=None,
                         tolerance_values=range_temp,
                         connectivity=connectivity,
-                        show_progress=True,
+                        show_progress=False,
                         intensity_mode=intensity_mode,
                         diff_mode=diff_mode,
                         log_level=f"{log_level}\t",
@@ -146,11 +145,10 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
                         best_intensity_mode = intensity_mode
                         best_diff_mode = diff_mode
 
-        # Construct a final message summarizing the optimization result
-        best_msg += f"{log_level}Optimization selected connectivity={bestconnectivity}, " \
-                    f"intensity_mode={best_intensity_mode}, diff_mode={best_diff_mode} " \
-                    f"with n_pixels={best_n_pixels}."
         msg += best_msg
+        msg += f"{log_level}\tCMB-{i}. Optimization results: connectivity={bestconnectivity}, " \
+                    f"intensity_mode={best_intensity_mode}, diff_mode={best_diff_mode} " \
+                    f"size={best_n_pixels}.\n"
 
         # Ensure there's no overlap with previously processed masks
         if np.any(final_processed_mask & best_processed_mask):

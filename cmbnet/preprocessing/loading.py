@@ -130,8 +130,7 @@ def load_mris_and_annotations(args, subject, msg='', log_level='\t\t'):
     elif args.dataset_name == "momeni":
         sequences_raw, labels_raw, labels_metadata, prim_seq, msg = dat_load.load_MOMENI_data(args, subject, msg)
     elif args.dataset_name == "momeni-synth":
-        raise NotImplementedError
-        sequences_raw, labels_raw, labels_metadata,  msg = load_MOMENIsynth_data(args, subject, msg)
+        sequences_raw, labels_raw, labels_metadata, prim_seq, msg = dat_load.load_MOMENIsynth_data(args, subject, msg)
     elif args.dataset_name == "rodeja":
         raise NotImplementedError
         sequences_raw, labels_raw, labels_metadata,  msg = load_RODEJA_data(args, subject, msg)
