@@ -384,7 +384,7 @@ def calculate_size_and_distance_thresholds(mri_im: nib.Nifti1Image, max_dist_mm:
     size_threshold = int(sphere_volume_mm3 / voxel_volume_mm3)
 
     # Calculate the maximum distance allowed in voxels
-    voxel_size = np.amax(voxel_dims) # we allow for maximum distance possible to not constrain growth to much
+    voxel_size = np.amin(voxel_dims) # we allow for maximum distance possible (so minimum size)
     max_dist_voxels = int(max_dist_mm / voxel_size)
 
 
