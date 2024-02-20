@@ -124,7 +124,7 @@ def process_MOMENI_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, conne
         best_n_pixels = 1
         counter = 0
         # Iterate over combinations of parameters
-        for connectivity in [6, 26]:
+        for connectivity in [26, 6]:
             for intensity_mode in ['point', 'running_average']:
                 for diff_mode in ['relative', 'normal']:
                     if diff_mode == "relative":
