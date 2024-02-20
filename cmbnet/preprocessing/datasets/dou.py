@@ -112,6 +112,8 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
         for connectivity in [6, 26]:
             for intensity_mode in ['point', 'running_average']:
                 for diff_mode in ['relative', 'normal']:
+                    print(com)
+                    print(connectivity, intensity_mode, diff_mode)
                     if diff_mode == "relative":
                         range_temp = np.concatenate((np.arange(0, 20, 0.05), np.arange(20, 100, 1), np.arange(100, 10000, 100)))
                     else:
@@ -124,7 +126,7 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
                         max_dist_voxels=None,
                         tolerance_values=range_temp,
                         connectivity=connectivity,
-                        show_progress=False,
+                        show_progress=True,
                         intensity_mode=intensity_mode,
                         diff_mode=diff_mode,
                         log_level=f"{log_level}\t\t",
@@ -149,7 +151,7 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
 
         # Ensure there's no overlap with previously processed masks
         if np.any(final_processed_mask & best_processed_mask):
-            raise RuntimeError("Overlap detected between individual processed masks.")
+            raise RuntimeError(f"Overlap detected between individual processed masks when trying to add CMB-{i} located at {com}. Previosly visited CMBs: {com_list[:i]}")
 
         # Update the final mask and metadata
         final_processed_mask |= best_processed_mask
