@@ -106,12 +106,8 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
     # Process each CMB based on its center of mass
     for i, com in enumerate(com_list):
         seeds = [com]
-
         best_n_pixels = 1
-        best_processed_mask = None
-        best_metadata = None
-        best_msg = ""
-
+        counter = 0
         # Iterate over combinations of parameters
         for connectivity in [6, 26]:
             for intensity_mode in ['point', 'running_average']:
@@ -131,12 +127,12 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
                         show_progress=False,
                         intensity_mode=intensity_mode,
                         diff_mode=diff_mode,
-                        log_level=f"{log_level}\t",
+                        log_level=f"{log_level}\t\t",
                         msg=msg_temp
                     )
                     n_pixels = metadata['n_pixels']
                     # Update best results if this combination yielded more pixels
-                    if n_pixels > best_n_pixels:
+                    if (n_pixels > best_n_pixels) or counter == 0:
                         best_n_pixels = n_pixels
                         bestconnectivity = connectivity
                         best_processed_mask = processed_mask
@@ -144,6 +140,7 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
                         best_msg = msg_temp
                         best_intensity_mode = intensity_mode
                         best_diff_mode = diff_mode
+                    counter += 1
 
         msg += best_msg
         msg += f"{log_level}\tCMB-{i}. Optimization results: connectivity={bestconnectivity}, " \
