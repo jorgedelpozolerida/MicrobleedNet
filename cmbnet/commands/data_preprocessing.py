@@ -292,6 +292,8 @@ def process_study(args, subject, msg=''):
         utils_general.ensure_directory_exists(os.path.join(args.data_dir_path, subject, sub_d))
 
     try:
+        # 0. If all files exist and not overwrite, skip
+        # TODO
 
         # 1. Perform QC while loading data
         mris, annotations, labels_metadata, prim_seq, msg = loading.load_mris_and_annotations(args, subject, msg, log_level="\t\t")
@@ -451,6 +453,8 @@ def parse_args():
     parser.add_argument('--dataset_name', type=str, default=None, required=True, 
                         choices=['valdo', 'cerebriu', 'momeni', 'momeni-synth', 'dou', 'rodeja'], 
                         help='Raw dataset name, to know what type of preprocessing is needed')
+    parser.add_argument('--overwrite',  default=False, action='store_true',
+                        help='Add this flag if you want to overwrite existing processed studies, or else these will be skipped')
 
     return parser.parse_args()
 

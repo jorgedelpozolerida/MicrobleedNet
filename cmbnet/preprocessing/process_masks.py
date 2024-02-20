@@ -147,7 +147,8 @@ def get_current_intensity(point_intensity, seed_avg_intensity, total_intensity, 
 
 def region_growing_3d_seed(volume, seed_points, tolerance, size_threshold,
                             max_dist_voxels, connectivity=26, 
-                            intensity_mode="point", difference_mode = "relative"
+                            intensity_mode="point", difference_mode = "relative",
+                            epsilon=1e-5
                             ):
     """
     Grow a region in a 3D volume based on intensity differences with multiple seed points.
@@ -187,6 +188,8 @@ def region_growing_3d_seed(volume, seed_points, tolerance, size_threshold,
                     neighbor_dist = 0 # large number
 
                 if difference_mode == "relative":
+                    if current_intensity == 0:
+                        current_intensity = epsilon
                     intensity_diff = abs((volume[neighbor] - current_intensity) / current_intensity )
                 else: 
                     intensity_diff = abs((volume[neighbor] - current_intensity))
