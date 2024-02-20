@@ -21,6 +21,8 @@ import nibabel as nib
 import time 
 from scipy.io import loadmat
 import glob
+from typing import List, Tuple
+import warnings
 import sys
 from typing import Tuple, Dict, List, Any
 
@@ -96,6 +98,44 @@ def get_dataset_subjects(dataset_name, input_dir):
     check_for_duplicates(subjects)
 
     return subjects
+
+
+
+def process_coordinates(com_list: List[Tuple[int, int, int]], msg: str = "", log_level: str = "\t   t") -> Tuple[List[Tuple[int, int, int]], str]:
+    """
+    Processes a list of 3D coordinates to ensure uniqueness and checks for coordinates with minimal differences.
+    Updates a message whenever the list's length is changed.
+
+    Args:
+        com_list (List[Tuple[int, int, int]]): A list of tuples, where each tuple represents a 3D coordinate (x, y, z).
+        msg (str): Initial message to be updated throughout the processing.
+
+    Returns:
+        Tuple[List[Tuple[int, int, int]], str]: A tuple containing the list of unique 3D coordinates after removing
+                                                duplicates and handling minimal differences, and the updated message.
+    """
+    unique_coords = set(com_list)
+    if len(unique_coords) < len(com_list):
+        msg += f"{log_level}Removed {len(com_list) - len(unique_coords)} duplicate coordinates.\n"
+    processed_coords = list(unique_coords)
+    
+    i = 0
+    while i < len(processed_coords):
+        coord1 = processed_coords[i]
+        j = i + 1
+        while j < len(processed_coords):
+            coord2 = processed_coords[j]
+            # Check if the coordinates differ by only 1 unit in any dimension
+            if sum(abs(c1 - c2) for c1, c2 in zip(coord1, coord2)) == 1:
+                warning_msg = f"{log_level}Coordinates {coord1} and {coord2} differ by only 1 unit. Keeping {coord1} and removing {coord2}."
+                warnings.warn(warning_msg)
+                processed_coords.pop(j)
+                msg += warning_msg + "\n"
+            else:
+                j += 1
+        i += 1
+
+    return processed_coords, msg
 
 
 def load_mris_and_annotations(args, subject, msg='', log_level='\t\t'):

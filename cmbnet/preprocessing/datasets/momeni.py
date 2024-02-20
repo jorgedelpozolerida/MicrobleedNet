@@ -25,6 +25,8 @@ import sys
 from typing import Tuple, Dict, List, Any
 
 import cmbnet.preprocessing.process_masks as process_masks
+import cmbnet.preprocessing.loading as loading
+
 import cmbnet.utils.utils_general as utils_general
 import cmbnet.visualization.utils_plotting as utils_plt
 
@@ -76,7 +78,7 @@ def extract_microbleed_coordinates_from_excel(excel_path, filename):
     return microbleed_coordinates
 
 
-def load_MOMENI_raw(input_dir: str, study: str) -> Tuple[Dict[str, nib.Nifti1Image], Dict[str, nib.Nifti1Image], str, list]:
+def load_MOMENI_raw(input_dir: str, study: str, msg: str, log_level: str) -> Tuple[Dict[str, nib.Nifti1Image], Dict[str, nib.Nifti1Image], str, list]:
     """
     Load raw MRI and segmentation data for a given Momeni study, including centers of mass for microbleeds.
     """
@@ -103,7 +105,10 @@ def load_MOMENI_raw(input_dir: str, study: str) -> Tuple[Dict[str, nib.Nifti1Ima
     sequences_raw = {seq_type: mri_nib}
     labels_raw = {seq_type: cmb_nib}
 
-    return sequences_raw, labels_raw, seq_type, com_list
+    # Coordinates are repeated need to ensure that does not happen 
+    com_list_clean, msg = loading.process_coordinates(com_list, msg, log_level)
+
+    return sequences_raw, labels_raw, seq_type, com_list_clean, msg
 
 def process_MOMENI_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, 
                         connectivity=6, log_level="\t\t") -> Tuple[nib.Nifti1Image, Dict, str]:
@@ -289,7 +294,7 @@ def load_MOMENI_data(args, subject, msg):
         msg (str): Updated log message.
     """
     # 1. Load raw data
-    sequences_raw, labels_raw, sequence_type, com_list = load_MOMENI_raw(args.input_dir, subject)
+    sequences_raw, labels_raw, sequence_type, com_list, msg = load_MOMENI_raw(args.input_dir, subject, msg=msg, log_level="\t\t")
 
     # 2. Perform Quality Control and Data Cleaning
     sequences_qc, labels_qc, labels_metadata, msg = perform_MOMENI_QC(subject, sequences_raw, labels_raw, com_list, msg)
@@ -311,7 +316,7 @@ def load_MOMENI_data(args, subject, msg):
 ##################          Momeni (synth)                 ###################
 ##############################################################################
 
-def load_MOMENIsynth_raw(input_dir: str, study: str) -> Tuple[Dict[str, nib.Nifti1Image], Dict[str, nib.Nifti1Image], str, list]:
+def load_MOMENIsynth_raw(input_dir: str, study: str, msg: str, log_level: str) -> Tuple[Dict[str, nib.Nifti1Image], Dict[str, nib.Nifti1Image], str, list]:
     """
     Load raw MRI and segmentation data for a given Momeni synth study, 
     including centers of mass for microbleeds.
@@ -341,8 +346,11 @@ def load_MOMENIsynth_raw(input_dir: str, study: str) -> Tuple[Dict[str, nib.Nift
     seq_type = "SWI"
     sequences_raw = {seq_type: mri_nib}
     labels_raw = {seq_type: cmb_nib}
+    
+    # Coordinates are repeated need to ensure that does not happen 
+    com_list_clean, msg = loading.process_coordinates(com_list, msg, log_level=log_level)
 
-    return sequences_raw, labels_raw, seq_type, com_list
+    return sequences_raw, labels_raw, seq_type, com_list_clean, msg 
 
 
 def load_MOMENIsynth_data(args, subject, msg):
@@ -362,7 +370,7 @@ def load_MOMENIsynth_data(args, subject, msg):
         msg (str): Updated log message.
     """
     # 1. Load raw data
-    sequences_raw, labels_raw, sequence_type, com_list = load_MOMENIsynth_raw(args.input_dir, subject)
+    sequences_raw, labels_raw, sequence_type, com_list, msg = load_MOMENIsynth_raw(args.input_dir, subject,  msg=msg, log_level="\t\t")
 
     # 2. Perform Quality Control and Data Cleaning
     sequences_qc, labels_qc, labels_metadata, msg = perform_MOMENI_QC(subject, sequences_raw, labels_raw, com_list, msg)

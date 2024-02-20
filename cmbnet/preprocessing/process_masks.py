@@ -27,6 +27,7 @@ from skimage.filters import threshold_otsu
 from scipy.cluster.hierarchy import fcluster, linkage
 from scipy.spatial.distance import pdist
 from kneed import KneeLocator
+from typing import List, Tuple
 
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
