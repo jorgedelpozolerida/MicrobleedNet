@@ -93,9 +93,10 @@ def parse_metadatajson_to_dfs(meta_dict):
     for cmb_id, cmb_info in meta_dict["CMBs_old"].items():
         cmb_info["subject"] = meta_dict["subject"]
         cmb_info["id"] = cmb_id
-        # Flatten the region growing dictionary into the main dictionary
-        cmb_info.update({"RG_" + k: v for k, v in cmb_info.pop("region_growing").items()})
-        cmb_level_old_data.append(cmb_info)
+        if "region_growing" in cmb_info:
+            # Flatten the region growing dictionary into the main dictionary
+            cmb_info.update({"RG_" + k: v for k, v in cmb_info.pop("region_growing").items()})
+            cmb_level_old_data.append(cmb_info)
     cmb_level_old_df = pd.DataFrame(cmb_level_old_data)
     
     cmb_level_new_data = []
@@ -153,7 +154,6 @@ def main(args):
 
     for dataset_name in datasets:
         study_df, cmb_old_df, cmb_new_df = get_datasets_metadata(os.path.join(args.datasets_dir, dataset_name), dataset_name)
-
         all_metadata_studies.append(study_df)
         all_metadata_cmb_old.append(cmb_old_df)
         all_metadata_cmb_new.append(cmb_new_df)

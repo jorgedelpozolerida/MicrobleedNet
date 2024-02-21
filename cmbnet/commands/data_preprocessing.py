@@ -342,25 +342,25 @@ def process_study(args, subject, msg=''):
         utils_general.ensure_directory_exists(dir_path)
 
     # Load MRI and annotations with quality control
-    mris, annotations, labels_metadata, prim_seq, msg = loading.load_mris_and_annotations(
+    mris, annotations, labels_metadata, im_specs_orig, prim_seq, msg = loading.load_mris_and_annotations(
         args, subject, msg, log_level="\t"
     )
     msg += f'\tUsing {prim_seq} as primary sequence\n'
 
     # Resample and standardize MRI data
-    mris, annotations, msg = resample_mris_and_annotations(
+    mris_resampled, annotations_resampled, msg = resample_mris_and_annotations(
         mris, annotations, primary_sequence=prim_seq, isotropic=True, msg=msg
     )
 
     # Save affine and header after resampling for later use
-    affine_after_resampling = mris[prim_seq].affine
-    header_after_resampling = mris[prim_seq].header
+    affine_after_resampling = mris_resampled[prim_seq].affine
+    header_after_resampling = mris_resampled[prim_seq].header
 
     # Crop and concatenate sequences
-    save_seq_order = [prim_seq] + [seq for seq in mris if seq != prim_seq]
+    save_seq_order = [prim_seq] + [seq for seq in mris_resampled if seq != prim_seq]
     msg += f'\tConcatenating MRIs in the following order: {save_seq_order}\n'
     mris_array, annotations_array, msg = crop_and_concatenate(
-        mris, annotations, primary_sequence=prim_seq, save_sequence_order=save_seq_order, msg=msg
+        mris_resampled, annotations_resampled, primary_sequence=prim_seq, save_sequence_order=save_seq_order, msg=msg
     )
 
     # Squeeze arrays to remove any unnecessary fourth dimension
@@ -392,7 +392,7 @@ def process_study(args, subject, msg=''):
         "n_CMB_old": len(labels_metadata[prim_seq]["CMBs_old"]),
         "CMBs_new": annotations_metadata_new[prim_seq],
         "n_CMB_new": len(annotations_metadata_new[prim_seq]),
-        "old_specs": loading.extract_im_specs(mris[prim_seq]),
+        "old_specs": im_specs_orig,
         "new_specs": loading.extract_im_specs(mris_image)
     }
     metadata_filepath = os.path.join(args.data_dir_path, subject, args.annotations_metadata_subdir, f'{subject}_metadata.json')

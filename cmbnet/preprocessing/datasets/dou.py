@@ -65,9 +65,10 @@ def load_DOU_raw(input_dir: str, study: str) -> Tuple[Dict[str, nib.Nifti1Image]
     # Mark each center of mass in the cmb_mask
     com_list = []
     for center in centers_of_mass:
-        com = center[0], center[1], center[2]
-        cmb_mask[com] = 1
-        com_list.append(tuple(center))
+        com = [center[0], center[1], center[2]]
+        new_center = tuple(int(c)-1 for c in com) # correct indexing
+        cmb_mask[new_center] = 1
+        com_list.append(tuple(new_center))
 
     # Create a NIfTI image from the cmb_mask
     cmb_nib = nib.Nifti1Image(cmb_mask, affine=mri_nib.affine, header=mri_nib.header)
