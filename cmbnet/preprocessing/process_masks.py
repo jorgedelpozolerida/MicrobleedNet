@@ -255,19 +255,18 @@ def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_v
         selected_tolerance = knee_locator.knee
     knee_index = np.where(tolerances == selected_tolerance)[0][0]
 
-    # selected_tolerance_index = knee_index if exceeded_size_threshold else len(grown_regions) - 1
     selected_tolerance_index = knee_index
-    # selected_tolerance = np.arange(*tolerance_range)[selected_tolerance_index]
     selected_mask = grown_regions[selected_tolerance_index]
     
     # -------------------- Cleaning of mask ----------------------------------
     
     # Define the structure for dilation and erosion based on connectivity
-    struct = generate_binary_structure(volume.ndim, connectivity)
+    connectivity_struct = 1
+    struct = generate_binary_structure(volume.ndim, connectivity_struct)
     
     # Perform one final dilation and then erosion (closing)
-    closed_mask = binary_dilation(selected_mask, structure=struct, iterations=4)
-    closed_mask = binary_erosion(closed_mask, structure=struct, iterations=4)
+    closed_mask = binary_dilation(selected_mask, structure=struct, iterations=2)
+    closed_mask = binary_erosion(closed_mask, structure=struct, iterations=2)
     
     # Fill holes in the mask to ensure it's solid
     closed_mask = binary_fill_holes(closed_mask, structure=struct)
@@ -288,10 +287,10 @@ def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_v
     metadata = {
         'n_pixels': np.sum(cleaned_mask),
         'tolerance_selected': selected_tolerance,
-        'tolerance_pixel_counts': len_list,
-        'tolerances_inspected': len(len_list), 
-        'elbow_i': knee_index,
-        'elbow2end_tol': len_list[knee_index-1:]
+        'tolerance_pixel_counts': len_list, 
+        'tolerances_inspected': len(len_list), # total number of tolerances visited
+        'elbow_i': knee_index, # index taken
+        'elbow2end_tol': len_list[knee_index-1:] # sizes of last elements
     }
     return cleaned_mask, metadata, msg
 

@@ -149,7 +149,7 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
                     f"size={best_n_pixels}.\n"
         # Ensure there's no overlap with previously processed masks
         if np.any(final_processed_mask & best_processed_mask):
-            msg += f"{log_level}\t\tCAUTION: Overlap detected at {com}" + \
+            msg += f"{log_level}\t\tCAUTION: Overlap detected at {com}\n" + \
                     f"{log_level}\t\t         Previosly visited CMBs: {com_list[:i]}\n"
         # Update the final mask and metadata
         final_processed_mask |= best_processed_mask
