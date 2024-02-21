@@ -172,7 +172,8 @@ def process_MOMENI_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str,
                     f"size={best_n_pixels}.\n"
         # Ensure there's no overlap with previously processed masks
         if np.any(final_processed_mask & best_processed_mask):
-            msg += f"{log_level}\t\tCAUTION: Overlap detected between individual processed masks for CMB-{i} located at {com}. Previosly visited CMBs: {com_list[:i]}\n"
+            msg += f"{log_level}\t\tCAUTION: Overlap detected at {com}" + \
+                    f"{log_level}\t\t         Previosly visited CMBs: {com_list[:i]}\n"
             # raise RuntimeError() # remove error but inform
 
         # Update the final mask and metadata

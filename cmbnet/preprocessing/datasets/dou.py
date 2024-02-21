@@ -142,15 +142,15 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
                         best_diff_mode = diff_mode
                     counter += 1
 
+        # Construct a final message summarizing the optimization result
         msg += best_msg
-        msg += f"{log_level}\tCMB-{i}. Optimization results: connectivity={bestconnectivity}, " \
-                    f"intensity_mode={best_intensity_mode}, diff_mode={best_diff_mode} " \
+        msg += f"{log_level}\t\tOptimization chose: '{bestconnectivity}-conn', " \
+                    f"'{best_intensity_mode}', '{best_diff_mode}', " \
                     f"size={best_n_pixels}.\n"
-
         # Ensure there's no overlap with previously processed masks
         if np.any(final_processed_mask & best_processed_mask):
-            raise RuntimeError(f"Overlap detected between individual processed masks when trying to add CMB-{i} located at {com}. Previosly visited CMBs: {com_list[:i]}")
-
+            msg += f"{log_level}\t\tCAUTION: Overlap detected at {com}" + \
+                    f"{log_level}\t\t         Previosly visited CMBs: {com_list[:i]}\n"
         # Update the final mask and metadata
         final_processed_mask |= best_processed_mask
 
