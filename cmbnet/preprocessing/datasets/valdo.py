@@ -29,6 +29,10 @@ import cmbnet.visualization.utils_plotting as utils_plt
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 
+import warnings
+
+warnings.filterwarnings("ignore", message="All-NaN slice encountered")
+
 
 
 ##############################################################################
@@ -133,8 +137,8 @@ def load_VALDO_data(args, subject, msg):
 
     # 1. Load Raw MRI Sequences
     sequences_raw = {
-        "T1": nib.load(os.path.join(subject_old_dir, f"{subject}_space-T2S_desc-masked_T1.nii.gz")),
-        "T2": nib.load(os.path.join(subject_old_dir, f"{subject}_space-T2S_desc-masked_T2.nii.gz")),
+        # "T1": nib.load(os.path.join(subject_old_dir, f"{subject}_space-T2S_desc-masked_T1.nii.gz")),
+        # "T2": nib.load(os.path.join(subject_old_dir, f"{subject}_space-T2S_desc-masked_T2.nii.gz")),
         "T2S": nib.load(os.path.join(subject_old_dir, f"{subject}_space-T2S_desc-masked_T2S.nii.gz"))
     }
     

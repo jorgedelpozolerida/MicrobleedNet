@@ -186,7 +186,7 @@ def load_mris_and_annotations(args, subject, msg='', log_level='\t\t'):
     # Fill MRIs dict
     for sequence_name in sequences_raw:
         mris[sequence_name] = sequences_raw[sequence_name]
-        msg += f'{log_level}Found {sequence_name} MRI sequence of shape {mris[sequence_name].shape}\n'
+        msg += f'{log_level}\tFound {sequence_name} MRI sequence of shape {mris[sequence_name].shape}\n'
 
         # fix orientation and data type
         mris[sequence_name] = nib.as_closest_canonical(mris[sequence_name])
@@ -202,12 +202,12 @@ def load_mris_and_annotations(args, subject, msg='', log_level='\t\t'):
     for sequence_name in sequences_raw:
         if sequence_name in labels_raw.keys():
             annotations[sequence_name] = labels_raw[sequence_name]
-            msg += f'{log_level}Found {sequence_name} annotation of shape {annotations[sequence_name].shape}\n'
+            msg += f'{log_level}\tFound {sequence_name} annotation of shape {annotations[sequence_name].shape}\n'
         else:
             annotations[sequence_name] = nib.Nifti1Image(np.zeros(shape=mris[prim_seq].shape),
                                                     affine=mris[prim_seq].affine,
                                                     header=mris[prim_seq].header)
-            msg += f'{log_level}Missing {sequence_name} annotation, filling with 0s\n'
+            msg += f'{log_level}\tMissing {sequence_name} annotation, filling with 0s\n'
 
         # fix orientation adn data type
         annotations[sequence_name] = nib.as_closest_canonical(annotations[sequence_name])
@@ -219,7 +219,7 @@ def load_mris_and_annotations(args, subject, msg='', log_level='\t\t'):
             raise ValueError("Image does not have RAS orientation.")
 
     end = time.time()
-    msg += f'{log_level}Loading of MRIs and annotations took {end - start} seconds!\n\n'
+    msg += f'{log_level}\tLoading of MRIs and annotations took {end - start} seconds!\n\n'
 
     return mris, annotations, labels_metadata, prim_seq, msg
 

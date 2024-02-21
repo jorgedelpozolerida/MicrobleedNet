@@ -41,14 +41,20 @@ import logging
 import numpy as np                                                                  
 from tqdm import tqdm
 import nibabel as nib
-import multiprocessing
+import multiprocessing as mp
 import time 
 from nilearn.image import resample_to_img, resample_img
 import json
 from datetime import datetime
 from functools import partial
 import sys
+import pandas as pd
+import shutil
+import threading
+import csv
 
+# Define a lock for thread synchronization
+csv_lock = threading.Lock()
 
 # Utils
 import cmbnet.preprocessing.loading as loading
@@ -72,7 +78,8 @@ logger_nib.setLevel(logging.CRITICAL)
 ##############################################################################
 
 def resample(source_image, target_image, interpolation, is_annotation=False,
-            isotropic=False, source_sequence=None, target_sequence=None, msg=''):
+            isotropic=False, source_sequence=None, target_sequence=None, msg='', 
+            log_level="\t\t"):
     '''
     Resamples source image to target image (no registration is performed).
     Args:
@@ -89,8 +96,8 @@ def resample(source_image, target_image, interpolation, is_annotation=False,
         msg (str): Log message.
     '''
     if isotropic:
-        msg += f'\tResampling {source_sequence} MRI to isotropic of voxel size {args.voxel_size} using {interpolation} interpolation...\n'
-        msg += f'\t\tShape before resampling: {source_image.shape}\n'
+        msg += f'{log_level}Resampling {source_sequence} MRI to isotropic of voxel size {args.voxel_size} using {interpolation} interpolation...\n'
+        msg += f'{log_level}\tShape before resampling: {source_image.shape}\n'
 
         desired_voxel_size = float(args.voxel_size)
         isotropic_affine = np.diag([desired_voxel_size, desired_voxel_size, desired_voxel_size])
@@ -100,8 +107,8 @@ def resample(source_image, target_image, interpolation, is_annotation=False,
                                         order='F')
 
     elif is_annotation:
-        msg += f'\tResampling {source_sequence} annotation to {target_sequence} using {interpolation} interpolation...\n'
-        msg += f'\t\tShape before resampling: {source_image.shape}\n'
+        msg += f'{log_level}Resampling {source_sequence} annotation to {target_sequence} using {interpolation} interpolation...\n'
+        msg += f'{log_level}\tShape before resampling: {source_image.shape}\n'
 
         if interpolation == 'nearest':
             resampled_image = resample_to_img(source_image, target_image,
@@ -127,13 +134,13 @@ def resample(source_image, target_image, interpolation, is_annotation=False,
                                                 header=annotation_binary.header)
 
     else:
-        msg += f'\tResampling {source_sequence} MRI to {target_sequence} using {interpolation} interpolation...\n'
-        msg += f'\t\tShape before resampling: {source_image.shape}\n'
+        msg += f'{log_level}Resampling {source_sequence} MRI to {target_sequence} using {interpolation} interpolation...\n'
+        msg += f'{log_level}\tShape before resampling: {source_image.shape}\n'
 
         resampled_image = resample_to_img(source_image, target_image, interpolation=interpolation,
                                             fill_value=np.min(source_image.get_fdata()))
 
-    msg += f'\t\tShape after resampling: {resampled_image.shape}\n'
+    msg += f'{log_level}Shape after resampling: {resampled_image.shape}\n'
 
     return resampled_image, msg
 
@@ -268,141 +275,243 @@ def numpy_to_list(obj):
         return [numpy_to_list(item) for item in obj]
     else:
         return obj
+    
+def update_study_status(study_uid, new_status, msg, csv_log_filepath):
+    '''
+    Updates the status of a study in the CSV log file and adds a message.
+
+    Args:
+        study_uid (str): The unique identifier of the study.
+        new_status (str): The new status ('completed' or 'failed').
+        msg (str): The message associated with the status update.
+        csv_log_filepath (str): Path to the CSV log file.
+    '''
+    # Prepare data to be appended to the CSV
+    data = {'studyUID': [study_uid], 'status': [new_status], 'message': [msg]}
+    df = pd.DataFrame(data)
+    
+    # Append data to the CSV file
+    df.to_csv(csv_log_filepath, mode='a', header=False, index=False, sep=';', quoting=1, quotechar='"')
+
+
+def delete_study_files(args, study):
+    """ 
+    Deletes files for study if failed
+    """
+    # Define paths to directories and files
+    study_dir = os.path.join(args.data_dir_path, study)
+    pre_plots_dir = os.path.join(args.plots_path, "pre")
+    post_plots_dir = os.path.join(args.plots_path, "post")
+
+    # Delete study folder and its contents recursively
+    if os.path.exists(study_dir):
+        try:
+            shutil.rmtree(study_dir)
+        except OSError as e:
+            print(f"Error deleting study directory {study_dir}: {e}")
+
+    # Delete pre and post plots
+    for plots_dir in [pre_plots_dir, post_plots_dir]:
+        if os.path.exists(plots_dir):
+            for filename in os.listdir(plots_dir):
+                if filename.startswith(f"{study}-CMB-") and filename.endswith(".png"):
+                    file_path = os.path.join(plots_dir, filename)
+                    try:
+                        os.remove(file_path)
+                    except OSError as e:
+                        print(f"Error deleting file {file_path}: {e}")
+                        # Log error if deletion fails
+
 
 def process_study(args, subject, msg=''):
     """
-    Process a given study (subject) by performing a series of operations 
-    including loading, resampling, cropping, and saving the MRIs and annotations.
+    Process a given study (subject) by performing a series of operations including loading,
+    resampling, cropping, and saving the MRIs and annotations.
     
     Args:
-        args (dict): Parsed arguments coming from parse_args() function.
+        args (dict): Parsed arguments coming from the parse_args() function.
         subject (str): The subject identifier.
         msg (str, optional): Log message. Defaults to ''.
     
     Returns:
-        None. The function writes processed data to disk and updates the log message.
+        str: Updated log message after completing processing.
     """
-    
-    # Initialize
-    start = time.time()
-    msg = f'Started processing {subject}...\n\n'
-
-    # Create dirs
+    # Ensure necessary directories exist
     for sub_d in [args.mris_subdir, args.annotations_subdir, args.annotations_metadata_subdir]:
-        utils_general.ensure_directory_exists(os.path.join(args.data_dir_path, subject, sub_d))
+        dir_path = os.path.join(args.data_dir_path, subject, sub_d)
+        utils_general.ensure_directory_exists(dir_path)
 
-    try:
-        # 0. If all files exist and not overwrite, skip
-        # TODO
+    # Load MRI and annotations with quality control
+    mris, annotations, labels_metadata, prim_seq, msg = loading.load_mris_and_annotations(
+        args, subject, msg, log_level="\t"
+    )
+    msg += f'\tUsing {prim_seq} as primary sequence\n'
 
-        # 1. Perform QC while loading data
-        mris, annotations, labels_metadata, prim_seq, msg = loading.load_mris_and_annotations(args, subject, msg, log_level="\t\t")
-        msg += f'\tUsing {prim_seq} as primary sequence\n'
+    # Resample and standardize MRI data
+    mris, annotations, msg = resample_mris_and_annotations(
+        mris, annotations, primary_sequence=prim_seq, isotropic=True, msg=msg
+    )
 
-        # 2. Resample and Standardize
-        mris, annotations, msg = resample_mris_and_annotations(mris, annotations, 
-                                                                primary_sequence=prim_seq, 
-                                                                isotropic=True, 
-                                                                msg=msg)
+    # Save affine and header after resampling for later use
+    affine_after_resampling = mris[prim_seq].affine
+    header_after_resampling = mris[prim_seq].header
 
-        # Save affine after resampling
-        affine_after_resampling = mris[prim_seq].affine
-        header_after_resampling = mris[prim_seq].header
+    # Crop and concatenate sequences
+    save_seq_order = [prim_seq] + [seq for seq in mris if seq != prim_seq]
+    msg += f'\tConcatenating MRIs in the following order: {save_seq_order}\n'
+    mris_array, annotations_array, msg = crop_and_concatenate(
+        mris, annotations, primary_sequence=prim_seq, save_sequence_order=save_seq_order, msg=msg
+    )
 
-        # 3. Crop and Concatenate
-        save_seq_order = [prim_seq] + [seq for seq in mris.keys() if seq != prim_seq]
-        msg += f'\tCocatenating MRIs in the following order: {save_seq_order}\n'
+    # Squeeze arrays to remove any unnecessary fourth dimension
+    mris_array = mris_array.squeeze(axis=-1)
+    annotations_array = annotations_array.squeeze(axis=-1)
+    msg += f'\tSqueezed MRIs and Annotations (keeping {save_seq_order[0]})\n'
+    msg += f'\t\tMRIs shape after cropping: {mris_array.shape}\n'
+    msg += f'\t\tAnnotations shape after cropping: {annotations_array.shape}\n'
 
-        mris_array, annotations_array, msg = crop_and_concatenate(
-            mris, annotations, primary_sequence=prim_seq, 
-            save_sequence_order=save_seq_order, msg=msg)
+    # Convert processed data to Nifti1Image format for saving
+    mris_image = nib.Nifti1Image(mris_array.astype(np.float32), affine_after_resampling, header_after_resampling)
+    annotations_image_pre = nib.Nifti1Image(annotations_array.astype(np.uint8), affine_after_resampling, header_after_resampling)
+
+    # Clean CMB masks and generate plots
+    msg += "\tCleaning final masks and checking new stats for annotations after transforms\n"
+    processed_mask, metadata, msg = process_masks.process_cmb_mask(annotations_image_pre, msg)
+    annotations_metadata_new = {prim_seq: metadata}
+    annotations_image = nib.Nifti1Image(processed_mask.get_fdata().astype(np.uint8), affine_after_resampling, header_after_resampling)
+
+    # Save processed images to disk
+    nib.save(mris_image, os.path.join(args.data_dir_path, subject, args.mris_subdir, f'{subject}.nii.gz'))
+    nib.save(annotations_image, os.path.join(args.data_dir_path, subject, args.annotations_subdir, f'{subject}.nii.gz'))
+
+    # Handle and save metadata
+    metadata_out = {
+        "subject": subject,
+        "seq_type": prim_seq,
+        **labels_metadata[prim_seq],
+        "n_CMB_old": len(labels_metadata[prim_seq]["CMBs_old"]),
+        "CMBs_new": annotations_metadata_new[prim_seq],
+        "n_CMB_new": len(annotations_metadata_new[prim_seq]),
+        "old_specs": loading.extract_im_specs(mris[prim_seq]),
+        "new_specs": loading.extract_im_specs(mris_image)
+    }
+    metadata_filepath = os.path.join(args.data_dir_path, subject, args.annotations_metadata_subdir, f'{subject}_metadata.json')
+    with open(metadata_filepath, "w") as file:
+        json.dump(metadata_out, file, default=loading.convert_numpy, indent=4)
+    msg += "\tCorrectly saved NIfTI images and metadata for study\n"
+
+    # Generate and save CMB plots for debugging
+    mask_with_CMS = np.zeros_like(annotations_image.get_fdata())
+    for k_i, cm_i in annotations_metadata_new[prim_seq].items():
+        cm = tuple(cm_i['CM'])
+        mask_with_CMS[cm] = 1  # Mark the center of mass in the mask
+    mask_with_CMS_im= nib.Nifti1Image(mask_with_CMS.astype(np.uint8), affine_after_resampling, header_after_resampling)
+
+    utils_plt.generate_cmb_plots(subject,
+                                mri_im=mris_image,
+                                raw_cmb=mask_with_CMS_im,
+                                processed_cmb=annotations_image,
+                                cmb_metadata=metadata_out['CMBs_new'],
+                                plots_path=utils_general.ensure_directory_exists(os.path.join(args.plots_path, "post")))
+
+    msg += "\tCorrectly generated and saved CMB plots for study\n"
+    return msg
+
+
+def process_single_study_worker(args, studies_pending: mp.Queue, studies_done: mp.Queue, processes_done: mp.Queue, worker_number: int):
+    '''
+    Worker function that processes a single study.
+    
+    Args:
+        args (dict): Parsed arguments coming from the parse_args() function.
+        studies_pending (mp.Queue): Queue containing studies that need to be processed.
+        studies_done (mp.Queue): Queue containing studies that have been processed.
+        processes_done (mp.Queue): Queue indicating when processes have finished.
+        worker_number (int): Identifier for the worker.
+    '''
+    while not studies_pending.empty():
+        # Try to extract a study from the queue
+        try:
+            study, i, n = studies_pending.get()
+        except Exception as e:
+            print(f"Worker {worker_number} - No more items to process or error: {str(e)}")
+            break
+
+        msg = f'Started processing {study}... (worker {worker_number})\n'
         
-        # Squeezing to get first seq only
-        if mris_array.ndim > 3:
-            mris_array = mris_array[:,:,:,0]
+        try:
+            # Attempt to process the study
+            msg_process = process_study(args, study, '')
+            msg += msg_process
+            status = 'completed'
+            msg += f'Finished processing of {study} (worker {worker_number})!\n\n'
+        except Exception as e:
+            # Handle exceptions during processing
+            status = 'failed'
+            msg += f'Failed to process {study}!\n\nException caught: \n{traceback.format_exc()}\n'
 
-        if annotations_array.ndim > 3:
-            annotations_array = annotations_array[:,:,:, 0]
-        msg += f'\tSqueezed MRIs and Annotations (keeping {save_seq_order[0]})\n'
-        msg += f'\t\tMRIs shape after cropping: {mris_array.shape}\n'
-        msg += f'\t\tAnnotations shape after cropping: {annotations_array.shape}\n'
+        # Log the outcome
+        utils_general.write_to_log_file(msg, args.log_file_path)
+        
+        # Update the CSV log with the study's processing status
+        update_study_status(study, status, msg, args.csv_log_filepath)
+        
+        # delete files if failed
+        if status == 'failed':
+            delete_study_files(args, study)
 
+        # Indicate the study has been processed
+        studies_done.put((study, status, msg))
 
-        # # 4. Combine annotations. NOTE: not needed but left just in case
-        # annotations_array, msg = combine_annotations(annotations_array, None, msg)
+    # Signal that this worker has completed its task
+    processes_done.put(worker_number)
 
-        # Convert to Nifti1Image
-        mris_image = nib.Nifti1Image(mris_array.astype(np.float32), affine_after_resampling, header_after_resampling)
-        annotations_image_pre = nib.Nifti1Image(annotations_array.astype(np.uint8), affine_after_resampling, header_after_resampling)
+def process_all_studies(args, studies):
+    '''
+    Processes list of studies: performs data preprocessing for provided studies
+    '''
+    # initiate multiprocessing queues
+    studies_pending = mp.Queue()
+    studies_done = mp.Queue()
+    processes_done = mp.Queue()
 
-        # Clean CMBs and save plots
-        msg += "\tChecking new stats for annotations after transforms\n"
-        processed_mask, metadata, msg = process_masks.process_cmb_mask(annotations_image_pre, msg)
-        annotations_metadata_new = {prim_seq: metadata}
+    # put all studies in queue
+    for i, study in enumerate(studies, start=1):
+        studies_pending.put((study, i, len(studies)))
 
-        annotations_image = nib.Nifti1Image(processed_mask.get_fdata().astype(np.uint8), affine_after_resampling, header_after_resampling)
+    # initialize progress bar
+    if args.progress_bar:
+        progress_bar = tqdm(total=studies_pending.qsize())
+        number_of_studies_done_so_far = 0
 
-        # Save to Disk
-        nib.save(
-            mris_image,
-            os.path.join(
-                args.data_dir_path,
-                subject,
-                args.mris_subdir,
-                f'{subject}.nii.gz',
-            ),
-        )
-        nib.save(
-            annotations_image,
-            os.path.join(
-                args.data_dir_path,
-                subject,
-                args.annotations_subdir,
-                f'{subject}.nii.gz',
-            ),
-        )
-        # METADATA handling ---
-        metadata_out = {
-            "subject": subject,
-            "seq_type": prim_seq,
-            **labels_metadata[prim_seq],
-            "n_CMB_old": len(labels_metadata[prim_seq]["CMBs_old"].keys()),
-            "CMBs_new": annotations_metadata_new[prim_seq],
-            "n_CMB_new": len(annotations_metadata_new[prim_seq]),
-            "old_specs": loading.extract_im_specs(mris[prim_seq]),
-            "new_specs": loading.extract_im_specs(mris_image)
-        }
-        # Save Metadata for CMBs using JSON format
-        with open(os.path.join(args.data_dir_path, subject, args.annotations_metadata_subdir, f'{subject}_metadata.json'), "w") as file:
-            json.dump(metadata_out, file, default=loading.convert_numpy, indent=4)
+    # start processes
+    processes = []
+    if studies_pending.qsize() > 0:
+        number_of_workers = min(args.num_workers, studies_pending.qsize())
+        for i in range(number_of_workers):
+            process = mp.Process(target=process_single_study_worker,
+                                    args=(args, studies_pending, studies_done,
+                                        processes_done, i))
+            processes.append(process)
+            process.start()
 
+        while True:
+            if args.progress_bar:
+                number_of_studies_done_now = studies_done.qsize()
+                difference = number_of_studies_done_now - number_of_studies_done_so_far
+                if difference > 0:
+                    progress_bar.update(difference)
+                    number_of_studies_done_so_far = number_of_studies_done_now
 
-        # PLOTS debugging ---
-        mask_with_CMS = np.zeros_like(annotations_image.get_fdata())
-        for k_i, cm_i in annotations_metadata_new[prim_seq].items():
-            cm = tuple(cm_i['CM'])
-            mask_with_CMS[cm] = 1  # Mark the center of mass in the mask
-        mask_with_CMS_im = nib.Nifti1Image(mask_with_CMS.astype(np.uint8), affine_after_resampling, header_after_resampling)
-        utils_plt.generate_cmb_plots(
-            subject=subject, 
-            mri_im=mris_image, 
-            raw_cmb=mask_with_CMS_im, 
-            processed_cmb=annotations_image, 
-            cmb_metadata=metadata_out['CMBs_new'], 
-            plots_path=utils_general.ensure_directory_exists(os.path.join(args.plots_path, "post")),
-            zoom_size=100
-        )
+            if processes_done.qsize() == number_of_workers:
+                if args.progress_bar:
+                    progress_bar.close()
+                for process in processes:
+                    process.terminate()
+                break
 
+            time.sleep(0.1)
 
-
-    except Exception:
-
-        msg += f'Failed to process {subject}!\n\nException caught: {traceback.format_exc()}'
-
-    # Finalize
-    end = time.time()
-    msg += f'Finished processing of {subject} in {end - start} seconds!\n\n'
-    utils_general.write_to_log_file(msg, args.log_file_path)
 
 
 def main(args):
@@ -413,29 +522,99 @@ def main(args):
     args.annotations_metadata_subdir = 'Annotations_metadata'
     args.plots_path = os.path.join(args.output_dir, 'plots')
 
+    # Initialize log files
+    current_time = datetime.now()
+    current_datetime = current_time.strftime("%Y-%m-%d_%H-%M-%S")
+    args.log_file_path = os.path.join(args.output_dir, f'log_{current_datetime}.txt')
+    args.csv_log_filepath = os.path.join(args.output_dir, f'log_{current_datetime}.csv')
     
-    for dir_p in [args.output_dir, args.output_dir, args.data_dir_path, args.plots_path]:
+    for dir_p in [args.output_dir, args.data_dir_path, args.plots_path]:
         utils_general.ensure_directory_exists(dir_p)
 
-    current_time = datetime.now()
-    current_datetime = current_time.strftime("%d%m%Y_%H%M%S")
-    args.log_file_path = os.path.join(args.output_dir, f'log_{current_datetime}.txt')
+    # Create an empty CSV log file with headers
+    with open(args.csv_log_filepath, 'w', newline='') as f:
+        f.write("studyUID;status;message\n")  
+
+    msg = "***********************************************\n" + \
+        f"STARTING PROCESSING OF DATASET {args.dataset_name}\n" + \
+        "***********************************************\n"
 
     # Get subject list
     subjects = loading.get_dataset_subjects(args.dataset_name, args.input_dir)
-
-    # Determine number of worker processes
-    available_cpu_count = multiprocessing.cpu_count()
-    num_workers = min(args.num_workers, available_cpu_count)
     
-    # Parallelizing using multiprocessing
-    if num_workers > 1:
-        with multiprocessing.Pool(processes=num_workers) as pool:
-            list(tqdm(pool.imap(partial(process_study, args), subjects), total=len(subjects)))
-    else:
-        for sub in tqdm(subjects, total=len(subjects), desc="Processing all subjects"):
-            process_study(args, sub, "")
+    
+    # If args.remove_studies exclude from data processed
+    if args.remove_studies:
+        msg += f"STARTING DELETION OF STUDIES FOR DATASET {args.dataset_name}\n"
+        if len(args.remove_studies) == 1 and args.remove_studies[0].endswith(".csv"):
+            df_remove = pd.read_csv(args.remove_studies[0])
+            remove_studies = df_remove['studyUID'].to_list()
+        else:
+            remove_studies = args.remove_studies
+        if set(remove_studies).issubset(set(subjects)):
+            utils_general.confirm_action(f"Will delete {len(remove_studies)} studies")
+            for stud in remove_studies:
+                delete_study_files(args, stud)
+                msg += f"Succesfully deleted the following study: {stud}\n"
+            utils_general.write_to_log_file(msg, args.log_file_path)
+        else:
+            missing_studies = set(remove_studies) - set(subjects)
+            e_msg = f"ERROR: The following specified studies are not available in the dataset: {', '.join(missing_studies)}\n"
+            msg += e_msg
+            utils_general.write_to_log_file(msg, args.log_file_path)
+            raise ValueError(e_msg)
+        return
+    
+    msg +=  f"CSV log: {args.csv_log_filepath}\n" 
+
+    # Overwrite with failed studies
+    if args.start_from_log is not None:
+        df_log = pd.read_csv(args.start_from_log, sep=";")
+        df_log_fail = df_log[df_log['status'] == 'failed']
+        subjects = df_log_fail['studyUID'].to_list()
+        msg += f"Collected a total of {len(subjects)} subjects out of {df_log.shape[0]} from log file {args.start_from_log}\n"
+
+
+    # Overwrite with give studies
+    if args.studies is not None:
+        if len(args.studies) == 1 and args.studies[0].endswith(".csv"):
+            df_filter = pd.read_csv(args.studies[0])
+            filter_studies = df_filter['studyUID'].to_list()
+        else:
+            filter_studies = args.studies
+        if set(filter_studies).issubset(set(subjects)):
+            msg += f"Filtered studies from {len(subjects)} subjects to {len(filter_studies)}\n"
+            subjects = filter_studies
+
+
+        else:
+            missing_studies = set(filter_studies) - set(subjects)
+            e_msg = f"ERROR: The following specified studies are not available in the dataset: {', '.join(missing_studies)}"
+            msg += e_msg
+            utils_general.write_to_log_file(msg, args.log_file_path)
+            raise ValueError(e_msg)
         
+    msg += f"Processing {len(subjects)} studies\n\n"
+    print(msg)
+    utils_general.confirm_action()
+    utils_general.write_to_log_file(msg, args.log_file_path)
+
+    # Parallelizing using multiprocessing or not
+    try:
+        process_all_studies(args, subjects)
+        df_results = pd.read_csv(args.csv_log_filepath, sep=";")
+        df_results_fail = df_results[df_results['status'] == 'failed']
+        final_msg = "***********************************************\n" + \
+        f"FINISHED PROCESSING OF DATASET {args.dataset_name}\n" + \
+        f"Succesful studies: {df_results.shape[0]}, Failed studies: {df_results_fail.shape[0]}\n" + \
+        "***********************************************\n"
+        utils_general.write_to_log_file(final_msg, args.log_file_path)
+
+    except Exception:
+        _logger.error('Exception caught in main: {}'.format(traceback.format_exc()))
+        return 1
+    return 0
+
 
 def parse_args():
     '''
@@ -453,9 +632,14 @@ def parse_args():
     parser.add_argument('--dataset_name', type=str, default=None, required=True, 
                         choices=['valdo', 'cerebriu', 'momeni', 'momeni-synth', 'dou', 'rodeja'], 
                         help='Raw dataset name, to know what type of preprocessing is needed')
-    parser.add_argument('--overwrite',  default=False, action='store_true',
-                        help='Add this flag if you want to overwrite existing processed studies, or else these will be skipped')
-
+    parser.add_argument('--studies',  nargs='+', type=str, default=None, required=False,
+                        help='Specific studies to process. If None, all processed')
+    parser.add_argument('--remove_studies',  type=str, nargs='+',  default=None, required=False,
+                        help='Full path to CSV with studyUID of studies to remove from processed data. If given, only this is done')
+    parser.add_argument('--start_from_log', type=str, default=None, required=False,
+                        help='Full path to the CSV log file where to rerun for failed cases')
+    parser.add_argument('--progress_bar', type=bool, default=True,
+                        help='Whether or not to show a progress bar')
     return parser.parse_args()
 
 

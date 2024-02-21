@@ -44,6 +44,14 @@ def write_to_log_file(msg, log_file_path):
     with open(log_file_path, 'a+') as f:
         f.write(f'\n{current_time}\n{msg}')
         
+def confirm_action(message=""):
+    """Prompt the user for confirmation before proceeding."""
+    confirm = input(f"{message}\nDo you want to continue (yes/no): ")
+    if confirm.lower() != 'yes':
+        print("Action cancelled by user.")
+        sys.exit(0)
+
+
 def read_json_to_dict(file_path):
     """
     Reads a JSON file and converts it into a Python dictionary.

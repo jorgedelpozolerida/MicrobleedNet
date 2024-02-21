@@ -28,6 +28,9 @@ from scipy.cluster.hierarchy import fcluster, linkage
 from scipy.spatial.distance import pdist
 from kneed import KneeLocator
 from typing import List, Tuple
+import warnings
+warnings.filterwarnings("ignore", category=RuntimeWarning, module='kneed')
+
 
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
@@ -246,7 +249,7 @@ def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_v
     knee_locator = KneeLocator(tolerances, len_list, curve='convex', direction='increasing', interp_method='interp1d')
 
     if knee_locator.knee is None:
-        msg += f"{log_level}Knee could not be found, selecting second to last tolerance"
+        msg += f"{log_level}Knee could not be found, selecting second to last tolerance\n"
         selected_tolerance = tolerances[-2]  # or any default tolerance
     else:
         selected_tolerance = knee_locator.knee
@@ -275,7 +278,7 @@ def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_v
     # If there are multiple features, select the largest one
     if num_features > 1:
         counts = np.bincount(labeled_mask.ravel())
-        msg += f"{log_level}Found {num_features} CCs in one CMB. Counts: {counts[1:]}"
+        msg += f"{log_level}Found {num_features} CCs in one CMB. Counts: {counts[1:]}\n"
         max_label = 1 + np.argmax([np.sum(labeled_mask == i) for i in range(1, num_features + 1)])
         cleaned_mask = (labeled_mask == max_label)
     else:
@@ -290,73 +293,7 @@ def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_v
         'elbow_i': knee_index,
         'elbow2end_tol': len_list[knee_index-1:]
     }
-
     return cleaned_mask, metadata, msg
-
-
-# def optimize_region_growing(volume, seeds, size_threshold, max_dist_voxels=None, 
-#                             connectivity_options=[6, 26], 
-#                             intensity_mode_options=['point', 'running_average'], 
-#                             diff_mode_ranges=['relative', 'normal'],
-#                             log_level=""):  # sourcery skip: default-mutable-arg
-#     """
-#     Optimize the region growing process by iterating over combinations of parameters provided by the user.
-
-#     Parameters:
-#     - volume: The 3D volume data as a NumPy array.
-#     - seeds: Seed points for region growing.
-#     - size_threshold: The minimum size threshold for consideration.
-#     - connectivity_options: A list of connectivity values to iterate over.
-#     - intensity_mode_options: A list of intensity modes to iterate over.
-#     - diff_mode_ranges: A dictionary with diff modes as keys and their corresponding tolerance ranges as values.
-#     - max_dist_voxels: The maximum distance in voxels to be used, can be None.
-#     - log_level: String to indicate logging level for messages.
-
-#     Returns:
-#     - best_processed_mask: The best processed mask as a NumPy array.
-#     - best_metadata: Metadata dictionary for the best mask.
-#     - optimization_msg: A message summarizing the optimization results.
-#     """
-#     best_n_pixels = 1
-#     best_processed_mask = None
-#     best_metadata = None
-#     best_msg = ""
-
-#     # Iterate over combinations of provided parameters
-#     for connectivity in connectivity_options:
-#         for intensity_mode in intensity_mode_options:
-#             for diff_mode, range_temp in diff_mode_ranges.items():
-#                 msg_temp = ""
-#                 processed_mask, metadata, msg_temp = region_growing_with_auto_tolerance(
-#                     volume=volume,
-#                     seeds=seeds,
-#                     size_threshold=size_threshold,
-#                     max_dist_voxels=max_dist_voxels,
-#                     tolerance_values=range_temp,
-#                     connectivity=connectivity,
-#                     show_progress=False,
-#                     intensity_mode=intensity_mode,
-#                     diff_mode=diff_mode,
-#                     log_level=f"{log_level}\t\t",
-#                     msg=msg_temp
-#                 )
-#                 n_pixels = metadata['n_pixels']
-#                 # Update best results if this combination yielded bigger size
-#                 if n_pixels > best_n_pixels:
-#                     best_n_pixels = n_pixels
-#                     best_processed_mask = processed_mask
-#                     best_metadata = metadata
-#                     best_msg = msg_temp
-#                     best_intensity_mode = intensity_mode
-#                     best_diff_mode = diff_mode
-
-#     # Construct a final message summarizing the optimization result
-#     optimization_msg = best_msg
-#     optimization_msg += f"{log_level}Optimization results: connectivity={connectivity}, " \
-#                             f"intensity_mode={best_intensity_mode}, diff_mode={best_diff_mode}, " \
-#                             f"size={best_n_pixels}, max_dist_voxels={max_dist_voxels}.\n"
-
-#     return best_processed_mask, best_metadata, optimization_msg
 
 
 ##############################################################################
@@ -527,7 +464,7 @@ def process_cmb_mask(label_im, msg, log_level="\t\t"):
     processed_mask_nib = nib.Nifti1Image(data, label_im.affine, label_im.header)
 
     # Update the log message
-    msg += f"{log_level}Number of CMBs: {num_features}. Sizes: {pixel_counts}, Radii: {radii}, Unique labels: {unique_labels}, Counts: {counts}\n"
+    msg += f"{log_level}Number of CMBs: {num_features}, Unique labels: {unique_labels}, Counts: {counts}\n"
 
     # Generate metadata
     metadata = {

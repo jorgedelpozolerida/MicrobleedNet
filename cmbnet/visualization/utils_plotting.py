@@ -145,12 +145,8 @@ def plot_processed_mask(mri_im: Any, cmb_im: Any, processed_cmb_im: Any, cmb_coo
     for ax in axs.ravel():
         ax.axis('off')
     plt.tight_layout()
-
-    if save_path:
-        plt.savefig(save_path)
-        plt.close(fig)
-    else:
-        plt.show()
+    plt.savefig(save_path)
+    plt.close(fig)
 
 
 def generate_cmb_plots(subject, mri_im, raw_cmb, processed_cmb, cmb_metadata, plots_path, zoom_size=100):

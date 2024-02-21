@@ -126,6 +126,7 @@ def process_MOMENI_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str,
 
     # Process each CMB based on its center of mass
     for i, com in enumerate(com_list):
+        msg += f"{log_level}\tCMB-{i}\n"
         seeds = [com]
 
         best_n_pixels = 1
@@ -135,9 +136,9 @@ def process_MOMENI_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str,
             for intensity_mode in ['point', 'running_average']:
                 for diff_mode in ['relative', 'normal']:
                     if diff_mode == "relative":
-                        range_temp = np.concatenate((np.arange(0, 20, 0.05), np.arange(20, 100, 1), np.arange(100, 10000, 100)))
+                        range_temp = np.concatenate((np.arange(1e-3, 20, 0.05), np.arange(20, 100, 1), np.arange(100, 10000, 100)))
                     else:
-                        range_temp = np.arange(0, 100, 0.05)
+                        range_temp = np.arange(1e-3, 100, 0.05)
                     msg_temp = ""
                     processed_mask, metadata, msg_temp = process_masks.region_growing_with_auto_tolerance(
                         volume=mri_im.get_fdata(),
@@ -166,12 +167,13 @@ def process_MOMENI_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str,
 
         # Construct a final message summarizing the optimization result
         msg += best_msg
-        msg += f"{log_level}\tCMB-{i}. Optimization results: connectivity={bestconnectivity}, " \
-                    f"intensity_mode={best_intensity_mode}, diff_mode={best_diff_mode} " \
+        msg += f"{log_level}\t\tOptimization chose: '{bestconnectivity}-conn', " \
+                    f"'{best_intensity_mode}', '{best_diff_mode}', " \
                     f"size={best_n_pixels}.\n"
         # Ensure there's no overlap with previously processed masks
         if np.any(final_processed_mask & best_processed_mask):
-            raise RuntimeError(f"Overlap detected between individual processed masks when trying to add CMB-{i} located at {com}. Previosly visited CMBs: {com_list[:i]}")
+            msg += f"{log_level}\t\tCAUTION: Overlap detected between individual processed masks for CMB-{i} located at {com}. Previosly visited CMBs: {com_list[:i]}\n"
+            # raise RuntimeError() # remove error but inform
 
         # Update the final mask and metadata
         final_processed_mask |= best_processed_mask

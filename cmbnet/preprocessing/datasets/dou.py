@@ -112,21 +112,19 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
         for connectivity in [6, 26]:
             for intensity_mode in ['point', 'running_average']:
                 for diff_mode in ['relative', 'normal']:
-                    print(com)
-                    print(connectivity, intensity_mode, diff_mode)
                     if diff_mode == "relative":
-                        range_temp = np.concatenate((np.arange(0, 20, 0.05), np.arange(20, 100, 1), np.arange(100, 10000, 100)))
+                        range_temp = np.concatenate((np.arange(1e-3, 20, 0.05), np.arange(20, 100, 1), np.arange(100, 10000, 100)))
                     else:
-                        range_temp = np.arange(0, 100, 0.05)
+                        range_temp = np.arange(1e-3, 100, 0.05)
                     msg_temp = ""
                     processed_mask, metadata, msg_temp = process_masks.region_growing_with_auto_tolerance(
                         volume=mri_im.get_fdata(),
                         seeds=seeds,
                         size_threshold=size_th,
-                        max_dist_voxels=None,
+                        max_dist_voxels=max_dist_voxels,
                         tolerance_values=range_temp,
                         connectivity=connectivity,
-                        show_progress=True,
+                        show_progress=False,
                         intensity_mode=intensity_mode,
                         diff_mode=diff_mode,
                         log_level=f"{log_level}\t\t",
