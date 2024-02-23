@@ -22,7 +22,7 @@ from scipy.ndimage import binary_dilation, binary_erosion, binary_closing, gener
     center_of_mass, binary_fill_holes
 from skimage.morphology import ball
 from scipy.ndimage import label as nd_label # to avoid conflict below
-from skimage.measure import label
+from skimage.measure import label, regionprops
 from skimage.filters import threshold_otsu
 from scipy.cluster.hierarchy import fcluster, linkage
 from scipy.spatial.distance import pdist
@@ -264,28 +264,58 @@ def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_v
     connectivity_struct = 1
     struct = generate_binary_structure(volume.ndim, connectivity_struct)
     
-    # Perform one final dilation and then erosion (closing)
-    closed_mask = binary_dilation(selected_mask, structure=struct, iterations=2)
-    closed_mask = binary_erosion(closed_mask, structure=struct, iterations=2)
-    
-    # Fill holes in the mask to ensure it's solid
-    closed_mask = binary_fill_holes(closed_mask, structure=struct)
+    # Initialize erosion counter
+    erosion_iterations = 0
+
+    # Ensure there's more than 1 voxel to erode
+    if np.sum(selected_mask) > 1:  
+        for _ in range(2):  # Attempt up to 2 iterations of erosion
+            # Perform an erosion iteration
+            temp_eroded_mask = binary_erosion(eroded_mask, structure=struct)
+            
+            # Label the eroded mask to identify connected components
+            labeled_mask, num_features = label(temp_eroded_mask)
+            
+            # Calculate the size of each connected component
+            component_sizes = np.bincount(labeled_mask.ravel())[1:]  # Exclude background
+            
+            # Check if any component is reduced to a size of 1 voxel
+            if np.any(component_sizes == 1):
+                break  # Stop erosion if any component is reduced to 1 voxel
+            elif np.sum(temp_eroded_mask) >= 1:
+                eroded_mask = temp_eroded_mask
+                erosion_iterations += 1  # Increment erosion counter
+            else:
+                break  # Stop erosion if it would result in no voxels
+
 
     # Label the connected components
-    labeled_mask, num_features = nd_label(closed_mask, structure=struct)
+    labeled_mask, num_features = nd_label(eroded_mask, structure=struct)
 
-    # If there are multiple features, select the largest one
+    # Calculate mean position of seeds
+    seeds_mean_position = np.mean(seeds, axis=0)
+
+    # If there are multiple features, select the one closest to the mean of seeds positions
     if num_features > 1:
-        counts = np.bincount(labeled_mask.ravel())
-        msg += f"{log_level}Found {num_features} CCs in one CMB. Counts: {counts[1:]}\n"
-        max_label = 1 + np.argmax([np.sum(labeled_mask == i) for i in range(1, num_features + 1)])
-        cleaned_mask = (labeled_mask == max_label)
+        # Calculate center of mass for each feature
+        centers_of_mass = center_of_mass(eroded_mask, labeled_mask, range(1, num_features + 1))
+
+        # Calculate distances from each center of mass to the mean of seeds positions
+        distances = [np.linalg.norm(np.array(com) - seeds_mean_position) for com in centers_of_mass]
+
+        # Select the label with the minimum distance
+        closest_label = np.argmin(distances) + 1  # +1 because labels start from 1
+        cleaned_mask = (labeled_mask == closest_label)
+        msg += f"{log_level}Selected CC closest to seeds mean position. Num of CC: {len(centers_of_mass)}\n"
     else:
-        cleaned_mask = closed_mask
+        cleaned_mask = eroded_mask
+
+    # Now, apply dilation to the cleaned_mask with the same number of iterations as erosion
+    closed_mask = binary_dilation(cleaned_mask, structure=struct, iterations=erosion_iterations)
 
     # Metadata
     metadata = {
-        'n_pixels': np.sum(cleaned_mask),
+        'n_pixels': np.sum(closed_mask),
         'tolerance_selected': selected_tolerance,
         'tolerance_pixel_counts': len_list, 
         'tolerances_inspected': len(len_list), # total number of tolerances visited
@@ -415,8 +445,7 @@ def process_cmb_mask(label_im, msg, log_level="\t\t"):
     """
     Process a nibabel object containing a mask of cerebral microbleeds (CMBs).
     
-    Extracts connected components and performs morhpological operaitons to clean
-    mask. Then returns list of centers of mass, radius and size for each CMB.
+    Extracts connected components and then returns list of centers of mass, radius and size for each CMB.
 
     Args:
         label_im (nibabel.Nifti1Image): The nibabel object of the mask.
@@ -427,7 +456,6 @@ def process_cmb_mask(label_im, msg, log_level="\t\t"):
         metadata (dict): Metadata including centers of mass, pixel counts, and radii.
         msg (str): Updated log message.
     """
-
     # Extract data from the label image
     data = label_im.get_fdata()
 
@@ -442,13 +470,13 @@ def process_cmb_mask(label_im, msg, log_level="\t\t"):
         majority_label, minority_label = unique_labels[np.argmax(counts)], unique_labels[np.argmin(counts)]
         data[data == majority_label], data[data == minority_label] = 0, 1
 
-    # Perform dilation and erosion to clean the mask
-    struct_elem = ball(2)  # Using a spherical structuring element
-    data = binary_dilation(data, structure=struct_elem).astype(np.uint8)
-    data = binary_erosion(data, structure=struct_elem).astype(np.uint8)
+    # # Perform erosion and dilation to clean the mask
+    # struct_elem = ball(2)  # Using a spherical structuring element
+    # data = binary_erosion(data, structure=struct_elem, iterations=2).astype(np.uint8)
+    # data = binary_dilation(data, structure=struct_elem).astype(np.uint8)
 
-    # Fill holes in the mask
-    data = binary_fill_holes(data).astype(np.uint8)
+    # # Fill holes in the mask
+    # data = binary_fill_holes(data).astype(np.uint8)
 
     # Find connected components in the cleaned mask
     labeled_array, num_features = nd_label(data)
@@ -459,8 +487,9 @@ def process_cmb_mask(label_im, msg, log_level="\t\t"):
     pixel_counts = np.bincount(labeled_array.ravel())[1:]
     radii = [(3 * count / (4 * np.pi))**(1/3) for count in pixel_counts]
     radii = [round(r, ndigits=2) for r in radii]
-    # Convert the processed mask data back to a nibabel object
-    processed_mask_nib = nib.Nifti1Image(data, label_im.affine, label_im.header)
+
+    # # Convert the processed mask data back to a nibabel object
+    # processed_mask_nib = nib.Nifti1Image(data, label_im.affine, label_im.header)
 
     # Update the log message
     msg += f"{log_level}Number of CMBs: {num_features}, Unique labels: {unique_labels}, Counts: {counts}\n"
@@ -471,4 +500,4 @@ def process_cmb_mask(label_im, msg, log_level="\t\t"):
         for i, com in enumerate(com_list)
     }
 
-    return processed_mask_nib, metadata, msg
+    return label_im, metadata, msg
