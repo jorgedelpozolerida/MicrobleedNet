@@ -106,6 +106,7 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
 
     # Process each CMB based on its center of mass
     for i, com in enumerate(com_list):
+        msg += f"{log_level}\tCMB-{i}\n"
         seeds = [com]
         best_n_pixels = 1
         counter = 0
@@ -125,7 +126,7 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
                         max_dist_voxels=max_dist_voxels,
                         tolerance_values=range_temp,
                         connectivity=connectivity,
-                        show_progress=False,
+                        show_progress=True,
                         intensity_mode=intensity_mode,
                         diff_mode=diff_mode,
                         log_level=f"{log_level}\t\t",
@@ -164,16 +165,16 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
             "size": best_metadata['n_pixels'],
             "radius": round(radius, ndigits=2),
             "region_growing": {
+                "distance_th": max_dist_voxels,
+                "size_th": size_th,
+                'sphericity_ind': best_metadata['sphericity_ind'], 
                 "selected_tolerance": best_metadata['tolerance_selected'],
                 "n_tolerances": best_metadata['tolerances_inspected'], 
                 "elbow_i": best_metadata['elbow_i'], 
                 "elbow2end_tol": best_metadata['elbow2end_tol'],
                 'connectivity': bestconnectivity,
                 "intensity_mode": best_intensity_mode,
-                "diff_mode": best_diff_mode ,
-                "distance_th": max_dist_voxels,
-                "size_th": size_th,
-
+                "diff_mode": best_diff_mode 
             }
         }
     # Save if healthy or not

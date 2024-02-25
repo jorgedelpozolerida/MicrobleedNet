@@ -290,7 +290,7 @@ def generate_cmb_plots(subject, mri_im, raw_cmb, processed_cmb, cmb_metadata, pl
         ]
         # Add optional parts only if they are present
         if region_growing := met_i.get('region_growing', {}):
-            optional_keys = ['distance_th', 'size_th', 'connectivity', 'intensity_mode', 'diff_mode']
+            optional_keys = ['distance_th', 'size_th', 'connectivity', 'intensity_mode', 'diff_mode', 'sphericity_ind']
             optional_parts = [
                 f'"{region_growing[key]}"' for key in optional_keys if key in region_growing
             ]

@@ -188,16 +188,16 @@ def process_MOMENI_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str,
             "size": best_metadata['n_pixels'],
             "radius": round(radius, ndigits=2),
             "region_growing": {
+                "distance_th": max_dist_voxels,
+                "size_th": size_th,
+                'sphericity_ind': best_metadata['sphericity_ind'],
                 "selected_tolerance": best_metadata['tolerance_selected'],
                 "n_tolerances": best_metadata['tolerances_inspected'], 
                 "elbow_i": best_metadata['elbow_i'], 
                 "elbow2end_tol": best_metadata['elbow2end_tol'],
                 'connectivity': bestconnectivity,
                 "intensity_mode": best_intensity_mode,
-                "diff_mode": best_diff_mode ,
-                "distance_th": max_dist_voxels,
-                "size_th": size_th,
-
+                "diff_mode": best_diff_mode
             }
         }
     # Save if healthy or not

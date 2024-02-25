@@ -215,6 +215,146 @@ def region_growing_3d_seed(volume, seed_points, tolerance, size_threshold,
     return region, stop_signal
 
 
+# def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_voxels,
+#                                         tolerance_values, connectivity=26, 
+#                                         intensity_mode="point", show_progress=False, 
+#                                         diff_mode="normal",
+#                                         log_level="\t\t\t", msg=""):
+#     """ 
+#     Calculates results for several tolerance values and yields optimal based on 
+#     elbow-method
+#     """
+#     grown_regions = []
+#     len_list = []
+
+#     # Loop over the tolerance values and perform region growing
+#     iterator = tolerance_values
+#     if show_progress:
+#         iterator = tqdm(tolerance_values, desc="Looping over tolerances")
+
+#     for tolerance in iterator:
+#         grown_region, exceeded = region_growing_3d_seed(volume, seeds, tolerance,
+#                                                         size_threshold, max_dist_voxels, 
+#                                                         connectivity,  intensity_mode,
+#                                                         diff_mode)
+#         grown_regions.append(grown_region)
+#         len_list.append(np.sum(grown_region))
+
+#         # Do not continue if max size exceeded
+#         if exceeded:
+#             break  # Exit if the size threshold is exceeded
+
+#     # Determine the selected tolerance based on the sudden rise (exceeded signal)
+#     tolerances = tolerance_values[:len(len_list)]
+#     knee_locator = KneeLocator(tolerances, len_list, curve='convex', direction='increasing', interp_method='interp1d')
+
+#     if knee_locator.knee is None:
+#         msg += f"{log_level}Knee could not be found, selecting second to last tolerance\n"
+#         selected_tolerance = tolerances[-2]  # or any default tolerance
+#     else:
+#         selected_tolerance = knee_locator.knee
+#     knee_index = np.where(tolerances == selected_tolerance)[0][0]
+
+#     selected_tolerance_index = knee_index
+#     selected_mask = grown_regions[selected_tolerance_index]
+    
+#     # -------------------- Cleaning of mask ----------------------------------
+    
+#     # Define the structure for dilation and erosion based on connectivity
+#     connectivity_struct = 1
+#     struct = generate_binary_structure(volume.ndim, connectivity_struct)
+    
+#     # Initialize erosion counter
+#     erosion_iterations = 0
+#     eroded_mask = np.copy(selected_mask)  # Start with the selected mask
+
+#     # Ensure there's more than 1 voxel to erode
+#     if np.sum(selected_mask) > 1:  
+#         for _ in range(4):  # Attempt up to 2 iterations of erosion
+#             # Perform an erosion iteration
+#             temp_eroded_mask = binary_erosion(eroded_mask, structure=struct)
+            
+#             # Label the eroded mask to identify connected components
+#             labeled_mask, num_features = nd_label(temp_eroded_mask)
+            
+#             # Calculate the size of each connected component
+#             component_sizes = np.bincount(labeled_mask.ravel())[1:]  # Exclude background
+            
+#             # Check if any component is reduced to a size of 1 voxel
+#             if np.any(component_sizes == 1):
+#                 break  # Stop erosion if any component is reduced to 1 voxel
+#             elif np.sum(temp_eroded_mask) >= 1:
+#                 eroded_mask = temp_eroded_mask
+#                 erosion_iterations += 1  # Increment erosion counter
+#             else:
+#                 break  # Stop erosion if it would result in no voxels
+
+
+#     # Label the connected components
+#     labeled_mask, num_features = nd_label(eroded_mask, structure=struct)
+
+#     # Calculate mean position of seeds
+#     seeds_mean_position = np.mean(seeds, axis=0)
+
+#     # If there are multiple features, select the one closest to the mean of seeds positions
+#     if num_features > 1:
+#         # Calculate center of mass for each feature
+#         centers_of_mass = center_of_mass(eroded_mask, labeled_mask, range(1, num_features + 1))
+
+#         # Calculate distances from each center of mass to the mean of seeds positions
+#         distances = [np.linalg.norm(np.array(com) - seeds_mean_position) for com in centers_of_mass]
+
+#         # Select the label with the minimum distance
+#         closest_label = np.argmin(distances) + 1  # +1 because labels start from 1
+#         cleaned_mask = (labeled_mask == closest_label)
+#         msg += f"{log_level}Selected CC closest to seeds mean position. Num of CC: {len(centers_of_mass)}\n"
+#     else:
+#         cleaned_mask = eroded_mask
+
+#     # Now, apply dilation to the cleaned_mask with the same number of iterations as erosion
+#     closed_mask = binary_dilation(cleaned_mask, structure=struct, iterations=erosion_iterations)
+
+#     # Metadata
+#     metadata = {
+#         'n_pixels': np.sum(closed_mask),
+#         'tolerance_selected': selected_tolerance,
+#         'tolerance_pixel_counts': len_list, 
+#         'tolerances_inspected': len(len_list), # total number of tolerances visited
+#         'elbow_i': knee_index, # index taken
+#         'elbow2end_tol': len_list[knee_index-1:] # sizes of last elements
+#     }
+#     return cleaned_mask, metadata, msg
+
+def calculate_sphericity(mask):
+    """
+    Calculates the sphericity of a 3D mask.
+
+    Args:
+        mask (numpy.ndarray): A 3D numpy array where the mask of the object is True (1) and the background is False (0).
+
+    Returns:
+        float: The sphericity index of the mask. Values closer to 1 indicate a more spherical shape.
+    """
+    # Volume calculation (V)
+    volume = np.sum(mask)
+
+    # Generate a structuring element for surface area calculation
+    struct = generate_binary_structure(3, 1)
+
+    # Erode mask to identify surface voxels
+    eroded_mask = binary_erosion(mask, structure=struct)
+    
+    # Identify surface voxels using logical_xor
+    surface_voxels = np.logical_xor(mask, eroded_mask)
+
+    # Surface area calculation (A)
+    surface_area = np.sum(surface_voxels)
+
+    # Sphericity calculation (Ψ)
+    sphericity = (np.pi ** (1/3) * (6 * volume) ** (2/3)) / surface_area
+
+    return sphericity
+
 def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_voxels,
                                         tolerance_values, connectivity=26, 
                                         intensity_mode="point", show_progress=False, 
@@ -249,7 +389,7 @@ def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_v
     knee_locator = KneeLocator(tolerances, len_list, curve='convex', direction='increasing', interp_method='interp1d')
 
     if knee_locator.knee is None:
-        msg += f"{log_level}Knee could not be found, selecting second to last tolerance\n"
+        msg += f"{log_level}Knee could not be found, selecting second to last tolerance"
         selected_tolerance = tolerances[-2]  # or any default tolerance
     else:
         selected_tolerance = knee_locator.knee
@@ -261,69 +401,42 @@ def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_v
     # -------------------- Cleaning of mask ----------------------------------
     
     # Define the structure for dilation and erosion based on connectivity
-    connectivity_struct = 1
-    struct = generate_binary_structure(volume.ndim, connectivity_struct)
+    struct = generate_binary_structure(volume.ndim, 1)
     
-    # Initialize erosion counter
-    erosion_iterations = 0
-
-    # Ensure there's more than 1 voxel to erode
-    if np.sum(selected_mask) > 1:  
-        for _ in range(2):  # Attempt up to 2 iterations of erosion
-            # Perform an erosion iteration
-            temp_eroded_mask = binary_erosion(eroded_mask, structure=struct)
-            
-            # Label the eroded mask to identify connected components
-            labeled_mask, num_features = label(temp_eroded_mask)
-            
-            # Calculate the size of each connected component
-            component_sizes = np.bincount(labeled_mask.ravel())[1:]  # Exclude background
-            
-            # Check if any component is reduced to a size of 1 voxel
-            if np.any(component_sizes == 1):
-                break  # Stop erosion if any component is reduced to 1 voxel
-            elif np.sum(temp_eroded_mask) >= 1:
-                eroded_mask = temp_eroded_mask
-                erosion_iterations += 1  # Increment erosion counter
-            else:
-                break  # Stop erosion if it would result in no voxels
-
+    # # Perform one final dilation and then erosion (closing)
+    # closed_mask = binary_dilation(selected_mask, structure=struct, iterations=4)
+    # closed_mask = binary_erosion(closed_mask, structure=struct, iterations=4)
+    
+    # # Fill holes in the mask to ensure it's solid
+    # closed_mask = binary_fill_holes(closed_mask, structure=struct)
 
     # Label the connected components
-    labeled_mask, num_features = nd_label(eroded_mask, structure=struct)
+    labeled_mask, num_features = nd_label(selected_mask, structure=struct)
 
-    # Calculate mean position of seeds
-    seeds_mean_position = np.mean(seeds, axis=0)
-
-    # If there are multiple features, select the one closest to the mean of seeds positions
+    # If there are multiple features, select the largest one
     if num_features > 1:
-        # Calculate center of mass for each feature
-        centers_of_mass = center_of_mass(eroded_mask, labeled_mask, range(1, num_features + 1))
-
-        # Calculate distances from each center of mass to the mean of seeds positions
-        distances = [np.linalg.norm(np.array(com) - seeds_mean_position) for com in centers_of_mass]
-
-        # Select the label with the minimum distance
-        closest_label = np.argmin(distances) + 1  # +1 because labels start from 1
-        cleaned_mask = (labeled_mask == closest_label)
-        msg += f"{log_level}Selected CC closest to seeds mean position. Num of CC: {len(centers_of_mass)}\n"
+        counts = np.bincount(labeled_mask.ravel())
+        msg += f"{log_level}Found {num_features} CCs in one CMB. Counts: {counts[1:]}"
+        max_label = 1 + np.argmax([np.sum(labeled_mask == i) for i in range(1, num_features + 1)])
+        cleaned_mask = (labeled_mask == max_label)
     else:
-        cleaned_mask = eroded_mask
+        cleaned_mask = selected_mask
 
-    # Now, apply dilation to the cleaned_mask with the same number of iterations as erosion
-    closed_mask = binary_dilation(cleaned_mask, structure=struct, iterations=erosion_iterations)
+    # Sphericity
+    sphere_index = round(calculate_sphericity(cleaned_mask), ndigits=3)
 
     # Metadata
     metadata = {
-        'n_pixels': np.sum(closed_mask),
+        'n_pixels': np.sum(cleaned_mask),
         'tolerance_selected': selected_tolerance,
-        'tolerance_pixel_counts': len_list, 
-        'tolerances_inspected': len(len_list), # total number of tolerances visited
-        'elbow_i': knee_index, # index taken
-        'elbow2end_tol': len_list[knee_index-1:] # sizes of last elements
+        'tolerance_pixel_counts': len_list,
+        'tolerances_inspected': len(len_list), 
+        'elbow_i': knee_index,
+        'elbow2end_tol': len_list[knee_index-1:],
+        'sphericity_ind': sphere_index
     }
-    return cleaned_mask, metadata, msg
 
+    return cleaned_mask, metadata, msg
 
 ##############################################################################
 ###################            CMB processing              ###################
