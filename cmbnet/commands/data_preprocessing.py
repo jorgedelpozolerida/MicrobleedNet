@@ -549,7 +549,7 @@ def main(args):
     
     
     # If args.remove_studies exclude from data processed
-    if args.remove_studies:
+    if args.remove_studies and args.start_from_log is None:
         msg += f"STARTING DELETION OF STUDIES FOR DATASET {args.dataset_name}\n"
         if len(args.remove_studies) == 1 and args.remove_studies[0].endswith(".csv"):
             df_remove = pd.read_csv(args.remove_studies[0])
@@ -576,9 +576,19 @@ def main(args):
     if args.start_from_log is not None:
         df_log = pd.read_csv(args.start_from_log, sep=";")
         df_log_fail = df_log[df_log['status'] == 'failed']
-        subjects = df_log_fail['studyUID'].to_list()
-        msg += f"Collected a total of {len(subjects)} subjects out of {df_log.shape[0]} from log file {args.start_from_log}\n"
-
+        unprocessed_studies = [s for s in subjects if s not in df_log['studyUID'].to_list()]
+        
+        # Combine failed and unprocessed studies
+        subjects_used = df_log_fail['studyUID'].to_list() + unprocessed_studies
+        msg += f"Collected a total of {len(subjects_used)} subjects (Failed: {len(df_log_fail)}, Unprocessed: {len(unprocessed_studies)}) out of {len(subjects)} from log file {args.start_from_log}\n"
+        subjects = subjects_used
+        
+        if args.remove_studies:
+            utils_general.confirm_action(f"Will delete {len(subjects)} studies if present already")
+            for stud in remove_studies:
+                delete_study_files(args, stud)
+                msg += f"Succesfully deleted the following study: {stud}\n"
+            utils_general.write_to_log_file(msg, args.log_file_path)
 
     # Overwrite with give studies
     if args.studies is not None:
@@ -590,7 +600,6 @@ def main(args):
         if set(filter_studies).issubset(set(subjects)):
             msg += f"Filtered studies from {len(subjects)} subjects to {len(filter_studies)}\n"
             subjects = filter_studies
-
 
         else:
             missing_studies = set(filter_studies) - set(subjects)
