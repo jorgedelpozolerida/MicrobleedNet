@@ -2,6 +2,7 @@
 
 * [05 February 2024](#date-05-february-2024)
 * [19 February 2024](#date-19-february-2024)
+* [26 February 2024](#date-26-february-2024)
 
 <!-- *
 * [12 February 2024](#date-12-february-2024)
@@ -196,20 +197,41 @@ it comes to negative samples and possible use of synthestic dataset from MOMENI
 ### Date: 26 February 2024
 
 #### What did you achieve/do?
-* n/a
+* Almost finished preprocessigng for: VALDO, DOU, MOMENI, CEREBRIU
 
 #### What did you struggle with?
-* n/a
+* Region Growing out of control many times. Had to do a lot of manual inspection...
 
 #### What would you like to work on next ?
-* n/a
+* Finish once and for all preprocessing.
+* Clean data from RODEJA
 
 #### Where do you need help from Veronika?
-* n/a
+* What is your opinion on the use of synthetic microbleeds as created in this paper?:
+[Momeni paper](../docs/papers/Synthetic%20microbleeds%20generation%20for%20classifier%20training%20without.pdf) --> basically there are 3,700 scans from 118 patients with synthetic CMBs modelled with a random Gaussian shape and added to healthy brain locations
+* In the end Region Growing was not trustworthy, but gave nice estimate of radius. Using this to build a sphere around center. What do you think?
+* I am thinking of using a lot of negative data internal to allow model to learn when no microbleeds
+* Confirmation form SAP abou t presentation dates?
 
 #### Others
 
-* n/a
+* Rough summary of data:
+# Dataset Overview
+
+The following table provides an overview of the datasets, including the number of scans, patients, cerebral microbleeds (CMBs), scanner types, and specifications.
+
+| DATASET        | n_scans_neg | n_scans_CMB | n_patients_neg | n_patients_CMB | n_CMB          | scanner                        | specs                                                                                                         |
+|----------------|-------------|-------------|----------------|----------------|----------------|--------------------------------|---------------------------------------------------------------------------------------------------------------|
+| VALDO          | 23          | 49          | 23             | 49             | -              | 1GE 1.5T, 2Phillips 3T         | 1low_res, 2high_res                                                                                            |
+| DOU            | -           | 20          | -              | 20             | ~80            | 3.0T Philips Medical System    | TR=17ms, TE=24ms, resolution=(512×512×150), voxel=(0.45×0.45x1), slice_thickness=2mm, slice_spacing=1mm, FOV=230×230 mm2 |
+| MOMENI         | 313         | 57          | 100            | 30             | 148            | 3T                             | resolution=(0.93×0.93×1.75), TE=20                                                                            |
+| MOMENI_rsCMB   | -           | 570         | -              | 30 (same)      | 148 + 570*10 = 5848 | 3T                             | resolution=(0.93×0.93×1.75), TE=20                                                                            |
+| MOMENI_sCMB    | -           | 3130        | -              | 100 (same)     | 0 + 3130*10 = 31300 | 3T                             | resolution=(0.93×0.93×1.75), TE=20                                                                            |
+| CEREBRIU       | -           | 7/70        | -              | 7/70           | -              | diverse (table below)          | diverse (table below)                                                                                          |
+| RODEJA         | 22 + 40?    | 40          | 22 + 40?       | 40             | -              | 1.5T and 3T                    | various resolutions from (0.2×0.2×1) to (1 × 1 × 6)                                                           |
+| TOTAL          | 350         | ~200 (+3600)| ~150           | ~150           | -              | -                              | -                                                                                                             |
+
+
 
 <br><br><br><br><br>
 
