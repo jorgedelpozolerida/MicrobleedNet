@@ -254,6 +254,24 @@ def extract_im_specs(img):
         'data_type': img.header.get_data_dtype().name,
     }
 
+###############################################################################
+# Re-processing
+###############################################################################
+
+def get_sphere_df(csv_path, study, dataset):
+    
+    df = pd.read_csv(csv_path, sep=";")
+    df = df[df['dataset'] == dataset]
+
+    if "momeni" in dataset:
+        subject = study.split('_')[0] + "_" + study.split('_')[1]
+    else:
+        subject = study
+
+    return df[df['studyUID'] == subject]
+
+    
+
 
 ###############################################################################
 # Old

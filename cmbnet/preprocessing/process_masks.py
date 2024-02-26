@@ -29,8 +29,11 @@ from scipy.spatial.distance import pdist
 from kneed import KneeLocator
 from typing import List, Tuple
 import warnings
+import json
 warnings.filterwarnings("ignore", category=RuntimeWarning, module='kneed')
 
+
+import cmbnet.preprocessing.loading as loading
 
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
@@ -416,7 +419,7 @@ def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_v
     # If there are multiple features, select the largest one
     if num_features > 1:
         counts = np.bincount(labeled_mask.ravel())
-        msg += f"{log_level}Found {num_features} CCs in one CMB. Counts: {counts[1:]}"
+        msg += f"{log_level}Found {num_features} CCs in one CMB. Counts: {counts[1:]}\n"
         max_label = 1 + np.argmax([np.sum(labeled_mask == i) for i in range(1, num_features + 1)])
         cleaned_mask = (labeled_mask == max_label)
     else:
@@ -554,7 +557,7 @@ def isolate_single_CMBs(mask: np.ndarray, voxel_size: list, max_dist_mm: float =
     return cmb_masks
 
 
-def process_cmb_mask(label_im, msg, log_level="\t\t"):
+def process_cmb_mask(label_im, msg, dataset_name="valdo", log_level="\t\t"):
     """
     Process a nibabel object containing a mask of cerebral microbleeds (CMBs).
     
@@ -583,34 +586,251 @@ def process_cmb_mask(label_im, msg, log_level="\t\t"):
         majority_label, minority_label = unique_labels[np.argmax(counts)], unique_labels[np.argmin(counts)]
         data[data == majority_label], data[data == minority_label] = 0, 1
 
-    # # Perform erosion and dilation to clean the mask
-    # struct_elem = ball(2)  # Using a spherical structuring element
-    # data = binary_erosion(data, structure=struct_elem, iterations=2).astype(np.uint8)
-    # data = binary_dilation(data, structure=struct_elem).astype(np.uint8)
-
-    # # Fill holes in the mask
-    # data = binary_fill_holes(data).astype(np.uint8)
+    # Fill holes in the mask
+    data_filled = binary_fill_holes(data).astype(np.uint8)
 
     # Find connected components in the cleaned mask
-    labeled_array, num_features = nd_label(data)
+    labeled_array, num_features = nd_label(data_filled)
 
-    # Calculate centers of mass, pixel counts, and radii
-    com_list = center_of_mass(data, labels=labeled_array, index=np.arange(1, num_features + 1))
+    # Initialize an empty mask for combining processed CMBs
+    processed_data = np.zeros_like(data_filled)
+
+    # Perform erosion and dilation on each CMB separately for the "valdo" dataset
+    if dataset_name != "valdo":
+        struct_elem = generate_binary_structure(3, 1)
+        for label_num in range(1, num_features + 1):
+            cmb_mask = (labeled_array == label_num)  # Isolate the current CMB
+            
+            # Apply dilation and erosion
+            cmb_mask_dilated = binary_dilation(cmb_mask, structure=struct_elem, iterations=2).astype(np.uint8)
+            cmb_mask_processed = binary_erosion(cmb_mask_dilated, structure=struct_elem, iterations=2).astype(np.uint8)
+            
+            # Combine the processed CMB mask with the overall processed mask
+            processed_data += cmb_mask_processed
+        msg += f"{log_level}Applied closing operation to every CMB\n"
+
+    else:
+        # For other datasets, use the filled data without further processing
+        processed_data = data_filled
+
+    # Recalculate centers of mass, pixel counts, and radii after processing
+    labeled_array_processed, num_features_processed = nd_label(processed_data)
+    com_list = center_of_mass(processed_data, labels=labeled_array_processed, index=np.arange(1, num_features_processed + 1))
     com_list = [(int(coord[0]), int(coord[1]), int(coord[2])) for coord in com_list]
-    pixel_counts = np.bincount(labeled_array.ravel())[1:]
+    pixel_counts = np.bincount(labeled_array_processed.ravel())[1:]
     radii = [(3 * count / (4 * np.pi))**(1/3) for count in pixel_counts]
     radii = [round(r, ndigits=2) for r in radii]
 
-    # # Convert the processed mask data back to a nibabel object
-    # processed_mask_nib = nib.Nifti1Image(data, label_im.affine, label_im.header)
+    # Convert the processed mask data back to a nibabel object
+    processed_mask_nib = nib.Nifti1Image(processed_data, label_im.affine, label_im.header)
 
     # Update the log message
-    msg += f"{log_level}Number of CMBs: {num_features}, Unique labels: {unique_labels}, Counts: {counts}\n"
+    msg += f"{log_level}Number of processed CMBs: {num_features_processed}, Unique labels: {unique_labels}, Counts: {counts}\n"
 
     # Generate metadata
     metadata = {
-        i: {"CM": com, "size": pixel_counts[i], "radius": round(radii[i], 2)}
+        i: {"CM": com, "size": pixel_counts[i], "radius": radii[i]}
         for i, com in enumerate(com_list)
     }
 
-    return label_im, metadata, msg
+    return processed_mask_nib, metadata, msg
+
+
+def grow_3D_sphere(example_im, seeds, rad, size_threshold, max_dist_voxels, log_level, msg):
+    """
+    Grows a 3D spherical mask from a seed point within a NIfTI image volume, 
+    based on a given radius in millimeters.
+
+    Args:
+        example_im (nib.Nifti1Image): The NIfTI image for extracting voxel dimensions.
+        seeds (list): The seed points from which the sphere grows.
+        rad (float): The radius of the sphere in millimeters.
+        size_threshold (int): The maximum allowable size of the mask in voxels.
+        max_dist_voxels (int): The maximum distance in voxels for adding new voxels to the mask.
+        log_level (str): Logging level for messages.
+        msg (str): Initial message string.
+
+    Returns:
+        processed_mask (numpy.ndarray): The final processed mask as a 3D numpy array.
+        metadata (dict): Metadata about the generated mask.
+        msg (str): Updated message string.
+    """
+    # Extract voxel dimensions from the nibabel object to convert radius from mm to voxels
+    voxel_dims = example_im.header.get_zooms()
+    
+    # Calculate the average seed position in voxel coordinates
+    seeds_mean = np.mean(seeds, axis=0)
+    
+    # Initialize an empty mask with the same shape as the example image
+    mask_shape = example_im.shape
+    processed_mask = np.zeros(mask_shape, dtype=np.uint8)
+    
+    # Convert the radius from millimeters to voxels for each dimension
+    rad_voxels = rad / np.array(voxel_dims)
+    
+    # Generate spherical mask
+    for i in range(mask_shape[0]):
+        for j in range(mask_shape[1]):
+            for k in range(mask_shape[2]):
+                # Calculate distance from current voxel to seed mean in voxel units
+                dist_voxels = np.sqrt(((i - seeds_mean[0]) / rad_voxels[0]) ** 2 +
+                                      ((j - seeds_mean[1]) / rad_voxels[1]) ** 2 +
+                                      ((k - seeds_mean[2]) / rad_voxels[2]) ** 2)
+                if dist_voxels <= 1.0 and dist_voxels <= max_dist_voxels:
+                    processed_mask[i, j, k] = 1
+
+    # Decompose into connected components and keep the largest
+    labeled_mask, num_features = nd_label(processed_mask)
+    if num_features > 1:
+        component_sizes = np.bincount(labeled_mask.ravel())[1:]  # Ignore background
+        largest_component = component_sizes.argmax() + 1  # Label of largest component
+        processed_mask = (labeled_mask == largest_component).astype(bool)
+    
+    # Fill holes in the largest component
+    processed_mask = binary_fill_holes(processed_mask).astype(bool)
+    
+    # Check size threshold
+    if np.sum(processed_mask) > size_threshold:
+        msg += f"{log_level}Generated mask exceeds size threshold.\n"
+        return processed_mask, {}, msg
+    
+    # Metadata
+    metadata = {
+        'rad_voxels': rad_voxels.tolist(),  # Convert numpy array to list for JSON-serializable metadata
+        'n_pixels': np.sum(processed_mask),
+    }
+    
+    return processed_mask, metadata, msg
+
+def reprocess_study(study, processed_dir, mapping_file, dataset,
+                    mri_im: nib.Nifti1Image, 
+                    com_list: list, msg: str,
+                    log_level="\t\t"):
+    """
+    Re-Process annotations for dataset subject:
+    - Spherecreation 
+    OR
+    - Region Growing reusing params from first execution
+    """
+    # Get study metadata
+    json_file = os.path.join(processed_dir, "Data", study, "Annotations_metadata", f"{study}_metadata.json")
+    with open(json_file, 'r') as file:
+        metadata_dict = json.load(file)
+
+    # Get mapping list
+    map_df = loading.get_sphere_df(mapping_file, study, dataset)
+    if map_df.shape[0] > 0:
+        msg += f"{log_level}---- Study found in manual fixes mapping CSV ----\n"
+        has_correction = True
+    else:
+        has_correction = False
+
+    # Compute size threshold and maximum distance in voxels
+    size_th, max_dist_voxels = calculate_size_and_distance_thresholds(mri_im, max_dist_mm=10)
+
+    # Initialize the final processed mask
+    final_processed_mask = np.zeros_like(mri_im.get_fdata(), dtype=bool)
+    rg_metadata = {}  # To collect metadata from region growing
+    msg += f"{log_level}Applying Region Growing with max_distance={max_dist_voxels}, max_size={size_th}\n\n"
+
+    # Process each CMB based on its center of mass
+    for i, com in enumerate(com_list):
+        msg += f"{log_level}\tCMB-{i}\n"
+        seeds = [com]
+
+        # Get from previous execution
+        metadata_i = metadata_dict['CMBs_old'][str(i)]
+        metadata_rg_i = metadata_i['region_growing']
+        com_i = tuple(int(i) for i in metadata_i["CM"])
+
+        assert com_i == com  # both are tuples
+        # print("--------------------------")
+        # print(f"{log_level}CMB: {i}\n")
+        # print(f"{log_level}\t{com}\n")
+        # print(f"{log_level}\t{has_correction}\n")
+        map_temp = map_df[(map_df['x'] == com_i[0]) & (map_df['y'] == com_i[1]) & (map_df['z'] == com_i[2])]
+
+
+        if map_temp.shape[0] == 1:
+            radius = map_temp['radius'].item() / 2
+        elif map_temp.shape[0] > 1:
+            raise ValueError(f"Found several mapping rows for study: {study}")
+        else:
+            radius =  metadata_i['radius']
+            if dataset == "dou":
+                radius = radius / 2
+            
+        processed_mask, metadata, msg = grow_3D_sphere(
+            example_im=mri_im,  # nibabel object
+            seeds=seeds,
+            rad=radius,
+            size_threshold=size_th,
+            max_dist_voxels=max_dist_voxels,
+            log_level=f"{log_level}\t\t",
+            msg=msg
+        )
+
+            # print(f"{log_level}\t\t{[connectivity, intensity_mode, diff_mode]}\n")
+
+            # if diff_mode == "relative":
+            #     range_temp = np.concatenate((np.arange(1e-3, 20, 0.05), np.arange(20, 100, 1), np.arange(100, 10000, 100)))
+            # else:
+            #     range_temp = np.arange(1e-3, 100, 0.05)
+
+            # processed_mask, metadata, msg_temp = region_growing_with_auto_tolerance(
+            #     volume=mri_im.get_fdata(),
+            #     seeds=seeds,
+            #     size_threshold=size_th,
+            #     max_dist_voxels=max_dist_voxels,
+            #     tolerance_values=range_temp,
+            #     connectivity=connectivity,
+            #     show_progress=True,
+            #     intensity_mode=intensity_mode,
+            #     diff_mode=diff_mode,
+            #     log_level=f"{log_level}\t\t",
+            #     msg=""
+            # )
+            # n_pixels = metadata['n_pixels']
+            # msg += msg_temp
+            # msg += f"{log_level}\t\tRe-run RG with '{connectivity}-conn', " \
+            #         f"'{intensity_mode}', '{diff_mode}', " \
+            #         f"size={n_pixels}.\n"
+
+            # # EXTRA: expand if only 1-4 voxels .TODO
+        if 1 <= metadata['n_pixels'] <= 4:
+            struct = generate_binary_structure(3, 1)  # 3D dilation, connectivity=1
+            dilated_mask = binary_dilation(processed_mask, structure=struct)
+            n_pixels_dilated = np.sum(dilated_mask)
+            
+            if n_pixels_dilated > size_th:
+                msg += f"{log_level}Warning: Dilated mask exceeds size threshold. Nothing done\n"
+            else:
+                processed_mask = dilated_mask
+                msg += f"{log_level}Mask expanded by one layer, new size={n_pixels_dilated} voxels.\n"
+        radius = (3 * int(metadata['n_pixels']) / (4 * np.pi))**(1/3)
+        met_sph = metadata
+        msg += f"{log_level}\t\tSphere created with radius {radius}mm, size={np.sum(processed_mask)}\n"
+        # print(f"{log_level}\t\tSphere created with radius {radius}mm, size={np.sum(processed_mask)}\n")
+
+
+        if np.any(final_processed_mask & processed_mask):
+            msg += f"{log_level}\t\tCAUTION: Overlap detected at {com}\n" + \
+                    f"{log_level}\t\t         Previously visited CMBs: {com_list[:i]}\n"
+
+        final_processed_mask |= processed_mask.astype(bool)
+        rg_metadata[i] = {
+            "CM": com,
+            "size": np.sum(processed_mask),
+            "radius": round(radius, ndigits=2),
+            # "region_growing": met_rg,
+            "sphere": met_sph
+        }
+
+    metadata_out = {
+        "healthy": "no" if com_list else "yes",
+        "CMBs_old": rg_metadata,
+    }
+    annotation_processed_nib = nib.Nifti1Image(final_processed_mask.astype(np.int16), mri_im.affine, mri_im.header)
+
+    return annotation_processed_nib, metadata_out, msg
+

@@ -126,7 +126,7 @@ def process_DOU_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, log_leve
                         max_dist_voxels=max_dist_voxels,
                         tolerance_values=range_temp,
                         connectivity=connectivity,
-                        show_progress=True,
+                        show_progress=False,
                         intensity_mode=intensity_mode,
                         diff_mode=diff_mode,
                         log_level=f"{log_level}\t\t",
@@ -254,9 +254,16 @@ def perform_DOU_QC(args, subject, mris, annotations, com_list, msg):
     
     # Quality Control of Labels
     for anno_sequence, anno_im in annotations.items():
-        annotations_qc[anno_sequence], metadata, msg = process_DOU_anno(mris_qc[anno_sequence], com_list, msg)
-        annotations_metadata[anno_sequence] = metadata
-
+        
+        if args.reprocess_file is None:
+            annotations_qc[anno_sequence], metadata, msg = process_DOU_anno(mris_qc[anno_sequence], com_list, msg)
+            annotations_metadata[anno_sequence] = metadata
+        else:
+            annotations_qc[anno_sequence], metadata, msg = process_masks.reprocess_study(
+                study=subject, processed_dir=args.processed_dir, mapping_file=args.reprocess_file,
+                dataset=args.dataset_name, 
+                mri_im=mris_qc[anno_sequence], com_list=com_list, msg=msg)
+            annotations_metadata[anno_sequence] = metadata
     return mris_qc, annotations_qc, annotations_metadata, msg
 
 

@@ -376,7 +376,7 @@ def process_study(args, subject, msg=''):
 
     # Clean CMB masks and generate plots
     msg += "\tCleaning final masks and checking new stats for annotations after transforms\n"
-    processed_mask, metadata, msg = process_masks.process_cmb_mask(annotations_image_pre, msg)
+    processed_mask, metadata, msg = process_masks.process_cmb_mask(annotations_image_pre, msg, args.dataset_name)
     annotations_metadata_new = {prim_seq: metadata}
     annotations_image = nib.Nifti1Image(processed_mask.get_fdata().astype(np.uint8), affine_after_resampling, header_after_resampling)
 
@@ -522,6 +522,11 @@ def main(args):
     args.annotations_metadata_subdir = 'Annotations_metadata'
     args.plots_path = os.path.join(args.output_dir, 'plots')
 
+    if args.reprocess_file:
+        assert args.processed_dir is not None
+        assert os.path.exists(args.processed_dir)
+        assert os.path.exists(args.reprocess_file)
+
     # Initialize log files
     current_time = datetime.now()
     current_datetime = current_time.strftime("%Y-%m-%d_%H-%M-%S")
@@ -640,6 +645,10 @@ def parse_args():
                         help='Full path to the CSV log file where to rerun for failed cases')
     parser.add_argument('--progress_bar', type=bool, default=True,
                         help='Whether or not to show a progress bar')
+    parser.add_argument('--reprocess_file', type=str, default=None, required=False,
+                        help='Full path to the CSV with info for re-processing. If provided, the whole workflow of processing changes to REPROCESS')
+    parser.add_argument('--processed_dir', type=str, default=None, required=True,
+                        help='Path to the processed input directory of dataset')
     return parser.parse_args()
 
 

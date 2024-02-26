@@ -111,7 +111,7 @@ def load_MOMENI_raw(input_dir: str, study: str, msg: str, log_level: str) -> Tup
     return sequences_raw, labels_raw, seq_type, com_list_clean, msg
 
 def process_MOMENI_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, 
-                        connectivity=6, log_level="\t\t") -> Tuple[nib.Nifti1Image, Dict, str]:
+                        log_level="\t\t") -> Tuple[nib.Nifti1Image, Dict, str]:
     # sourcery skip: low-code-quality
     """
     Process annotations for a Momeni dataset subject by applying region growing algorithm on CMBs based on their COM.
@@ -251,7 +251,7 @@ def process_MOMENI_mri(mri_im, msg='', log_level='\t\t'):
     return processed_mri_im, msg
 
 
-def perform_MOMENI_QC(subject, mris, annotations, com_list, msg):
+def perform_MOMENI_QC(args, subject, mris, annotations, com_list, msg):
     """
     Perform Quality Control (QC) specific to the Momeni dataset on MRI sequences and labels.
 
@@ -275,9 +275,16 @@ def perform_MOMENI_QC(subject, mris, annotations, com_list, msg):
         mris_qc[mri_sequence], msg = process_MOMENI_mri(mri_im, msg)
     
     for anno_sequence, anno_im in annotations.items():
-        annotations_qc[anno_sequence], metadata, msg = process_MOMENI_anno(mris_qc[anno_sequence], com_list, msg)
-        annotations_metadata[anno_sequence] = metadata
-    
+        if args.reprocess_file is None:
+            annotations_qc[anno_sequence], metadata, msg = process_MOMENI_anno(mris_qc[anno_sequence], com_list, msg)
+            annotations_metadata[anno_sequence] = metadata
+        else:
+            annotations_qc[anno_sequence], metadata, msg = process_masks.reprocess_study(
+                study=subject, processed_dir=args.processed_dir, mapping_file=args.reprocess_file,
+                dataset=args.dataset_name, 
+                mri_im=mris_qc[anno_sequence], com_list=com_list, msg=msg)
+            annotations_metadata[anno_sequence] = metadata
+        
     return mris_qc, annotations_qc, annotations_metadata, msg
 
 
@@ -300,7 +307,7 @@ def load_MOMENI_data(args, subject, msg):
     sequences_raw, labels_raw, sequence_type, com_list, msg = load_MOMENI_raw(args.input_dir, subject, msg=msg, log_level="\t\t")
 
     # 2. Perform Quality Control and Data Cleaning
-    sequences_qc, labels_qc, labels_metadata, msg = perform_MOMENI_QC(subject, sequences_raw, labels_raw, com_list, msg)
+    sequences_qc, labels_qc, labels_metadata, msg = perform_MOMENI_QC(args, subject, sequences_raw, labels_raw, com_list, msg)
 
     # 3. Save plots for debugging
     utils_plt.generate_cmb_plots(
