@@ -4,4 +4,4 @@ Repository containing results of my MSc thesis done in collaboration with CEREBR
 
 
 
-NOTE: when project finished, restructure following: https://medium.com/analytics-vidhya/folder-structure-for-machine-learning-projects-a7e451a8caaa
+NOTE: THIS IS STILL WORK IN PROGRESS
