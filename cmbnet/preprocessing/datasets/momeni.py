@@ -383,7 +383,7 @@ def load_MOMENIsynth_data(args, subject, msg):
     sequences_raw, labels_raw, sequence_type, com_list, msg = load_MOMENIsynth_raw(args.input_dir, subject,  msg=msg, log_level="\t\t")
 
     # 2. Perform Quality Control and Data Cleaning
-    sequences_qc, labels_qc, labels_metadata, msg = perform_MOMENI_QC(subject, sequences_raw, labels_raw, com_list, msg)
+    sequences_qc, labels_qc, labels_metadata, msg = perform_MOMENI_QC(args, subject, sequences_raw, labels_raw, com_list, msg)
 
     # 3. Save plots for debugging
     utils_plt.generate_cmb_plots(

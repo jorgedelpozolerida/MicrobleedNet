@@ -260,8 +260,13 @@ def extract_im_specs(img):
 
 def get_sphere_df(csv_path, study, dataset):
     
-    df = pd.read_csv(csv_path, sep=";")
+    df = pd.read_csv(csv_path, sep=";", dtype=str)
     df = df[df['dataset'] == dataset]
+    df['x'] = df['x'].astype(int)
+    df['y'] = df['y'].astype(int)
+    df['z'] = df['z'].astype(int)
+    df['radius'] = df['radius'].astype(float) 
+    
 
     if "momeni" in dataset:
         subject = study.split('_')[0] + "_" + study.split('_')[1]

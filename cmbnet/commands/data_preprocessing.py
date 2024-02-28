@@ -288,7 +288,7 @@ def update_study_status(study_uid, new_status, msg, csv_log_filepath):
     '''
     # Prepare data to be appended to the CSV
     data = {'studyUID': [study_uid], 'status': [new_status], 'message': [msg]}
-    df = pd.DataFrame(data)
+    df = pd.DataFrame(data, dtype=str)
     
     # Append data to the CSV file
     df.to_csv(csv_log_filepath, mode='a', header=False, index=False, sep=';', quoting=1, quotechar='"')
@@ -415,8 +415,11 @@ def process_study(args, subject, msg=''):
                                 plots_path=utils_general.ensure_directory_exists(os.path.join(args.plots_path, "post")))
 
     msg += "\tCorrectly generated and saved CMB plots for study\n"
+    
+    # CMBs num check
+    if int(metadata_out['n_CMB_old']) != int(metadata_out['n_CMB_new']):
+        msg += "\t ISSUE: number of CMBs differ before and after preprocessing\n"
     return msg
-
 
 def process_single_study_worker(args, studies_pending: mp.Queue, studies_done: mp.Queue, processes_done: mp.Queue, worker_number: int):
     '''
@@ -574,10 +577,9 @@ def main(args):
 
     # Overwrite with failed studies
     if args.start_from_log is not None:
-        df_log = pd.read_csv(args.start_from_log, sep=";")
+        df_log = pd.read_csv(args.start_from_log, sep=";", dtype=str)
         df_log_fail = df_log[df_log['status'] == 'failed']
         unprocessed_studies = [s for s in subjects if s not in df_log['studyUID'].to_list()]
-        
         # Combine failed and unprocessed studies
         subjects_used = df_log_fail['studyUID'].to_list() + unprocessed_studies
         msg += f"Collected a total of {len(subjects_used)} subjects (Failed: {len(df_log_fail)}, Unprocessed: {len(unprocessed_studies)}) out of {len(subjects)} from log file {args.start_from_log}\n"
@@ -585,15 +587,14 @@ def main(args):
         
         if args.remove_studies:
             utils_general.confirm_action(f"Will delete {len(subjects)} studies if present already")
-            for stud in remove_studies:
+            for stud in subjects:
                 delete_study_files(args, stud)
                 msg += f"Succesfully deleted the following study: {stud}\n"
-            utils_general.write_to_log_file(msg, args.log_file_path)
 
     # Overwrite with give studies
     if args.studies is not None:
         if len(args.studies) == 1 and args.studies[0].endswith(".csv"):
-            df_filter = pd.read_csv(args.studies[0])
+            df_filter = pd.read_csv(args.studies[0], dtype=str)
             filter_studies = df_filter['studyUID'].to_list()
         else:
             filter_studies = args.studies
@@ -616,7 +617,7 @@ def main(args):
     # Parallelizing using multiprocessing or not
     try:
         process_all_studies(args, subjects)
-        df_results = pd.read_csv(args.csv_log_filepath, sep=";")
+        df_results = pd.read_csv(args.csv_log_filepath, sep=";", dtype=str)
         df_results_fail = df_results[df_results['status'] == 'failed']
         final_msg = "***********************************************\n" + \
         f"FINISHED PROCESSING OF DATASET {args.dataset_name}\n" + \
@@ -656,7 +657,7 @@ def parse_args():
                         help='Whether or not to show a progress bar')
     parser.add_argument('--reprocess_file', type=str, default=None, required=False,
                         help='Full path to the CSV with info for re-processing. If provided, the whole workflow of processing changes to REPROCESS')
-    parser.add_argument('--processed_dir', type=str, default=None, required=True,
+    parser.add_argument('--processed_dir', type=str, default=None, required=False,
                         help='Path to the processed input directory of dataset')
     return parser.parse_args()
 

@@ -605,12 +605,22 @@ def process_cmb_mask(label_im, msg, dataset_name="valdo", log_level="\t\t"):
             cmb_mask_dilated = binary_dilation(cmb_mask, structure=struct_elem, iterations=2).astype(np.uint8)
             cmb_mask_processed = binary_erosion(cmb_mask_dilated, structure=struct_elem, iterations=2).astype(np.uint8)
             
-            # Combine the processed CMB mask with the overall processed mask
+            # Label the processed CMB to find connected components
+            labeled_cmb, num_features_cmb = nd_label(cmb_mask_processed)
+            
+            if num_features_cmb > 1:
+                # If more than one CC is found, keep only the largest one
+                sizes = np.bincount(labeled_cmb.ravel())[1:]  # Exclude background size
+                largest_cc_label = np.argmax(sizes) + 1  # +1 because np.argmax starts at 0
+                cmb_mask_processed = (labeled_cmb == largest_cc_label).astype(np.uint8)
+            
+            # Combine the processed (and potentially filtered) CMB mask with the overall processed mask
             processed_data += cmb_mask_processed
-        msg += f"{log_level}Applied closing operation to every CMB\n"
+
+        msg += f"{log_level}Applied closing operation to every CMB and kept only the largest CC if more than one was created.\n"
 
     else:
-        # For other datasets, use the filled data without further processing
+        # For the "valdo" dataset, use the filled data without further processing
         processed_data = data_filled
 
     # Recalculate centers of mass, pixel counts, and radii after processing
@@ -707,10 +717,11 @@ def reprocess_study(study, processed_dir, mapping_file, dataset,
                     com_list: list, msg: str,
                     log_level="\t\t"):
     """
-    Re-Process annotations for dataset subject:
-    - Spherecreation 
+    Re-Process annotations for dataset subject by creating a sphere.
+    Radius is derived from:
+    - Manually set radius in "manual_fixes.csv" file 
     OR
-    - Region Growing reusing params from first execution
+    - Using Region Growing estimated radius from first run
     """
     # Get study metadata
     json_file = os.path.join(processed_dir, "Data", study, "Annotations_metadata", f"{study}_metadata.json")
@@ -721,9 +732,6 @@ def reprocess_study(study, processed_dir, mapping_file, dataset,
     map_df = loading.get_sphere_df(mapping_file, study, dataset)
     if map_df.shape[0] > 0:
         msg += f"{log_level}---- Study found in manual fixes mapping CSV ----\n"
-        has_correction = True
-    else:
-        has_correction = False
 
     # Compute size threshold and maximum distance in voxels
     size_th, max_dist_voxels = calculate_size_and_distance_thresholds(mri_im, max_dist_mm=10)
@@ -742,23 +750,20 @@ def reprocess_study(study, processed_dir, mapping_file, dataset,
         metadata_i = metadata_dict['CMBs_old'][str(i)]
         metadata_rg_i = metadata_i['region_growing']
         com_i = tuple(int(i) for i in metadata_i["CM"])
-
         assert com_i == com  # both are tuples
-        # print("--------------------------")
-        # print(f"{log_level}CMB: {i}\n")
-        # print(f"{log_level}\t{com}\n")
-        # print(f"{log_level}\t{has_correction}\n")
         map_temp = map_df[(map_df['x'] == com_i[0]) & (map_df['y'] == com_i[1]) & (map_df['z'] == com_i[2])]
-
 
         if map_temp.shape[0] == 1:
             radius = map_temp['radius'].item() / 2
+            msg += f"{log_level}\t\tWill use pre-set radius of {radius}\n"
+
         elif map_temp.shape[0] > 1:
             raise ValueError(f"Found several mapping rows for study: {study}")
         else:
             radius =  metadata_i['radius']
             if dataset == "dou":
                 radius = radius / 2
+            msg += f"{log_level}\t\tWill use RG radius of {radius}\n"
             
         processed_mask, metadata, msg = grow_3D_sphere(
             example_im=mri_im,  # nibabel object
@@ -806,7 +811,7 @@ def reprocess_study(study, processed_dir, mapping_file, dataset,
                 msg += f"{log_level}Warning: Dilated mask exceeds size threshold. Nothing done\n"
             else:
                 processed_mask = dilated_mask
-                msg += f"{log_level}Mask expanded by one layer, new size={n_pixels_dilated} voxels.\n"
+                msg += f"{log_level}\t\tMask expanded by one layer, new size={n_pixels_dilated} voxels.\n"
         radius = (3 * int(metadata['n_pixels']) / (4 * np.pi))**(1/3)
         met_sph = metadata
         msg += f"{log_level}\t\tSphere created with radius {radius}mm, size={np.sum(processed_mask)}\n"
