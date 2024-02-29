@@ -145,8 +145,11 @@ def get_datasets_metadata(dataset_dir, dataset_name):
 
 def main(args):
     all_datasets = os.listdir(args.datasets_dir)
-    datasets = args.datasets if args.datasets is not None else all_datasets
+    datasets = args.datasets if args.datasets else all_datasets
     assert set(datasets) <= set(all_datasets), "Some specified datasets are not in the datasets directory."
+
+    _logger.info(f"Will collect metadata from these datasets:")
+    print(datasets)
 
     all_metadata_studies = []
     all_metadata_cmb_old = []
@@ -176,6 +179,8 @@ def main(args):
     cmb_new_dataout = pd.concat(all_metadata_cmb_new)
     adjust_and_save_cmb_df(cmb_new_dataout, os.path.join(args.savedir, "cmb_new_overview.csv"), base_columns)
 
+    _logger.info(f"Succesfully saved CSVs in the following dataset:")
+    print(args.savedir)
 
 
 

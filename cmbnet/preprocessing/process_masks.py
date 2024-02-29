@@ -595,7 +595,7 @@ def process_cmb_mask(label_im, msg, dataset_name="valdo", log_level="\t\t"):
     # Initialize an empty mask for combining processed CMBs
     processed_data = np.zeros_like(data_filled)
 
-    # Perform erosion and dilation on each CMB separately for the "valdo" dataset
+    # Perform erosion and dilation on each CMB separately execpt for the "valdo" dataset
     if dataset_name != "valdo":
         struct_elem = generate_binary_structure(3, 1)
         for label_num in range(1, num_features + 1):
@@ -623,13 +623,30 @@ def process_cmb_mask(label_im, msg, dataset_name="valdo", log_level="\t\t"):
         # For the "valdo" dataset, use the filled data without further processing
         processed_data = data_filled
 
-    # Recalculate centers of mass, pixel counts, and radii after processing
+    # Recalculate centers of mass, pixel counts, and radii after processing ----
     labeled_array_processed, num_features_processed = nd_label(processed_data)
+
+    # Calculate centers of mass for each labeled feature
     com_list = center_of_mass(processed_data, labels=labeled_array_processed, index=np.arange(1, num_features_processed + 1))
     com_list = [(int(coord[0]), int(coord[1]), int(coord[2])) for coord in com_list]
-    pixel_counts = np.bincount(labeled_array_processed.ravel())[1:]
+
+    # Count pixels in each labeled region
+    pixel_counts = np.bincount(labeled_array_processed.ravel())[1:]  # Skip the background count
+
+    # Calculate radii for each labeled feature
     radii = [(3 * count / (4 * np.pi))**(1/3) for count in pixel_counts]
     radii = [round(r, ndigits=2) for r in radii]
+
+    # Identify indices where pixel_count is not 1, preserving only those entries
+    valid_indices = [i for i, count in enumerate(pixel_counts) if count != 1]
+
+    # Filter com_list and radii using valid_indices
+    com_list_filtered = [com_list[i] for i in valid_indices]
+    radii_filtered = [radii[i] for i in valid_indices]
+
+    # Update com_list and radii to the filtered versions
+    com_list = com_list_filtered
+    radii = radii_filtered
 
     # Convert the processed mask data back to a nibabel object
     processed_mask_nib = nib.Nifti1Image(processed_data, label_im.affine, label_im.header)
@@ -765,6 +782,10 @@ def reprocess_study(study, processed_dir, mapping_file, dataset,
                 radius = radius / 2
             msg += f"{log_level}\t\tWill use RG radius of {radius}\n"
             
+        if dataset == "momeni-synth" and radius > 3:
+            radius = 1
+            msg += f"{log_level}\t\tHarcoded to radius of {radius}\n"
+
         processed_mask, metadata, msg = grow_3D_sphere(
             example_im=mri_im,  # nibabel object
             seeds=seeds,
@@ -775,48 +796,20 @@ def reprocess_study(study, processed_dir, mapping_file, dataset,
             msg=msg
         )
 
-            # print(f"{log_level}\t\t{[connectivity, intensity_mode, diff_mode]}\n")
-
-            # if diff_mode == "relative":
-            #     range_temp = np.concatenate((np.arange(1e-3, 20, 0.05), np.arange(20, 100, 1), np.arange(100, 10000, 100)))
-            # else:
-            #     range_temp = np.arange(1e-3, 100, 0.05)
-
-            # processed_mask, metadata, msg_temp = region_growing_with_auto_tolerance(
-            #     volume=mri_im.get_fdata(),
-            #     seeds=seeds,
-            #     size_threshold=size_th,
-            #     max_dist_voxels=max_dist_voxels,
-            #     tolerance_values=range_temp,
-            #     connectivity=connectivity,
-            #     show_progress=True,
-            #     intensity_mode=intensity_mode,
-            #     diff_mode=diff_mode,
-            #     log_level=f"{log_level}\t\t",
-            #     msg=""
-            # )
-            # n_pixels = metadata['n_pixels']
-            # msg += msg_temp
-            # msg += f"{log_level}\t\tRe-run RG with '{connectivity}-conn', " \
-            #         f"'{intensity_mode}', '{diff_mode}', " \
-            #         f"size={n_pixels}.\n"
-
-            # # EXTRA: expand if only 1-4 voxels .TODO
+        # Expand if only 1-4 voxels to increase signal
         if 1 <= metadata['n_pixels'] <= 4:
             struct = generate_binary_structure(3, 1)  # 3D dilation, connectivity=1
-            dilated_mask = binary_dilation(processed_mask, structure=struct)
+            dilated_mask = binary_dilation(processed_mask, structure=struct, iterations=1)
             n_pixels_dilated = np.sum(dilated_mask)
             
             if n_pixels_dilated > size_th:
-                msg += f"{log_level}Warning: Dilated mask exceeds size threshold. Nothing done\n"
+                msg += f"{log_level}Dilated mask would exceed size threshold. Nothing done\n"
             else:
                 processed_mask = dilated_mask
                 msg += f"{log_level}\t\tMask expanded by one layer, new size={n_pixels_dilated} voxels.\n"
         radius = (3 * int(metadata['n_pixels']) / (4 * np.pi))**(1/3)
         met_sph = metadata
         msg += f"{log_level}\t\tSphere created with radius {radius}mm, size={np.sum(processed_mask)}\n"
-        # print(f"{log_level}\t\tSphere created with radius {radius}mm, size={np.sum(processed_mask)}\n")
-
 
         if np.any(final_processed_mask & processed_mask):
             msg += f"{log_level}\t\tCAUTION: Overlap detected at {com}\n" + \
@@ -827,7 +820,7 @@ def reprocess_study(study, processed_dir, mapping_file, dataset,
             "CM": com,
             "size": np.sum(processed_mask),
             "radius": round(radius, ndigits=2),
-            # "region_growing": met_rg,
+            "region_growing": metadata_rg_i,
             "sphere": met_sph
         }
 
