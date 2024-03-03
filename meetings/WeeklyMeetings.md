@@ -3,6 +3,7 @@
 * [05 February 2024](#date-05-february-2024)
 * [19 February 2024](#date-19-february-2024)
 * [26 February 2024](#date-26-february-2024)
+* [04 March 2024](#date-04-march-2024)
 
 <!-- *
 * [12 February 2024](#date-12-february-2024)
@@ -241,20 +242,33 @@ The following table provides an overview of the datasets, including the number o
 ### Date: 04 March 2024
 
 #### What did you achieve/do?
-* n/a
+* Selected 750 negative cases form internal data (not having CMBs supposedly)
+* Practically finished preprocessing for all datasets, debug some code error missing
+
 
 #### What did you struggle with?
-* n/a
+* Preprocessing takes incredibly lot of time, also since there are so many studies 
+and is very computationally demaning I need to do on server and parallellize everything, 
+which makes debugging very complex
 
 #### What would you like to work on next ?
-* n/a
+* Add Skull stripping to preprocessing pipeline (thinking of using SynthStrip model)
+* Run preprocessing again on everything with skull stripping
+* Implement Apollo (CEREBRIU's architecture) in ClearML
+* Pretrain on negative + synthetic + real with and without Apollo's weights initialized
 
 #### Where do you need help from Veronika?
-* n/a
+* What's your opinion on skull stripping? i wasn't sure whther to leave it as it is or keep brain only
 
 #### Others
 
-* n/a
+* Examples of how microbleeds look after all preprocessing pipeline:
+    - DOU dataset: [data-misc/img/03-CMB-2.png](../data-misc/img/03-CMB-2.png)
+    - RODEJA dataset: [data-misc/img/00006-CMB-0.png](../data-misc/img/00006-CMB-0.png)
+    - MOMENI dataset: [data-misc/img/122_T1_MRI_SWI_BFC_50mm_HM-CMB-1.png](../data-misc/img/122_T1_MRI_SWI_BFC_50mm_HM-CMB-1.png)
+    - MOMENI-synth: [data-misc/img/2_T2_MRI_SWI_BFC_50mm_HM_sCMB_V2-CMB-3.png](../data-misc/img/2_T2_MRI_SWI_BFC_50mm_HM_sCMB_V2-CMB-3.png)
+    - VALDO [data-misc/img/sub-101-CMB-12.png](../data-misc/img/sub-101-CMB-12.png)
+
 
 <br><br><br><br><br>
 
