@@ -645,7 +645,7 @@ def parse_args():
     parser.add_argument('--num_workers', type=int, default=5,
                             help='Number of workers running in parallel')
     parser.add_argument('--dataset_name', type=str, default=None, required=True, 
-                        choices=['valdo', 'cerebriu', 'momeni', 'momeni-synth', 'dou', 'rodeja'], 
+                        choices=['valdo', 'cerebriu', 'cerebriu-neg', 'momeni', 'momeni-synth', 'dou', 'rodeja'], 
                         help='Raw dataset name, to know what type of preprocessing is needed')
     parser.add_argument('--studies',  nargs='+', type=str, default=None, required=False,
                         help='Specific studies to process. If None, all processed')

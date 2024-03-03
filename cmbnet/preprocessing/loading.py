@@ -66,6 +66,11 @@ def get_dataset_subjects(dataset_name, input_dir):
         assert "CEREBRIU" in input_dir
         subjects = [d for d in os.listdir(input_dir) if os.path.isdir(os.path.join(input_dir, d))]
 
+    elif dataset_name == "cerebriu-neg":
+        assert "CEREBRIU-neg" in input_dir
+        datadir = os.path.join(input_dir, "Data")
+        subjects = [d for d in os.listdir(datadir) if os.path.isdir(os.path.join(datadir, d))]
+
     elif dataset_name == "momeni":
         assert "MOMENI" in input_dir
         mri_dir = os.path.join(input_dir, "data", "PublicDataShare_2020", "rCMB_DefiniteSubject")
@@ -201,6 +206,8 @@ def load_mris_and_annotations(args, subject, msg='', log_level='\t\t'):
         sequences_raw, labels_raw, labels_metadata, prim_seq, msg = dat_load.load_VALDO_data(args, subject, msg)
     elif args.dataset_name == "cerebriu":
         sequences_raw, labels_raw, labels_metadata, prim_seq, msg = dat_load.load_CEREBRIU_data(args, subject, msg)
+    elif args.dataset_name == "cerebriu-neg":
+        sequences_raw, labels_raw, labels_metadata, prim_seq, msg = dat_load.load_CEREBRIUneg_data(args, subject, msg)
     elif args.dataset_name == "dou":
         sequences_raw, labels_raw, labels_metadata, prim_seq, msg = dat_load.load_DOU_data(args, subject, msg)
     elif args.dataset_name == "momeni":

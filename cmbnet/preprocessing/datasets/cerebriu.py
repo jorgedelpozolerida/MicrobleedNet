@@ -225,13 +225,13 @@ def process_cerebriu_anno(args: Any,
     return processed_mask_nib, metadata, msg
 
 
-def process_cerebriu_mri(args, subject, mri_im, seq_folder, msg):
+def process_CEREBRIU_mri(args, subject, mri_im, seq_folder, msg):
 
     return mri_im, msg
 
 def perform_CEREBRIU_QC(args, subject, mris, annotations, seq_folder, msg):
     """
-    Perform Quality Control (QC) specific to the VALDO dataset on MRI sequences and labels.
+    Perform Quality Control (QC) specific to the CEREBRIU dataset on MRI sequences and labels.
 
     Args:
         args (Namespace): Arguments passed to the main function.
@@ -251,14 +251,13 @@ def perform_CEREBRIU_QC(args, subject, mris, annotations, seq_folder, msg):
 
     # Quality Control of MRI Sequences
     for mri_sequence, mri_im in mris.items():
-        mris_qc[mri_sequence], msg = process_cerebriu_mri(args, subject, mri_im, seq_folder, msg)
+        mris_qc[mri_sequence], msg = process_CEREBRIU_mri(args, subject, mri_im, seq_folder, msg)
     
     # Quality Control of Labels
     for anno_sequence, anno_im in annotations.items():
         annotations_qc[anno_sequence], metadata, msg = process_cerebriu_anno(args, subject, anno_im, mris_qc[anno_sequence], seq_folder, msg)
         annotations_metadata[anno_sequence] = metadata
 
-    
     return mris_qc, annotations_qc, annotations_metadata, msg
 
 
@@ -286,4 +285,113 @@ def load_CEREBRIU_data(args, subject, msg):
     
     
     
+    return sequences_qc, labels_qc, labels_metadata, sequence_type, msg
+
+
+
+##############################################################################
+###################               CEREBRIU - neg           ###################
+##############################################################################
+
+def load_CEREBRIUneg_raw(input_dir, study):
+    """
+    Load raw MRI and segmentation data for a given CEREBRIU-neg study.
+
+    Args:
+        input_dir (str): Directory containing the study subfolders.
+        study (str): Specific study identifier.
+
+    Returns:
+        Tuple[Dict, Dict, str, str]: Tuple containing dictionaries of raw MRI sequences and labels,
+                                        sequence type, and subfolder name.
+
+    Raises:
+        ValueError: If no files or multiple files are found where only one is expected.
+    """
+    mri_dir = os.path.join(input_dir, "Data", study)
+
+    # Find the CMB file in segmentations folder
+    mri_files = glob.glob(os.path.join(mri_dir, "*.nii.gz"))
+    print(mri_dir)
+    if not mri_files:
+        raise ValueError("No MRI files found")
+    elif len(mri_files) > 1:
+        raise ValueError(f"Multiple mri files found in {mri_dir}")
+
+    # Get the CMB file and determine corresponding MRI subfolder
+    mri_file = mri_files[0]
+    mri_filename = os.path.basename(mri_file).split('.')[0]  # Filename without extension
+
+    # Load Raw MRI Sequences and Labels
+    seq_type = mri_filename.split("_")[1]
+    mri_im = nib.load(mri_files[0])
+    sequences_raw = {seq_type: mri_im }
+    labels_raw = { 
+        # empty CMB mask
+        seq_type: nib.Nifti1Image(np.zeros_like(mri_im.get_fdata()), mri_im.affine, mri_im.header)
+        }
+
+    return sequences_raw, labels_raw, seq_type, mri_filename
+
+
+def perform_CEREBRIUneg_QC(args, subject, mris, annotations, sequence_type, msg):
+    """
+    Perform Quality Control (QC) specific to the CEREBRIU-neg dataset on MRI sequences and labels.
+
+    Args:
+        args (Namespace): Arguments passed to the main function.
+        subject (str): The subject identifier.
+        mris (dict): Dictionary of MRI sequences.
+        annotations (dict): Dictionary of labels.
+        msg (str): Log message.
+
+    Returns:
+        mris_qc (dict): Dictionary of QC'ed MRI sequences.
+        annotations_qc (dict): Dictionary of QC'ed labels.
+        annotations_metadata (dict): Metadata associated with the QC'ed labels.
+        msg (str): Updated log message.
+    """
+
+    mris_qc, annotations_qc, annotations_metadata = {}, {}, {}
+
+    # Quality Control of Labels
+    for anno_sequence, anno_im in annotations.items():
+        annotations_qc[anno_sequence], metadata, msg = process_masks.process_cmb_mask(anno_im, msg)
+        annotations_metadata[anno_sequence] = metadata
+
+    # Quality Control of MRI Sequences
+    for mri_sequence, mri_im in mris.items():
+        mris_qc[mri_sequence], msg = process_CEREBRIU_mri(args, subject, mri_im, None, msg)
+    
+    # Prepare metadta in correct format
+    metadata_out = {
+        sequence_type: {"healthy": "no" if annotations_metadata.get(sequence_type) else "yes",
+        "CMBs_old": annotations_metadata.get(sequence_type, {})}
+    }
+    
+    return mris_qc, annotations_qc, metadata_out, msg
+
+def load_CEREBRIUneg_data(args, subject, msg):
+    """
+    Load MRI sequences and labels specific to the CEREBRIU-neg dataset. 
+    Performs QC in the process.
+
+    Args:
+        args (Namespace): Command-line arguments or other configuration.
+        subject (str): The subject identifier.
+        msg (str): Log message.
+
+    Returns:
+        sequences_qc (dict): Dictionary of QC'ed MRI sequences.
+        labels_qc (dict): Dictionary of QC'ed labels.
+        labels_metadata (dict): Metadata associated with the labels.
+        msg (str): Updated log message.
+    """
+
+    # 1. Load raw data
+    sequences_raw, labels_raw, sequence_type, mri_filename = load_CEREBRIUneg_raw(args.input_dir, subject)
+
+    # 2. Perform Quality Control (QC) and Data Cleaning
+    sequences_qc, labels_qc, labels_metadata, msg = perform_CEREBRIUneg_QC(args, subject, sequences_raw, labels_raw, sequence_type, msg)
+        
     return sequences_qc, labels_qc, labels_metadata, sequence_type, msg

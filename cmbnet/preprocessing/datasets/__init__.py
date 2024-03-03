@@ -2,7 +2,7 @@ from cmbnet.preprocessing.datasets.valdo import (
     load_VALDO_data
 )
 from cmbnet.preprocessing.datasets.cerebriu import (
-    load_CEREBRIU_data
+    load_CEREBRIU_data, load_CEREBRIUneg_data
 )
 from cmbnet.preprocessing.datasets.dou import (
     load_DOU_data
