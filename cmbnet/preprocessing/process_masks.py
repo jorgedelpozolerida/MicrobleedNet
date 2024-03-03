@@ -596,7 +596,7 @@ def process_cmb_mask(label_im, msg, dataset_name="valdo", log_level="\t\t"):
     processed_data = np.zeros_like(data_filled)
 
     # Perform erosion and dilation on each CMB separately execpt for the "valdo" dataset
-    if dataset_name != "valdo":
+    if dataset_name not in  ["valdo", "rodeja"]:
         struct_elem = generate_binary_structure(3, 1)
         for label_num in range(1, num_features + 1):
             cmb_mask = (labeled_array == label_num)  # Isolate the current CMB

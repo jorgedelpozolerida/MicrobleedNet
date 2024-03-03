@@ -21,6 +21,7 @@ import nibabel as nib
 import time 
 from scipy.io import loadmat
 import glob
+import re
 from typing import List, Tuple
 import warnings
 import sys
@@ -88,13 +89,25 @@ def get_dataset_subjects(dataset_name, input_dir):
         if set(subjects_mri) == set(subjects_gt):
             subjects = subjects_mri
         else:
-            raise ValueError(f"Not all subjects contain annotations, check data")
+            raise ValueError("Not all subjects contain annotations, check data")
     elif dataset_name == "rodeja":
         assert "RODEJA" in input_dir
-        raise NotImplementedError
+        basedir = os.path.join(input_dir, "cmb_annotations")
+        masks = []
+        for sub in os.listdir(os.path.join(basedir, "Annotations")):
+            masks += os.listdir(os.path.join(basedir, "Annotations", sub))
+        subjects_gt =  [re.search(r'\d+', i.split(".")[0]).group() for i in masks]
+        mris = []
+        for sub in  ["cph_annotated", "cph_annotated_mip"]:
+            mris += os.listdir(os.path.join(basedir, sub, "images"))
+        subjects_mri =  [i.split(".")[0] for i in mris]
+        if set(subjects_mri) == set(subjects_gt):
+            subjects = subjects_mri
+        else:
+            raise ValueError("Not all subjects contain annotations, check data")
     else:
         raise NotImplementedError
-    
+
     check_for_duplicates(subjects)
 
     return subjects
@@ -195,8 +208,7 @@ def load_mris_and_annotations(args, subject, msg='', log_level='\t\t'):
     elif args.dataset_name == "momeni-synth":
         sequences_raw, labels_raw, labels_metadata, prim_seq, msg = dat_load.load_MOMENIsynth_data(args, subject, msg)
     elif args.dataset_name == "rodeja":
-        raise NotImplementedError
-        sequences_raw, labels_raw, labels_metadata,  msg = load_RODEJA_data(args, subject, msg)
+        sequences_raw, labels_raw, labels_metadata, prim_seq, msg = dat_load.load_RODEJA_data(args, subject, msg)
     else:
         # Implement here for other datasets
         raise NotImplementedError
