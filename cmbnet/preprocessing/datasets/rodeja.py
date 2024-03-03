@@ -32,6 +32,9 @@ import cmbnet.visualization.utils_plotting as utils_plt
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 
+import warnings
+warnings.filterwarnings("ignore", message="The provided image has no sform in its header. Please check the provided file. Results may not be as expected.")
+
 ##############################################################################
 ###################              RODEJA/HERSLEV           ###################
 ##############################################################################

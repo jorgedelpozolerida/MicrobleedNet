@@ -312,7 +312,6 @@ def load_CEREBRIUneg_raw(input_dir, study):
 
     # Find the CMB file in segmentations folder
     mri_files = glob.glob(os.path.join(mri_dir, "*.nii.gz"))
-    print(mri_dir)
     if not mri_files:
         raise ValueError("No MRI files found")
     elif len(mri_files) > 1:
@@ -320,10 +319,11 @@ def load_CEREBRIUneg_raw(input_dir, study):
 
     # Get the CMB file and determine corresponding MRI subfolder
     mri_file = mri_files[0]
-    mri_filename = os.path.basename(mri_file).split('.')[0]  # Filename without extension
+    mri_filename = os.path.basename(mri_file).split('/')[-1]
 
     # Load Raw MRI Sequences and Labels
     seq_type = mri_filename.split("_")[1]
+    # print(f"....................\n{mri_file}\n{mri_filename}\n{seq_type}\n")
     mri_im = nib.load(mri_files[0])
     sequences_raw = {seq_type: mri_im }
     labels_raw = { 
