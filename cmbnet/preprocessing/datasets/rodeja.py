@@ -39,7 +39,7 @@ warnings.filterwarnings("ignore", message="The provided image has no sform in it
 ###################              RODEJA/HERSLEV           ###################
 ##############################################################################
 
-def find_single_file(pattern, search_path):
+def find_macthing_files(pattern, search_path):
     """
     Find a single file matching a pattern in the given directory or its subdirectories.
 
@@ -56,12 +56,7 @@ def find_single_file(pattern, search_path):
     matches = []
     for root, dirs, files in os.walk(search_path):
         matches.extend(os.path.join(root, file) for file in files if pattern in file)
-    if len(matches) == 1:
-        return matches[0]
-    elif len(matches) > 1:
-        raise ValueError(f"More than one match found for {pattern}")
-    else:
-        raise ValueError(f"No matches found for {pattern}")
+    return matches
 
 def load_RODEJA_raw(input_dir: str, study: str, msg: str, log_level: str) -> Tuple[Dict[str, nib.Nifti1Image], Dict[str, nib.Nifti1Image], str, List[dict], str]:
     """
@@ -70,27 +65,26 @@ def load_RODEJA_raw(input_dir: str, study: str, msg: str, log_level: str) -> Tup
     seq_type = "SWI"
     
     annotations_dir = os.path.join(input_dir, "cmb_annotations", "Annotations")
-    mri_dirs = [os.path.join(input_dir, "cmb_annotations", sub) for sub in ["cph_annotated", "cph_annotated_mpi"]]
+    mri_dirs = [os.path.join(input_dir, "cmb_annotations", sub, "images") for sub in ["cph_annotated", "cph_annotated_mip"]]
 
     # Load Raw Labels (Segmentation Masks)
     labels_raw = {}
-    label_filepath = find_single_file(f"{study}mask.nii", annotations_dir)
-    im_anno = nib.load(label_filepath)
+    label_filepaths = find_macthing_files(f"{study}mask.nii", annotations_dir)
+    assert len(label_filepaths) == 1, f"More or no label files found: {label_filepaths}"
+    im_anno = nib.load(label_filepaths[0])
     im_anno_modified, cmb_info = process_rawmask_rodeja(im_anno)
     labels_raw[seq_type] = im_anno_modified
-
 
     assert labels_raw, f"{log_level}Label not found for subject: {study}"
 
     sequences_raw = {}
     # Load Raw MRI Sequences
+    mri_filepaths = []
     for mri_dir in mri_dirs:
-        try:
-            if sequence_file_path := find_single_file(f"{study}.nii.gz", mri_dir):
-                sequences_raw[seq_type] = nib.load(sequence_file_path)
-                break
-        except Exception as e:
-            msg += f"{log_level}MRI sequence not found for subject: {study}. Error: {e}\n"
+        mri_filepaths += find_macthing_files(f"{study}.nii.gz", mri_dir)
+    
+    assert len(mri_filepaths) == 1, f"More or no label files found: {mri_filepaths}"
+    sequences_raw[seq_type] = nib.load(mri_filepaths[0])
 
     assert sequences_raw, f"{log_level}MRI sequence not found for subject: {study}"
 
@@ -227,7 +221,7 @@ def load_RODEJA_data(args, subject, msg):
         labels_metadata (dict): Metadata associated with the labels.
         msg (str): Updated log message.
     """
-    # 1. Load Raw Annotaitons and MRI Sequences
+    # 1. Load Raw Annotations and MRI Sequences
     sequences_raw, labels_raw, seq_type, cmb_info, msg = load_RODEJA_raw(args.input_dir, subject,
                                                                             msg, log_level="\t\t")
 
