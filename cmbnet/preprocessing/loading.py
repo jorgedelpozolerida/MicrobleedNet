@@ -118,7 +118,6 @@ def get_dataset_subjects(dataset_name, input_dir):
     return subjects
 
 
-
 def process_coordinates(com_list: List[Tuple[int, int, int]], msg: str = "", log_level: str = "\t   t") -> Tuple[List[Tuple[int, int, int]], str]:
     """
     Processes a list of 3D coordinates to ensure uniqueness and checks for coordinates with minimal differences.
@@ -177,6 +176,14 @@ def convert_numpy(obj):
         return np.timedelta64(obj, 'ms').astype('timedelta64[ms]').astype('int64')
     return obj
 
+def extract_im_specs(img):
+    return {
+        'shape': img.shape,
+        'voxel_dim': img.header.get_zooms(),
+        'orientation': nib.aff2axcodes(img.affine),
+        'data_type': img.header.get_data_dtype().name,
+    }
+    
 
 def load_mris_and_annotations(args, subject, msg='', log_level='\t\t'):
     '''
@@ -203,75 +210,30 @@ def load_mris_and_annotations(args, subject, msg='', log_level='\t\t'):
     start = time.time()
 
     if args.dataset_name == "valdo":
-        sequences_raw, labels_raw, labels_metadata, prim_seq, msg = dat_load.load_VALDO_data(args, subject, msg)
+        sequences_raw, labels_raw, nifti_paths, labels_metadata, prim_seq, msg = dat_load.load_VALDO_data(args, subject, msg)
     elif args.dataset_name == "cerebriu":
-        sequences_raw, labels_raw, labels_metadata, prim_seq, msg = dat_load.load_CEREBRIU_data(args, subject, msg)
+        sequences_raw, labels_raw, nifti_paths, labels_metadata, prim_seq, msg = dat_load.load_CEREBRIU_data(args, subject, msg)
     elif args.dataset_name == "cerebriu-neg":
-        sequences_raw, labels_raw, labels_metadata, prim_seq, msg = dat_load.load_CEREBRIUneg_data(args, subject, msg)
+        sequences_raw, labels_raw, nifti_paths, labels_metadata, prim_seq, msg = dat_load.load_CEREBRIUneg_data(args, subject, msg)
     elif args.dataset_name == "dou":
-        sequences_raw, labels_raw, labels_metadata, prim_seq, msg = dat_load.load_DOU_data(args, subject, msg)
+        sequences_raw, labels_raw, nifti_paths, labels_metadata, prim_seq, msg = dat_load.load_DOU_data(args, subject, msg)
     elif args.dataset_name == "momeni":
-        sequences_raw, labels_raw, labels_metadata, prim_seq, msg = dat_load.load_MOMENI_data(args, subject, msg)
+        sequences_raw, labels_raw, nifti_paths, labels_metadata, prim_seq, msg = dat_load.load_MOMENI_data(args, subject, msg)
     elif args.dataset_name == "momeni-synth":
-        sequences_raw, labels_raw, labels_metadata, prim_seq, msg = dat_load.load_MOMENIsynth_data(args, subject, msg)
+        sequences_raw, labels_raw, nifti_paths, labels_metadata, prim_seq, msg = dat_load.load_MOMENIsynth_data(args, subject, msg)
     elif args.dataset_name == "rodeja":
-        sequences_raw, labels_raw, labels_metadata, prim_seq, msg = dat_load.load_RODEJA_data(args, subject, msg)
+        sequences_raw, labels_raw, nifti_paths, labels_metadata, prim_seq, msg = dat_load.load_RODEJA_data(args, subject, msg)
     else:
         # Implement here for other datasets
         raise NotImplementedError
-
-    im_specs = extract_im_specs(sequences_raw[prim_seq])
-    mris = {}
-    annotations = {}
-
-    # Fill MRIs dict
-    for sequence_name in sequences_raw:
-        mris[sequence_name] = sequences_raw[sequence_name]
-        msg += f'{log_level}\tFound {sequence_name} MRI sequence of shape {mris[sequence_name].shape}\n'
-
-        # fix orientation and data type
-        mris[sequence_name] = nib.as_closest_canonical(mris[sequence_name])
-        mris[sequence_name].set_data_dtype(np.float32) 
-
-        orientation = nib.aff2axcodes(mris[sequence_name].affine)
-        if orientation != ('R', 'A', 'S'):
-            raise ValueError("Image does not have RAS orientation.")
-
-    assert prim_seq in mris
-
-    # Fill annotations dict
-    for sequence_name in sequences_raw:
-        if sequence_name in labels_raw.keys():
-            annotations[sequence_name] = labels_raw[sequence_name]
-            msg += f'{log_level}\tFound {sequence_name} annotation of shape {annotations[sequence_name].shape}\n'
-        else:
-            annotations[sequence_name] = nib.Nifti1Image(np.zeros(shape=mris[prim_seq].shape),
-                                                    affine=mris[prim_seq].affine,
-                                                    header=mris[prim_seq].header)
-            msg += f'{log_level}\tMissing {sequence_name} annotation, filling with 0s\n'
-
-        # fix orientation adn data type
-        annotations[sequence_name] = nib.as_closest_canonical(annotations[sequence_name])
-        annotations[sequence_name].set_data_dtype(np.uint8)
-
-        orientation = nib.aff2axcodes(annotations[sequence_name].affine)
-
-        if orientation != ('R', 'A', 'S'):
-            raise ValueError("Image does not have RAS orientation.")
+    
+    im_specs_orig = extract_im_specs(sequences_raw[prim_seq])
 
     end = time.time()
     msg += f'{log_level}\tLoading of MRIs and annotations took {end - start} seconds!\n\n'
 
-    return mris, annotations, labels_metadata, im_specs, prim_seq, msg
+    return sequences_raw, labels_raw, nifti_paths, labels_metadata, im_specs_orig, prim_seq, msg
 
-
-def extract_im_specs(img):
-    return {
-        'shape': img.shape,
-        'voxel_dim': img.header.get_zooms(),
-        'orientation': nib.aff2axcodes(img.affine),
-        'data_type': img.header.get_data_dtype().name,
-    }
 
 ###############################################################################
 # Re-processing
@@ -294,7 +256,6 @@ def get_sphere_df(csv_path, study, dataset):
 
     return df[df['studyUID'] == subject]
 
-    
 
 
 ###############################################################################

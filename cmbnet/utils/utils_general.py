@@ -21,6 +21,7 @@ import numpy as np
 import pandas as pd
 from datetime import datetime as dt
 import json
+import nibabel as nib
 
 
 logging.basicConfig(level=logging.INFO)
@@ -68,3 +69,25 @@ def read_json_to_dict(file_path):
     except Exception as e:
         print(f"Error reading the JSON file: {e}")
         return None
+    
+    
+def create_nifti(data, affine, header, is_annotation=False):
+    '''
+    Creates Nifti1Image given data array, header and affine matrix.
+    Args:
+        data (np.ndarray): Input data array.
+        affine (np.ndarray): Affine matrix.
+        header (nib.Nifti1Header): Header.
+        is_annotation (bool): Whether image is an annotation or not.
+    Returns:
+        image (nib.Nifti1Image): Created Nifti1Image.
+    '''
+    if is_annotation:
+        image = nib.Nifti1Image(data.astype(np.uint8), affine=affine, header=header)
+        image.set_data_dtype(np.uint8)
+
+    else:
+        image = nib.Nifti1Image(data.astype(np.float32), affine=affine, header=header)
+        image.set_data_dtype(np.float32)
+
+    return image

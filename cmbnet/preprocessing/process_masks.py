@@ -30,10 +30,14 @@ from kneed import KneeLocator
 from typing import List, Tuple
 import warnings
 import json
+import numpy.linalg as npl
+from nibabel.affines import apply_affine
+
 warnings.filterwarnings("ignore", category=RuntimeWarning, module='kneed')
 
 
 import cmbnet.preprocessing.loading as loading
+import cmbnet.utils.utils_general as utils_gen
 
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
@@ -86,8 +90,6 @@ def get_brain_mask(image):
     mask = binary_dilation(mask, iterations=5, structure=struct)
 
     return mask
-
-
 
 ##############################################################################
 ###################            Region Growing              ###################
@@ -218,116 +220,6 @@ def region_growing_3d_seed(volume, seed_points, tolerance, size_threshold,
     return region, stop_signal
 
 
-# def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_voxels,
-#                                         tolerance_values, connectivity=26, 
-#                                         intensity_mode="point", show_progress=False, 
-#                                         diff_mode="normal",
-#                                         log_level="\t\t\t", msg=""):
-#     """ 
-#     Calculates results for several tolerance values and yields optimal based on 
-#     elbow-method
-#     """
-#     grown_regions = []
-#     len_list = []
-
-#     # Loop over the tolerance values and perform region growing
-#     iterator = tolerance_values
-#     if show_progress:
-#         iterator = tqdm(tolerance_values, desc="Looping over tolerances")
-
-#     for tolerance in iterator:
-#         grown_region, exceeded = region_growing_3d_seed(volume, seeds, tolerance,
-#                                                         size_threshold, max_dist_voxels, 
-#                                                         connectivity,  intensity_mode,
-#                                                         diff_mode)
-#         grown_regions.append(grown_region)
-#         len_list.append(np.sum(grown_region))
-
-#         # Do not continue if max size exceeded
-#         if exceeded:
-#             break  # Exit if the size threshold is exceeded
-
-#     # Determine the selected tolerance based on the sudden rise (exceeded signal)
-#     tolerances = tolerance_values[:len(len_list)]
-#     knee_locator = KneeLocator(tolerances, len_list, curve='convex', direction='increasing', interp_method='interp1d')
-
-#     if knee_locator.knee is None:
-#         msg += f"{log_level}Knee could not be found, selecting second to last tolerance\n"
-#         selected_tolerance = tolerances[-2]  # or any default tolerance
-#     else:
-#         selected_tolerance = knee_locator.knee
-#     knee_index = np.where(tolerances == selected_tolerance)[0][0]
-
-#     selected_tolerance_index = knee_index
-#     selected_mask = grown_regions[selected_tolerance_index]
-    
-#     # -------------------- Cleaning of mask ----------------------------------
-    
-#     # Define the structure for dilation and erosion based on connectivity
-#     connectivity_struct = 1
-#     struct = generate_binary_structure(volume.ndim, connectivity_struct)
-    
-#     # Initialize erosion counter
-#     erosion_iterations = 0
-#     eroded_mask = np.copy(selected_mask)  # Start with the selected mask
-
-#     # Ensure there's more than 1 voxel to erode
-#     if np.sum(selected_mask) > 1:  
-#         for _ in range(4):  # Attempt up to 2 iterations of erosion
-#             # Perform an erosion iteration
-#             temp_eroded_mask = binary_erosion(eroded_mask, structure=struct)
-            
-#             # Label the eroded mask to identify connected components
-#             labeled_mask, num_features = nd_label(temp_eroded_mask)
-            
-#             # Calculate the size of each connected component
-#             component_sizes = np.bincount(labeled_mask.ravel())[1:]  # Exclude background
-            
-#             # Check if any component is reduced to a size of 1 voxel
-#             if np.any(component_sizes == 1):
-#                 break  # Stop erosion if any component is reduced to 1 voxel
-#             elif np.sum(temp_eroded_mask) >= 1:
-#                 eroded_mask = temp_eroded_mask
-#                 erosion_iterations += 1  # Increment erosion counter
-#             else:
-#                 break  # Stop erosion if it would result in no voxels
-
-
-#     # Label the connected components
-#     labeled_mask, num_features = nd_label(eroded_mask, structure=struct)
-
-#     # Calculate mean position of seeds
-#     seeds_mean_position = np.mean(seeds, axis=0)
-
-#     # If there are multiple features, select the one closest to the mean of seeds positions
-#     if num_features > 1:
-#         # Calculate center of mass for each feature
-#         centers_of_mass = center_of_mass(eroded_mask, labeled_mask, range(1, num_features + 1))
-
-#         # Calculate distances from each center of mass to the mean of seeds positions
-#         distances = [np.linalg.norm(np.array(com) - seeds_mean_position) for com in centers_of_mass]
-
-#         # Select the label with the minimum distance
-#         closest_label = np.argmin(distances) + 1  # +1 because labels start from 1
-#         cleaned_mask = (labeled_mask == closest_label)
-#         msg += f"{log_level}Selected CC closest to seeds mean position. Num of CC: {len(centers_of_mass)}\n"
-#     else:
-#         cleaned_mask = eroded_mask
-
-#     # Now, apply dilation to the cleaned_mask with the same number of iterations as erosion
-#     closed_mask = binary_dilation(cleaned_mask, structure=struct, iterations=erosion_iterations)
-
-#     # Metadata
-#     metadata = {
-#         'n_pixels': np.sum(closed_mask),
-#         'tolerance_selected': selected_tolerance,
-#         'tolerance_pixel_counts': len_list, 
-#         'tolerances_inspected': len(len_list), # total number of tolerances visited
-#         'elbow_i': knee_index, # index taken
-#         'elbow2end_tol': len_list[knee_index-1:] # sizes of last elements
-#     }
-#     return cleaned_mask, metadata, msg
-
 def calculate_sphericity(mask):
     """
     Calculates the sphericity of a 3D mask.
@@ -406,13 +298,6 @@ def region_growing_with_auto_tolerance(volume, seeds, size_threshold, max_dist_v
     # Define the structure for dilation and erosion based on connectivity
     struct = generate_binary_structure(volume.ndim, 1)
     
-    # # Perform one final dilation and then erosion (closing)
-    # closed_mask = binary_dilation(selected_mask, structure=struct, iterations=4)
-    # closed_mask = binary_erosion(closed_mask, structure=struct, iterations=4)
-    
-    # # Fill holes in the mask to ensure it's solid
-    # closed_mask = binary_fill_holes(closed_mask, structure=struct)
-
     # Label the connected components
     labeled_mask, num_features = nd_label(selected_mask, structure=struct)
 
@@ -649,7 +534,9 @@ def process_cmb_mask(label_im, msg, dataset_name="valdo", log_level="\t\t"):
     radii = radii_filtered
 
     # Convert the processed mask data back to a nibabel object
-    processed_mask_nib = nib.Nifti1Image(processed_data, label_im.affine, label_im.header)
+    processed_mask_nib = utils_gen.create_nifti(
+        processed_data, label_im.affine, label_im.header, is_annotation=True
+    )
 
     # Update the log message
     msg += f"{log_level}Number of processed CMBs: {num_features_processed}, Unique labels: {unique_labels}, Counts: {counts}\n"
@@ -832,3 +719,121 @@ def reprocess_study(study, processed_dir, mapping_file, dataset,
 
     return annotation_processed_nib, metadata_out, msg
 
+def add_sphere_to_mask(mask, com, shape, voxel_size_mm, radius_mm):
+    # Calculate the radius in voxels
+    radius_voxels = int(np.round(radius_mm / voxel_size_mm))
+    
+    # Create a spherical structuring element
+    struct_elem = ball(radius_voxels)
+    
+    # Ensure the center of mass is within the mask bounds
+    if all(0 <= idx < dim for idx, dim in zip(com, shape)):
+        # Get bounding box indices for the sphere to be placed
+        slices = tuple(slice(max(0, c - radius_voxels), min(s, c + radius_voxels + 1)) 
+                        for c, s in zip(com, mask.shape))
+        # Generate a temporary mask to place the sphere
+        temp_mask = np.zeros_like(mask, dtype=bool)
+        temp_mask[slices] = struct_elem[:temp_mask[slices].shape[0], 
+                                        :temp_mask[slices].shape[1], 
+                                        :temp_mask[slices].shape[2]]
+        # Combine the temporary mask with the existing mask
+        mask |= temp_mask
+    
+    return mask
+
+
+def prune_CMBs(args, annotations, annotations_resampled, labels_metadata, primary_seq, msg, log_level):
+    """
+    Prunes CMBs for the "rodeja" dataset by applying an affine transformation to centers of mass,
+    filtering based on new positions, and pruning resampled annotations based on overlap with a mask filter.
+
+    Parameters:
+    args (Namespace): Command-line arguments or other configuration with 'dataset_name'.
+    annotations (dict): Original annotations by sequence type.
+    annotations_resampled (dict): Resampled annotations by sequence type.
+    labels_metadata (dict): Metadata for labels, including 'CMBs_old'.
+    primary_seq (str): Key for primary sequence type in annotations.
+    msg (str): Log message to be updated throughout the operation.
+    log_level: 
+
+    Returns:
+    Tuple containing updated annotations (with pruned CMBs), modified labels_metadata, and an updated msg.
+    """
+    # Skip if dataset is not 'rodeja'
+    if args.dataset_name != "rodeja":
+        return annotations_resampled, labels_metadata, msg
+    
+    # Affine transformations
+    affine_before = annotations[primary_seq].affine
+    affine_after = annotations_resampled[primary_seq].affine
+    original2resample = npl.inv(affine_after).dot(affine_before)
+
+    # Debugging prints
+    # print(f"Affine before: {affine_before}\nAffine after: {affine_after}\nTransform: {original2resample}")
+
+    metadata_study = labels_metadata[primary_seq]["CMBs_old"].copy()
+
+    # Create a mask filter based on transformed centers of mass
+    cmb_data = annotations_resampled[primary_seq].get_fdata()
+    mask_filter_COM = np.zeros_like(cmb_data, dtype=bool)
+    mask_filter = np.zeros_like(cmb_data, dtype=bool)
+
+    msg_temp = ""
+    for cmb_id, cmb_meta in metadata_study.items():
+        com = cmb_meta['CM']
+        new_com = apply_affine(original2resample, np.array(com))
+        new_com = tuple(map(int, new_com))
+        # print(f"Before: {com}, After: {new_com}")
+        
+        if all(0 <= idx < dim for idx, dim in zip(new_com, mask_filter.shape)):
+            mask_filter_COM[new_com] = True
+            mask_filter = add_sphere_to_mask(mask_filter, new_com, mask_filter.shape, 1, 3)
+        else:
+            msg_temp += f"{log_level}\tOut-of-bounds coordinate: {new_com} (old: {com}).\n"
+
+
+    # Prune based on mask filter
+    processed_data = np.zeros_like(cmb_data, dtype=bool)
+    labeled_array, num_features = nd_label(cmb_data > 0)
+    cmb_count_before = num_features
+    
+    for i in range(1, num_features + 1):
+        cmb_mask = (labeled_array == i)
+        if np.any(cmb_mask & mask_filter):
+            processed_data |= cmb_mask
+
+    # After processing the data, check COM inclusion in the processed mask
+    hit_coms = np.argwhere(processed_data & mask_filter_COM)
+    hit_com_ids = set()  # To store IDs of COMs that were hit
+
+    # Check each transformed COM against hit_coms to find matches
+    for cmb_id, cmb_meta in metadata_study.items():
+        com = cmb_meta['CM']
+        new_com = apply_affine(original2resample, np.array(com))
+        new_com = tuple(map(int, new_com))
+        
+        if new_com in hit_coms:
+            hit_com_ids.add(cmb_id)
+
+    missed_coms = [cmb_id for cmb_id in metadata_study if cmb_id not in hit_com_ids]
+    if missed_coms:
+        msg += f"{log_level} Centers of mass not hit in processed mask: {len(missed_coms)} missed.\n"
+    else:
+        msg += f"{log_level} All centers of mass were hit in processed mask.\n"
+
+    # FINALIZE
+    cmb_count_after = nd_label(processed_data)[1]
+    
+    msg += f"{log_level}Pruned from {cmb_count_before} CMBs to {cmb_count_after}.\n"
+    msg += msg_temp
+
+    annotations_pruned = utils_gen.create_nifti(
+        processed_data, 
+        affine=annotations_resampled[primary_seq].affine,
+        header=annotations_resampled[primary_seq].header,
+        is_annotation=True
+        )
+    
+    labels_metadata_modified = labels_metadata.copy()  # Placeholder for actual metadata modifications
+
+    return {primary_seq: annotations_pruned}, labels_metadata_modified, msg

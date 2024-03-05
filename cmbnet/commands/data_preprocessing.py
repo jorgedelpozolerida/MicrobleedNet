@@ -52,12 +52,14 @@ import pandas as pd
 import shutil
 import threading
 import csv
+import subprocess
 
 # Define a lock for thread synchronization
 csv_lock = threading.Lock()
 
 # Utils
 import cmbnet.preprocessing.loading as loading
+import cmbnet.preprocessing.processing_steps as process_steps
 import cmbnet.preprocessing.process_masks as process_masks
 import cmbnet.utils.utils_general as utils_general
 import cmbnet.visualization.utils_plotting as utils_plt
@@ -74,197 +76,8 @@ logger_nib.setLevel(logging.CRITICAL)
 
 
 ##############################################################################
-###################            PROCESSING STEPS            ###################
+###################                 OTHERS                 ###################
 ##############################################################################
-
-def resample(source_image, target_image, interpolation, is_annotation=False,
-            isotropic=False, source_sequence=None, target_sequence=None, msg='', 
-            log_level="\t\t"):
-    '''
-    Resamples source image to target image (no registration is performed).
-    Args:
-        source_image (nib.Nifti1Image): Source image being resampled.
-        target_image (nib.Nifti1Image): Target image to which source is being resampled to.
-        interpolation (str): Resampling method (one of nearest, linear and continuous).
-        is_annotation (bool): Whether the source image is an annotation.
-        isotropic (bool): Whether to resample to isotropic (uses only source image).
-        source_sequence (str)(optional): Source sequence (for logging purposes only).
-        target_sequence (str)(optional): Target sequence (for logging purposes only).
-        msg (str)(optional): Log message.
-    Returns:
-        resampled_image (nib.Nifti1Image): Resampled source image.
-        msg (str): Log message.
-    '''
-    if isotropic:
-        msg += f'{log_level}Resampling {source_sequence} MRI to isotropic of voxel size {args.voxel_size} using {interpolation} interpolation...\n'
-        msg += f'{log_level}\tShape before resampling: {source_image.shape}\n'
-
-        desired_voxel_size = float(args.voxel_size)
-        isotropic_affine = np.diag([desired_voxel_size, desired_voxel_size, desired_voxel_size])
-        resampled_image = resample_img(source_image, target_affine=isotropic_affine,
-                                        interpolation=interpolation,
-                                        fill_value=np.min(source_image.get_fdata()),
-                                        order='F')
-
-    elif is_annotation:
-        msg += f'{log_level}Resampling {source_sequence} annotation to {target_sequence} using {interpolation} interpolation...\n'
-        msg += f'{log_level}\tShape before resampling: {source_image.shape}\n'
-
-        if interpolation == 'nearest':
-            resampled_image = resample_to_img(source_image, target_image,
-                                                interpolation=interpolation,
-                                                fill_value=0)
-
-        elif interpolation == 'linear':
-            resampled_image = np.zeros(target_image.shape, dtype=np.float32)
-
-            unique_labels = np.rint(np.unique(source_image.get_fdata()))
-            for unique_label in unique_labels:
-
-                annotation_binary = nib.Nifti1Image(
-                    (np.rint(source_image.get_fdata()) == unique_label).astype(np.float32),
-                    source_image.affine, source_image.header)
-
-                annotation_binary = resample_to_img(annotation_binary, target_image,
-                                                    interpolation=interpolation, fill_value=0)
-
-                resampled_image[annotation_binary.get_fdata() >= 0.5] = unique_label
-
-            resampled_image = nib.Nifti1Image(resampled_image, affine=annotation_binary.affine,
-                                                header=annotation_binary.header)
-
-    else:
-        msg += f'{log_level}Resampling {source_sequence} MRI to {target_sequence} using {interpolation} interpolation...\n'
-        msg += f'{log_level}\tShape before resampling: {source_image.shape}\n'
-
-        resampled_image = resample_to_img(source_image, target_image, interpolation=interpolation,
-                                            fill_value=np.min(source_image.get_fdata()))
-
-    msg += f'{log_level}Shape after resampling: {resampled_image.shape}\n'
-
-    return resampled_image, msg
-
-def resample_mris_and_annotations(mris, annotations, primary_sequence, isotropic, msg=''):
-    '''
-    Resamples MRIs and annotations to primary sequence space.
-    Args:
-        mris (dict): Dictionary of MRIs.
-        annotations (dict): Dictionary of annotations.
-        primary_sequence (str): Sequence to which other sequences are being resampled to.
-        isotropic (bool): Whether to resample to isotropic (uses only source image).
-        msg (str)(optional): Log message.
-    Returns:
-        mris (dict): Dictionary of resampled MRIs.
-        annotations (dict): Dictionary of resampled annotations.
-        msg (str): Log message.
-    '''
-    msg += '\tResampling MRIs and annotations maps...\n'
-
-    start = time.time()
-
-    if isotropic:
-        mris[primary_sequence], msg = resample(source_image=mris[primary_sequence],
-                                                target_image=None,
-                                                interpolation='linear',
-                                                isotropic=True,
-                                                source_sequence=primary_sequence,
-                                                target_sequence=primary_sequence, msg=msg)
-    for sequence in mris:
-        # resample MRI
-        if sequence != primary_sequence:
-            mris[sequence], msg = resample(source_image=mris[sequence],
-                                            target_image=mris[primary_sequence],
-                                            interpolation='continuous',
-                                            source_sequence=sequence,
-                                            target_sequence=primary_sequence, msg=msg)
-        # resample annotation
-        annotations[sequence], msg = resample(source_image=annotations[sequence],
-                                                target_image=mris[primary_sequence],
-                                                interpolation='nearest', # bcs binary mask
-                                                # interpolation='linear',
-                                                is_annotation=True,
-                                                source_sequence=sequence,
-                                                target_sequence=primary_sequence, msg=msg)
-
-    end = time.time()
-    msg += f'\t\tResampling of MRIs and annotations took {end - start} seconds!\n\n'
-
-    return mris, annotations, msg
-
-
-def crop_and_concatenate(mris, annotations, primary_sequence, save_sequence_order, msg=''):
-    '''
-    Crops and concatenates MRIs and annotations to non-zero region.
-    Args:
-        mris (nib.Nifti1Image): Input MRIs.
-        annotations (nib.Nifti1Image): Input annotations.
-        primary_sequence (str): Sequence to which other sequences are being resampled to.
-        save_sequence_order ([str]): Save sequence order.
-        msg (str)(optional): Log message.
-    Returns:
-        cropped_mris (np.ndarray): Cropped MRIs array.
-        cropped_annotations (np.ndarray): Cropped annotations array.
-        msg (str): Log message.
-    '''
-    msg += '\tCropping and concatenating MRIs and annotations...\n'
-
-    start = time.time()
-
-    # get brain mask from primary sequence
-    mask = process_masks.get_brain_mask(image=mris[primary_sequence])
-
-    x, y, z = np.where(mask == 1)
-    coordinates = {'x': [np.min(x), np.max(x)], 'y': [np.min(y), np.max(y)],
-                    'z': [np.min(z), np.max(z)]}
-
-    # concatenate MRIs and annotations
-    mris_array, annotations_array = [], []
-
-    for sequence in save_sequence_order:
-        mris_array.append(mris[sequence].get_fdata()[..., None])
-        annotations_array.append(annotations[sequence].get_fdata()[..., None])
-
-    mris_array = np.concatenate(mris_array, axis=-1)
-    annotations_array = np.concatenate(annotations_array, axis=-1)
-
-    msg += f'\t\tMRIs shape after concatenation: {mris_array.shape}\n'
-    msg += f'\t\tAnnotations shape after concatenation: {annotations_array.shape}\n'
-
-    # crop MRIs and annotations by applying brain mask
-    cropped_mris = mris_array[coordinates['x'][0]:coordinates['x'][1],
-                                coordinates['y'][0]:coordinates['y'][1],
-                                coordinates['z'][0]:coordinates['z'][1], :]
-
-    cropped_annotations = annotations_array[coordinates['x'][0]:coordinates['x'][1],
-                                            coordinates['y'][0]:coordinates['y'][1],
-                                            coordinates['z'][0]:coordinates['z'][1], :]
-
-    msg += f'\t\tMRIs shape after cropping: {cropped_mris.shape}\n'
-    msg += f'\t\tAnnotations shape after cropping: {cropped_annotations.shape}\n'
-
-    end = time.time()
-    msg += f'\t\tCropping and concatenation of MRIs and annotations took {end - start} seconds!\n\n'
-
-    return cropped_mris, cropped_annotations, msg
-
-def combine_annotations(annotations, priorities, msg=''):
-    '''
-    Combines multi-channel annotations to single-channel according to label priotiries.
-    Args:
-        annotations (np.array): Annotations array.
-        priorities ([int]): Label priorities.
-        msg (str)(optional): Log message.
-    Returns:
-        combined_annotations (np.array): Combined annotations array.
-        msg (optional): Log message.
-    '''
-    
-    # TODO: if with future datasets several labels, combine here. 
-    
-    # For now let's just take first channel (T2S)
-    combined_annotations = annotations[:, :, :, 0]
-    
-    return combined_annotations, msg
 
 def numpy_to_list(obj):
     if isinstance(obj, np.ndarray):
@@ -323,6 +136,10 @@ def delete_study_files(args, study):
                         # Log error if deletion fails
 
 
+##############################################################################
+###################                 MAIN                  ###################
+##############################################################################
+
 def process_study(args, subject, msg=''):
     """
     Process a given study (subject) by performing a series of operations including loading,
@@ -341,48 +158,54 @@ def process_study(args, subject, msg=''):
         dir_path = os.path.join(args.data_dir_path, subject, sub_d)
         utils_general.ensure_directory_exists(dir_path)
 
-    # Load MRI and annotations with quality control
-    mris, annotations, labels_metadata, im_specs_orig, prim_seq, msg = loading.load_mris_and_annotations(
+    # Load MRI scans and annotations with QC
+    mris_raw, annotations_raw, nifti_paths, labels_metadata, im_specs_orig, prim_seq, msg = loading.load_mris_and_annotations(
         args, subject, msg, log_level="\t"
-    )
+        )
     msg += f'\tUsing {prim_seq} as primary sequence\n'
 
-    # Resample and standardize MRI data
-    mris_resampled, annotations_resampled, msg = resample_mris_and_annotations(
-        mris, annotations, primary_sequence=prim_seq, isotropic=True, msg=msg
+    # Skull stripping
+    mris_noskull, brain_masks, msg = process_steps.skull_strip(args.synthstrip_docker, subject, mris_raw,
+                                                    utils_general.ensure_directory_exists(
+                                                        os.path.join(args.cache_folder, "synthstrip")
+                                                        ),
+                                                    msg)
+    
+    # Crop images
+    mris_cropped, annotations_cropped =  process_steps.crop_mris_and_annotations(
+        mris_noskull, annotations_raw, brain_masks, prim_seq, msg, log_level="\t"
     )
 
-    # Save affine and header after resampling for later use
+    # Fix orientation and dtype
+    mris_fixed, annotations_fixed, msg = process_steps.fix_orientation_and_dtype(mris_cropped, annotations_cropped, prim_seq, msg, log_level="\t")
+
+    # Resample and standardize MRI data
+    mris_resampled, annotations_resampled, msg = process_steps.resample_mris_and_annotations(
+        args, mris_fixed, annotations_fixed, primary_sequence=prim_seq, isotropic=True, msg=msg
+    )
     affine_after_resampling = mris_resampled[prim_seq].affine
     header_after_resampling = mris_resampled[prim_seq].header
 
-    # Crop and concatenate sequences
-    save_seq_order = [prim_seq] + [seq for seq in mris_resampled if seq != prim_seq]
-    msg += f'\tConcatenating MRIs in the following order: {save_seq_order}\n'
-    mris_array, annotations_array, msg = crop_and_concatenate(
-        mris_resampled, annotations_resampled, primary_sequence=prim_seq, save_sequence_order=save_seq_order, msg=msg
-    )
-
-    # Squeeze arrays to remove any unnecessary fourth dimension
-    mris_array = mris_array.squeeze(axis=-1)
-    annotations_array = annotations_array.squeeze(axis=-1)
-    msg += f'\tSqueezed MRIs and Annotations (keeping {save_seq_order[0]})\n'
-    msg += f'\t\tMRIs shape after cropping: {mris_array.shape}\n'
-    msg += f'\t\tAnnotations shape after cropping: {annotations_array.shape}\n'
-
-    # Convert processed data to Nifti1Image format for saving
-    mris_image = nib.Nifti1Image(mris_array.astype(np.float32), affine_after_resampling, header_after_resampling)
-    annotations_image_pre = nib.Nifti1Image(annotations_array.astype(np.uint8), affine_after_resampling, header_after_resampling)
+    # Prune CMBs
+    annotations_pruned, labels_metadata, msg = process_masks.prune_CMBs(args,
+                                                                        annotations_raw, 
+                                                                        annotations_resampled, 
+                                                                        labels_metadata, 
+                                                                        prim_seq,  
+                                                                        msg,
+                                                                        log_level="\t")
 
     # Clean CMB masks and generate plots
     msg += "\tCleaning final masks and checking new stats for annotations after transforms\n"
-    processed_mask, metadata, msg = process_masks.process_cmb_mask(annotations_image_pre, msg, args.dataset_name)
+    processed_mask_nib, metadata, msg = process_masks.process_cmb_mask(annotations_pruned[prim_seq], msg, args.dataset_name)
     annotations_metadata_new = {prim_seq: metadata}
-    annotations_image = nib.Nifti1Image(processed_mask.get_fdata().astype(np.uint8), affine_after_resampling, header_after_resampling)
+    
+    final_anno_nib = processed_mask_nib
+    final_mri_nib = mris_resampled[prim_seq]
 
     # Save processed images to disk
-    nib.save(mris_image, os.path.join(args.data_dir_path, subject, args.mris_subdir, f'{subject}.nii.gz'))
-    nib.save(annotations_image, os.path.join(args.data_dir_path, subject, args.annotations_subdir, f'{subject}.nii.gz'))
+    nib.save(final_mri_nib, os.path.join(args.data_dir_path, subject, args.mris_subdir, f'{subject}.nii.gz'))
+    nib.save(final_anno_nib, os.path.join(args.data_dir_path, subject, args.annotations_subdir, f'{subject}.nii.gz'))
 
     # Handle and save metadata
     metadata_out = {
@@ -393,7 +216,7 @@ def process_study(args, subject, msg=''):
         "CMBs_new": annotations_metadata_new[prim_seq],
         "n_CMB_new": len(annotations_metadata_new[prim_seq]),
         "old_specs": im_specs_orig,
-        "new_specs": loading.extract_im_specs(mris_image)
+        "new_specs": loading.extract_im_specs(final_mri_nib)
     }
     metadata_filepath = os.path.join(args.data_dir_path, subject, args.annotations_metadata_subdir, f'{subject}_metadata.json')
     with open(metadata_filepath, "w") as file:
@@ -401,24 +224,26 @@ def process_study(args, subject, msg=''):
     msg += "\tCorrectly saved NIfTI images and metadata for study\n"
 
     # Generate and save CMB plots for debugging
-    mask_with_CMS = np.zeros_like(annotations_image.get_fdata())
+    mask_with_CMS = np.zeros_like(final_anno_nib.get_fdata())
     for k_i, cm_i in annotations_metadata_new[prim_seq].items():
         cm = tuple(cm_i['CM'])
         mask_with_CMS[cm] = 1  # Mark the center of mass in the mask
     mask_with_CMS_im= nib.Nifti1Image(mask_with_CMS.astype(np.uint8), affine_after_resampling, header_after_resampling)
 
     utils_plt.generate_cmb_plots(subject,
-                                mri_im=mris_image,
+                                mri_im=final_mri_nib,
                                 raw_cmb=mask_with_CMS_im,
-                                processed_cmb=annotations_image,
+                                processed_cmb=final_anno_nib,
                                 cmb_metadata=metadata_out['CMBs_new'],
                                 plots_path=utils_general.ensure_directory_exists(os.path.join(args.plots_path, "post")))
 
     msg += "\tCorrectly generated and saved CMB plots for study\n"
     
     # CMBs num check
-    if int(metadata_out['n_CMB_old']) != int(metadata_out['n_CMB_new']):
-        msg += "\t ISSUE: number of CMBs differ before and after preprocessing\n"
+    n_CMB_new = int(metadata_out['n_CMB_new'])
+    n_CMB_old = int(metadata_out['n_CMB_raw'])
+    if n_CMB_old != n_CMB_new:
+        msg += f"\t ISSUE: number of original CMBs differ before ({n_CMB_old}) and after ({n_CMB_new}) preprocessing\n"
     return msg
 
 def process_single_study_worker(args, studies_pending: mp.Queue, studies_done: mp.Queue, processes_done: mp.Queue, worker_number: int):
@@ -516,7 +341,6 @@ def process_all_studies(args, studies):
             time.sleep(0.1)
 
 
-
 def main(args):
 
     args.data_dir_path = os.path.join(args.output_dir, 'Data')
@@ -524,11 +348,14 @@ def main(args):
     args.annotations_subdir = 'Annotations'
     args.annotations_metadata_subdir = 'Annotations_metadata'
     args.plots_path = os.path.join(args.output_dir, 'plots')
+    args.cache_folder = os.path.join(args.output_dir, 'tmp')
 
     if args.reprocess_file:
         assert args.processed_dir is not None
         assert os.path.exists(args.processed_dir)
         assert os.path.exists(args.reprocess_file)
+
+    assert os.path.exists(args.synthstrip_docker)
 
     # Initialize log files
     current_time = datetime.now()
@@ -536,7 +363,7 @@ def main(args):
     args.log_file_path = os.path.join(args.output_dir, f'log_{current_datetime}.txt')
     args.csv_log_filepath = os.path.join(args.output_dir, f'log_{current_datetime}.csv')
     
-    for dir_p in [args.output_dir, args.data_dir_path, args.plots_path]:
+    for dir_p in [args.output_dir, args.data_dir_path, args.plots_path, args.cache_folder]:
         utils_general.ensure_directory_exists(dir_p)
 
     # Create an empty CSV log file with headers
@@ -659,6 +486,8 @@ def parse_args():
                         help='Full path to the CSV with info for re-processing. If provided, the whole workflow of processing changes to REPROCESS')
     parser.add_argument('--processed_dir', type=str, default=None, required=False,
                         help='Path to the processed input directory of dataset')
+    parser.add_argument('--synthstrip_docker', type=str, default="/datadrive_m2/jorge/synthstrip-docker",
+                        help='Full path to docker image of Synthstrip')
     return parser.parse_args()
 
 

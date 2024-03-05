@@ -4,9 +4,6 @@
 
 paper: https://www.sciencedirect.com/science/article/pii/S0169260721002029?via%3Dihub
 
-TODO:
-- implement momeni synth
-
 @author: jorgedelpozolerida
 @date: 13/02/2024
 """
@@ -85,13 +82,15 @@ def load_MOMENI_raw(input_dir: str, study: str, msg: str, log_level: str) -> Tup
     studies_w_cmb = os.listdir(os.path.join(input_dir, "data", "PublicDataShare_2020", "rCMB_DefiniteSubject"))
     studies_w_cmb = [s.split(".")[0] for s in studies_w_cmb]
     if study in studies_w_cmb:
-        mri_nib = nib.load(os.path.join(input_dir, "data", "PublicDataShare_2020", "rCMB_DefiniteSubject", f"{study}.nii.gz"))
+        mri_path = os.path.join(input_dir, "data", "PublicDataShare_2020", "rCMB_DefiniteSubject", f"{study}.nii.gz")
         cmb_metadata_excel = os.path.join(input_dir, "data", "PublicDataShare_2020", "rCMBInformationInfo.xlsx")
         centers_of_mass = extract_microbleed_coordinates_from_excel(cmb_metadata_excel, f"{study}.nii.gz")
 
     else:
-        mri_nib = nib.load(os.path.join(input_dir, "data", "PublicDataShare_2020", "NoCMBSubject", f"{study}.nii.gz")) 
+        mri_path = os.path.join(input_dir, "data", "PublicDataShare_2020", "NoCMBSubject", f"{study}.nii.gz")
         centers_of_mass = []
+    
+    mri_nib = nib.load(mri_path) 
 
     com_list = []
     cmb_mask = np.zeros_like(mri_nib.get_fdata())
@@ -108,7 +107,11 @@ def load_MOMENI_raw(input_dir: str, study: str, msg: str, log_level: str) -> Tup
     # Coordinates are repeated need to ensure that does not happen 
     com_list_clean, msg = loading.process_coordinates(com_list, msg, log_level)
 
-    return sequences_raw, labels_raw, seq_type, com_list_clean, msg
+    nifti_paths = {
+        seq_type: mri_path,
+        "CMB": None
+    }
+    return sequences_raw, labels_raw, nifti_paths, seq_type, com_list_clean, msg
 
 def process_MOMENI_anno(mri_im: nib.Nifti1Image, com_list: list, msg: str, 
                         log_level="\t\t") -> Tuple[nib.Nifti1Image, Dict, str]:
@@ -304,7 +307,7 @@ def load_MOMENI_data(args, subject, msg):
         msg (str): Updated log message.
     """
     # 1. Load raw data
-    sequences_raw, labels_raw, sequence_type, com_list, msg = load_MOMENI_raw(args.input_dir, subject, msg=msg, log_level="\t\t")
+    sequences_raw, labels_raw, nifti_paths, sequence_type, com_list, msg = load_MOMENI_raw(args.input_dir, subject, msg=msg, log_level="\t\t")
 
     # 2. Perform Quality Control and Data Cleaning
     sequences_qc, labels_qc, labels_metadata, msg = perform_MOMENI_QC(args, subject, sequences_raw, labels_raw, com_list, msg)
@@ -316,9 +319,7 @@ def load_MOMENI_data(args, subject, msg):
         plots_path=utils_general.ensure_directory_exists(os.path.join(args.plots_path, "pre")),
         zoom_size=100
     )
-    return sequences_qc, labels_qc, labels_metadata, sequence_type, msg
-
-
+    return sequences_qc, labels_qc, nifti_paths, labels_metadata, sequence_type, msg
 
 
 
@@ -360,7 +361,12 @@ def load_MOMENIsynth_raw(input_dir: str, study: str, msg: str, log_level: str) -
     # Coordinates are repeated need to ensure that does not happen 
     com_list_clean, msg = loading.process_coordinates(com_list, msg, log_level=log_level)
 
-    return sequences_raw, labels_raw, seq_type, com_list_clean, msg 
+    nifti_paths = {
+        seq_type: mri_file,
+        "CMB": None
+    }
+
+    return sequences_raw, labels_raw, nifti_paths, seq_type, com_list_clean, msg 
 
 
 def load_MOMENIsynth_data(args, subject, msg):
@@ -380,10 +386,12 @@ def load_MOMENIsynth_data(args, subject, msg):
         msg (str): Updated log message.
     """
     # 1. Load raw data
-    sequences_raw, labels_raw, sequence_type, com_list, msg = load_MOMENIsynth_raw(args.input_dir, subject,  msg=msg, log_level="\t\t")
+    sequences_raw, labels_raw, nifti_paths, sequence_type, com_list, msg = load_MOMENIsynth_raw(args.input_dir, subject,  msg=msg, log_level="\t\t")
 
     # 2. Perform Quality Control and Data Cleaning
     sequences_qc, labels_qc, labels_metadata, msg = perform_MOMENI_QC(args, subject, sequences_raw, labels_raw, com_list, msg)
+
+    labels_metadata.update({"n_CMB_raw": len(com_list)})
 
     # 3. Save plots for debugging
     utils_plt.generate_cmb_plots(
@@ -392,4 +400,4 @@ def load_MOMENIsynth_data(args, subject, msg):
         plots_path=utils_general.ensure_directory_exists(os.path.join(args.plots_path, "pre")),
         zoom_size=100
     )
-    return sequences_qc, labels_qc, labels_metadata, sequence_type, msg
+    return sequences_qc, labels_qc, nifti_paths, labels_metadata, sequence_type, msg

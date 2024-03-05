@@ -88,7 +88,12 @@ def load_RODEJA_raw(input_dir: str, study: str, msg: str, log_level: str) -> Tup
 
     assert sequences_raw, f"{log_level}MRI sequence not found for subject: {study}"
 
-    return sequences_raw, labels_raw, seq_type, cmb_info, msg
+    nifti_paths = {
+        seq_type: mri_filepaths[0],
+        "CMB": label_filepaths[0]
+    }
+
+    return sequences_raw, labels_raw, nifti_paths, seq_type, cmb_info, msg
 
 
 def process_rawmask_rodeja(im_anno):
@@ -222,9 +227,8 @@ def load_RODEJA_data(args, subject, msg):
         msg (str): Updated log message.
     """
     # 1. Load Raw Annotations and MRI Sequences
-    sequences_raw, labels_raw, seq_type, cmb_info, msg = load_RODEJA_raw(args.input_dir, subject,
+    sequences_raw, labels_raw, nifti_paths, seq_type, cmb_info, msg = load_RODEJA_raw(args.input_dir, subject,
                                                                             msg, log_level="\t\t")
-
 
     # 3. Perform Quality Control (QC) on Loaded Data
     sequences_qc, labels_qc, labels_metadata, msg = perform_RODEJA_QC(sequences_raw, labels_raw, msg)
@@ -233,6 +237,8 @@ def load_RODEJA_data(args, subject, msg):
     old_n_CMB = len(cmb_info)
     if old_n_CMB != new_n_CMB:
         msg += f"\t\tCAUTION: there were originally {old_n_CMB} CMB labels and now {new_n_CMB} CCs detected\n"
+    
+    labels_metadata.update({"n_CMB_raw": old_n_CMB,"CMB_raw": cmb_info})
 
     # 4. Save plots for debugging
     utils_plt.generate_cmb_plots(
@@ -241,5 +247,6 @@ def load_RODEJA_data(args, subject, msg):
         plots_path=utils_general.ensure_directory_exists(os.path.join(args.plots_path, "pre")),
         zoom_size=100
     )
-    metadata_out = {seq_type: labels_metadata }
-    return sequences_qc, labels_qc, metadata_out, seq_type, msg
+    metadata_out = {seq_type: labels_metadata}
+
+    return sequences_qc, labels_qc, nifti_paths, metadata_out, seq_type, msg
