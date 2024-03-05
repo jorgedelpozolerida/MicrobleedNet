@@ -275,7 +275,7 @@ def process_single_study_worker(args, studies_pending: mp.Queue, studies_done: m
         except Exception as e:
             print(f"Worker {worker_number} - No more items to process or error: {str(e)}")
             break
-
+        start = time.time()
         msg = f'Started processing {study}... (worker {worker_number})\n'
         
         try:
@@ -283,7 +283,8 @@ def process_single_study_worker(args, studies_pending: mp.Queue, studies_done: m
             msg_process = process_study(args, study, '')
             msg += msg_process
             status = 'completed'
-            msg += f'Finished processing of {study} (worker {worker_number})!\n\n'
+            end = time.time()
+            msg += f'Finished processing of {study} in {end - start:.2f} seconds (worker {worker_number})!\n\n'
         except Exception as e:
             # Handle exceptions during processing
             status = 'failed'
@@ -374,7 +375,7 @@ def main(args):
     current_datetime = current_time.strftime("%Y-%m-%d_%H-%M-%S")
     args.log_file_path = os.path.join(args.output_dir, f'log_{current_datetime}.txt')
     args.csv_log_filepath = os.path.join(args.output_dir, f'log_{current_datetime}.csv')
-    
+
     for dir_p in [args.output_dir, args.data_dir_path, args.plots_path, args.cache_folder]:
         utils_general.ensure_directory_exists(dir_p)
 
@@ -388,8 +389,8 @@ def main(args):
 
     # Get subject list
     subjects = loading.get_dataset_subjects(args.dataset_name, args.input_dir)
-    
-    
+
+
     # If args.remove_studies exclude from data processed
     if args.remove_studies and args.start_from_log is None:
         msg += f"STARTING DELETION OF STUDIES FOR DATASET {args.dataset_name}\n"
@@ -411,8 +412,9 @@ def main(args):
             utils_general.write_to_log_file(msg, args.log_file_path)
             raise ValueError(e_msg)
         return
-    
+
     msg +=  f"CSV log: {args.csv_log_filepath}\n" 
+    msg +=  f"TXT log: {args.log_file_path}\n" 
 
     # Overwrite with failed studies
     if args.start_from_log is not None:
@@ -423,7 +425,7 @@ def main(args):
         subjects_used = df_log_fail['studyUID'].to_list() + unprocessed_studies
         msg += f"Collected a total of {len(subjects_used)} subjects (Failed: {len(df_log_fail)}, Unprocessed: {len(unprocessed_studies)}) out of {len(subjects)} from log file {args.start_from_log}\n"
         subjects = subjects_used
-        
+
         if args.remove_studies:
             utils_general.confirm_action(f"Will delete {len(subjects)} studies if present already")
             for stud in subjects:
@@ -447,7 +449,7 @@ def main(args):
             msg += e_msg
             utils_general.write_to_log_file(msg, args.log_file_path)
             raise ValueError(e_msg)
-        
+
     msg += f"Processing {len(subjects)} studies\n\n"
     print(msg)
     utils_general.confirm_action()
@@ -465,7 +467,7 @@ def main(args):
         utils_general.write_to_log_file(final_msg, args.log_file_path)
 
     except Exception:
-        _logger.error('Exception caught in main: {}'.format(traceback.format_exc()))
+        _logger.error(f'Exception caught in main: {traceback.format_exc()}')
         return 1
     return 0
 

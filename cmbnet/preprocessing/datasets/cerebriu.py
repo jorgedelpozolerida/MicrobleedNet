@@ -51,7 +51,7 @@ def load_CEREBRIU_raw(input_dir, study):
 
     # Find the CMB file in segmentations folder
     cmb_files = glob.glob(os.path.join(cmb_dir, "*.nii.gz"))
-    if len(cmb_files) == 0:
+    if not cmb_files:
         raise ValueError("No CMB files found")
     elif len(cmb_files) > 1:
         raise ValueError(f"Multiple CMB files found in {cmb_dir}")
@@ -66,7 +66,7 @@ def load_CEREBRIU_raw(input_dir, study):
         raise ValueError(f"No corresponding MRI subfolder found for {cmb_filename}")
 
     mri_files = glob.glob(os.path.join(mri_subfolder_path, "*.nii.gz"))
-    if len(mri_files) == 0:
+    if not mri_files:
         raise ValueError(f"No MRI files found in {mri_subfolder_path}")
     elif len(mri_files) > 1:
         raise ValueError(f"Multiple MRI files found in {mri_subfolder_path}")
@@ -76,7 +76,12 @@ def load_CEREBRIU_raw(input_dir, study):
     sequences_raw = {seq_type: nib.load(mri_files[0])}
     labels_raw = {seq_type: nib.load(cmb_file)}
 
-    return sequences_raw, labels_raw, seq_type, cmb_filename
+    nifti_paths = {
+        seq_type: mri_files[0],
+        "CMB": cmb_file
+    }
+
+    return sequences_raw, labels_raw, nifti_paths, seq_type, cmb_filename
 
 
 def process_CEREBRIU_cmb(label_im: nib.Nifti1Image, 
@@ -278,14 +283,18 @@ def load_CEREBRIU_data(args, subject, msg):
     """
 
     # 1. Load raw data
-    sequences_raw, labels_raw, sequence_type, seq_folder = load_CEREBRIU_raw(args.input_dir, subject)
+    sequences_raw, labels_raw, nifti_paths, sequence_type, seq_folder = load_CEREBRIU_raw(args.input_dir, subject)
 
     # 2. Perform Quality Control (QC) and Data Cleaning
     sequences_qc, labels_qc, labels_metadata, msg = perform_CEREBRIU_QC(args, subject, sequences_raw, labels_raw, seq_folder, msg)
     
+
+    new_n_CMB = len(labels_metadata['CMBs_old'])
+
+    labels_metadata.update({"n_CMB_raw": new_n_CMB, "CMB_raw": []})
+
     
-    
-    return sequences_qc, labels_qc, labels_metadata, sequence_type, msg
+    return sequences_qc, labels_qc, nifti_paths, labels_metadata, sequence_type, msg
 
 
 
@@ -324,14 +333,17 @@ def load_CEREBRIUneg_raw(input_dir, study):
     # Load Raw MRI Sequences and Labels
     seq_type = mri_filename.split("_")[1]
     # print(f"....................\n{mri_file}\n{mri_filename}\n{seq_type}\n")
-    mri_im = nib.load(mri_files[0])
+    mri_im = nib.load(mri_file)
     sequences_raw = {seq_type: mri_im }
     labels_raw = { 
         # empty CMB mask
         seq_type: nib.Nifti1Image(np.zeros_like(mri_im.get_fdata()), mri_im.affine, mri_im.header)
         }
-
-    return sequences_raw, labels_raw, seq_type, mri_filename
+    nifti_paths = {
+        seq_type: mri_file,
+        "CMB": None
+    }
+    return sequences_raw, labels_raw, nifti_paths, seq_type, mri_filename
 
 
 def perform_CEREBRIUneg_QC(args, subject, mris, annotations, sequence_type, msg):
@@ -389,9 +401,13 @@ def load_CEREBRIUneg_data(args, subject, msg):
     """
 
     # 1. Load raw data
-    sequences_raw, labels_raw, sequence_type, mri_filename = load_CEREBRIUneg_raw(args.input_dir, subject)
+    sequences_raw, labels_raw, nifti_paths, sequence_type, mri_filename = load_CEREBRIUneg_raw(args.input_dir, subject)
 
     # 2. Perform Quality Control (QC) and Data Cleaning
     sequences_qc, labels_qc, labels_metadata, msg = perform_CEREBRIUneg_QC(args, subject, sequences_raw, labels_raw, sequence_type, msg)
-        
-    return sequences_qc, labels_qc, labels_metadata, sequence_type, msg
+
+    new_n_CMB = len(labels_metadata[sequence_type]['CMBs_old'])
+    labels_metadata[sequence_type].update({"n_CMB_raw": new_n_CMB, "CMB_raw": []})
+
+    
+    return sequences_qc, labels_qc, nifti_paths, labels_metadata, sequence_type, msg

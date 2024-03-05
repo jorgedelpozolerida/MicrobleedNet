@@ -312,6 +312,9 @@ def load_MOMENI_data(args, subject, msg):
     # 2. Perform Quality Control and Data Cleaning
     sequences_qc, labels_qc, labels_metadata, msg = perform_MOMENI_QC(args, subject, sequences_raw, labels_raw, com_list, msg)
 
+
+    labels_metadata[sequence_type].update({"n_CMB_raw": len(com_list)})
+
     # 3. Save plots for debugging
     utils_plt.generate_cmb_plots(
         subject, sequences_raw[sequence_type], labels_raw[sequence_type], 
@@ -391,7 +394,7 @@ def load_MOMENIsynth_data(args, subject, msg):
     # 2. Perform Quality Control and Data Cleaning
     sequences_qc, labels_qc, labels_metadata, msg = perform_MOMENI_QC(args, subject, sequences_raw, labels_raw, com_list, msg)
 
-    labels_metadata.update({"n_CMB_raw": len(com_list)})
+    labels_metadata[sequence_type].update({"n_CMB_raw": len(com_list)})
 
     # 3. Save plots for debugging
     utils_plt.generate_cmb_plots(

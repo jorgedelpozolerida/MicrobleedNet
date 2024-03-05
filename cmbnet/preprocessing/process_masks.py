@@ -482,6 +482,8 @@ def process_cmb_mask(label_im, msg, dataset_name="valdo", log_level="\t\t"):
 
     # Perform erosion and dilation on each CMB separately execpt for the "valdo" dataset
     if dataset_name not in  ["valdo", "rodeja"]:
+        msg += f"{log_level}Applying closing operation to every CMB\n"
+
         struct_elem = generate_binary_structure(3, 1)
         for label_num in range(1, num_features + 1):
             cmb_mask = (labeled_array == label_num)  # Isolate the current CMB
@@ -498,11 +500,10 @@ def process_cmb_mask(label_im, msg, dataset_name="valdo", log_level="\t\t"):
                 sizes = np.bincount(labeled_cmb.ravel())[1:]  # Exclude background size
                 largest_cc_label = np.argmax(sizes) + 1  # +1 because np.argmax starts at 0
                 cmb_mask_processed = (labeled_cmb == largest_cc_label).astype(np.uint8)
-            
+                msg += f"{log_level}\tKeeping only 1 CC out of {num_features_cmb} for {label_num}/{num_features+1} CMBs\n"
+
             # Combine the processed (and potentially filtered) CMB mask with the overall processed mask
             processed_data += cmb_mask_processed
-
-        msg += f"{log_level}Applied closing operation to every CMB and kept only the largest CC if more than one was created.\n"
 
     else:
         # For the "valdo" dataset, use the filled data without further processing
@@ -762,7 +763,7 @@ def prune_CMBs(args, annotations, annotations_resampled, labels_metadata, primar
     # Skip if dataset is not 'rodeja'
     if args.dataset_name != "rodeja":
         return annotations_resampled, labels_metadata, msg
-    
+
     # Affine transformations
     affine_before = annotations[primary_seq].affine
     affine_after = annotations_resampled[primary_seq].affine
@@ -775,18 +776,21 @@ def prune_CMBs(args, annotations, annotations_resampled, labels_metadata, primar
 
     # Create a mask filter based on transformed centers of mass
     cmb_data = annotations_resampled[primary_seq].get_fdata()
-    mask_filter_COM = np.zeros_like(cmb_data, dtype=bool)
     mask_filter = np.zeros_like(cmb_data, dtype=bool)
 
     msg_temp = ""
+    mapping = {}
     for cmb_id, cmb_meta in metadata_study.items():
         com = cmb_meta['CM']
         new_com = apply_affine(original2resample, np.array(com))
         new_com = tuple(map(int, new_com))
+        mapping[cmb_id] = {
+            new_com
+        }
         # print(f"Before: {com}, After: {new_com}")
-        
         if all(0 <= idx < dim for idx, dim in zip(new_com, mask_filter.shape)):
-            mask_filter_COM[new_com] = True
+            # mask_filter_COM[new_com] = True
+            mask_filter[new_com] = 1
             mask_filter = add_sphere_to_mask(mask_filter, new_com, mask_filter.shape, 1, 2)
         else:
             msg_temp += f"{log_level}\tOut-of-bounds coordinate: {new_com} (old: {com}).\n"
@@ -796,34 +800,35 @@ def prune_CMBs(args, annotations, annotations_resampled, labels_metadata, primar
     processed_data = np.zeros_like(cmb_data, dtype=bool)
     labeled_array, num_features = nd_label(cmb_data > 0)
     cmb_count_before = num_features
-    
-    for i in range(1, num_features + 1):
+
+    for i in range(1, cmb_count_before + 1):
         cmb_mask = (labeled_array == i)
         if np.any(cmb_mask & mask_filter):
             processed_data |= cmb_mask
 
     # After processing the data, check COM inclusion in the processed mask
-    hit_coms = np.argwhere(processed_data & mask_filter_COM)
-    hit_com_ids = set()  # To store IDs of COMs that were hit
+    hit_coms = np.argwhere(processed_data & mask_filter)
+    hit_com_ids = []  # To store IDs of COMs that were hit
 
     # Check each transformed COM against hit_coms to find matches
     for cmb_id, cmb_meta in metadata_study.items():
         com = cmb_meta['CM']
         new_com = apply_affine(original2resample, np.array(com))
         new_com = tuple(map(int, new_com))
-        
+
         if new_com in hit_coms:
-            hit_com_ids.add(cmb_id)
+            hit_com_ids.append(cmb_id)
 
     missed_coms = [cmb_id for cmb_id in metadata_study if cmb_id not in hit_com_ids]
+    missed_COM = [f"{idx}-{metadata_study[idx]['CM']}-{mapping[idx]}" for idx in missed_coms]
     if missed_coms:
-        msg += f"{log_level} Centers of mass not hit in processed mask: {len(missed_coms)} missed.\n"
+        msg_temp += f"{log_level}\tCenters of mass not hit in processed mask: {missed_COM} missed.\n"
     else:
-        msg += f"{log_level} All centers of mass were hit in processed mask.\n"
+        msg_temp += f"{log_level}\tAll centers of mass were hit in processed mask.\n"
 
     # FINALIZE
     cmb_count_after = nd_label(processed_data)[1]
-    
+
     msg += f"{log_level}Pruned from {cmb_count_before} CMBs to {cmb_count_after}.\n"
     msg += msg_temp
 
@@ -833,7 +838,7 @@ def prune_CMBs(args, annotations, annotations_resampled, labels_metadata, primar
         header=annotations_resampled[primary_seq].header,
         is_annotation=True
         )
-    
+
     labels_metadata_modified = labels_metadata.copy()  # Placeholder for actual metadata modifications
 
     return {primary_seq: annotations_pruned}, labels_metadata_modified, msg

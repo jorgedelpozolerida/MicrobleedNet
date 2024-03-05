@@ -118,7 +118,7 @@ def get_dataset_subjects(dataset_name, input_dir):
     return subjects
 
 
-def process_coordinates(com_list: List[Tuple[int, int, int]], msg: str = "", log_level: str = "\t   t") -> Tuple[List[Tuple[int, int, int]], str]:
+def process_coordinates(com_list: List[Tuple[int, int, int]], msg: str = "", log_level: str = "\t\t") -> Tuple[List[Tuple[int, int, int]], str]:
     """
     Processes a list of 3D coordinates to ensure uniqueness and checks for coordinates with minimal differences.
     Updates a message whenever the list's length is changed.

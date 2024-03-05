@@ -50,19 +50,21 @@ def fix_orientation_and_dtype(sequences_raw, labels_raw, prim_seq, msg, log_leve
         msg (str): Updated log message.
     """
     start = time.time()
-    msg += f'{log_level}Fixing orientation and data type...\n'
+    msg += f'{log_level}Fixing orientation to RAS and data types...\n'
     mris = {}
     annotations = {}
 
     # Validate and fix MRIs
     for sequence_name in sequences_raw:
         mris[sequence_name] = sequences_raw[sequence_name]
-        msg += f'{log_level}Found {sequence_name} MRI sequence of shape {mris[sequence_name].shape}\n'
+        orientation_old = nib.aff2axcodes(sequences_raw[sequence_name].affine)
+        msg += f'{log_level}\tFound {sequence_name} MRI sequence, shape {sequences_raw[sequence_name].shape} and orientation {orientation_old}\n'
 
         mris[sequence_name] = nib.as_closest_canonical(mris[sequence_name])
         mris[sequence_name].set_data_dtype(np.float32) 
 
         orientation = nib.aff2axcodes(mris[sequence_name].affine)
+
         if orientation != ('R', 'A', 'S'):
             raise ValueError(f"Image {sequence_name} does not have RAS orientation.")
 
@@ -70,17 +72,19 @@ def fix_orientation_and_dtype(sequences_raw, labels_raw, prim_seq, msg, log_leve
     for sequence_name in sequences_raw:
         if sequence_name in labels_raw.keys():
             annotations[sequence_name] = labels_raw[sequence_name]
-            msg += f'{log_level}Found {sequence_name} annotation of shape {annotations[sequence_name].shape}\n'
+            orientation_old = nib.aff2axcodes(labels_raw[sequence_name].affine)
+            msg += f'{log_level}\tFound {sequence_name} annotation, shape {labels_raw[sequence_name].shape} and orientation {orientation_old}\n'
         else:
             annotations[sequence_name] = nib.Nifti1Image(np.zeros(shape=mris[prim_seq].shape),
                                                             affine=mris[prim_seq].affine,
                                                             header=mris[prim_seq].header)
-            msg += f'{log_level}Missing {sequence_name} annotation, filling with 0s\n'
+            msg += f'{log_level}\tMissing {sequence_name} annotation, filling with 0s\n'
 
         annotations[sequence_name] = nib.as_closest_canonical(annotations[sequence_name])
         annotations[sequence_name].set_data_dtype(np.uint8)
 
         orientation = nib.aff2axcodes(annotations[sequence_name].affine)
+
         if orientation != ('R', 'A', 'S'):
             raise ValueError(f"Annotation {sequence_name} does not have RAS orientation.")
 
@@ -152,7 +156,7 @@ def resample(args, source_image, target_image, interpolation, is_annotation=Fals
         resampled_image = resample_to_img(source_image, target_image, interpolation=interpolation,
                                             fill_value=np.min(source_image.get_fdata()))
 
-    msg += f'{log_level}Shape after resampling: {resampled_image.shape}\n'
+    msg += f'{log_level}\tShape after resampling: {resampled_image.shape}\n'
 
     return resampled_image, msg
 
@@ -200,7 +204,7 @@ def resample_mris_and_annotations(args, mris, annotations, primary_sequence, iso
                                                 target_sequence=primary_sequence, msg=msg)
 
     end = time.time()
-    msg += f'\t\tResampling of MRIs and annotations took {end - start} seconds!\n\n'
+    msg += f'\tResampling of MRIs and annotations took {end - start} seconds!\n\n'
 
     return mris_copy, annotations_copy, msg
 
@@ -258,7 +262,7 @@ def crop_and_concatenate(mris, annotations, primary_sequence, save_sequence_orde
     msg += f'\t\tAnnotations shape after cropping: {cropped_annotations.shape}\n'
 
     end = time.time()
-    msg += f'\t\tCropping and concatenation of MRIs and annotations took {end - start} seconds!\n\n'
+    msg += f'\tCropping and concatenation of MRIs and annotations took {end - start} seconds!\n\n'
 
     return cropped_mris, cropped_annotations, msg
 
@@ -332,7 +336,7 @@ def skull_strip(synthstrip_docker, subject, mris, tmp_dir_path, msg=''):
         brain_masks[sequence] = brain_mask
 
     end = time.time()
-    msg += f'\t\tSkull-stripping of MRIs took {end - start} seconds!\n\n'
+    msg += f'\tSkull-stripping of MRIs took {end - start} seconds!\n\n'
 
     return mris_copy, brain_masks, msg
 
@@ -374,8 +378,11 @@ def crop_mris_and_annotations(mris, annotations, brain_masks, prim_seq, msg, log
         annotations_cropped (dict): Dictionary of cropped annotations.
         msg (str): Updated log message.
     """
-    msg += f'{log_level}Cropping MRIs and annotations to brain-only regions using nibabel slicer...\n'
+    msg += f'{log_level}Cropping MRIs and annotations to brain-only regions...\n'
     start = time.time()
+
+    msg += '\t\tMRIs shape before cropping: {}\n'.format(mris[prim_seq].shape)
+    msg += '\t\tAnnotations shape before cropping: {}\n'.format(annotations[prim_seq].shape)
 
     # Use the primary sequence's mask to define cropping coordinates
     mask_array = brain_masks[prim_seq].get_fdata().astype(bool)
@@ -395,6 +402,9 @@ def crop_mris_and_annotations(mris, annotations, brain_masks, prim_seq, msg, log
 
     for seq in annotations:
         annotations_cropped[seq] = annotations[seq].slicer[coordinates['x'], coordinates['y'], coordinates['z']]
+    
+    msg += '\t\tMRIs shape after cropping: {}\n'.format(mris_cropped[prim_seq].shape)
+    msg += '\t\tAnnotations shape after cropping: {}\n'.format(annotations_cropped[prim_seq].shape)
 
     end = time.time()
     msg += f'{log_level}Cropping completed in {end - start:.2f} seconds.\n'

@@ -82,7 +82,7 @@ def load_DOU_raw(input_dir: str, study: str) -> Tuple[Dict[str, nib.Nifti1Image]
         seq_type: mri_file,
         "CMB": cmb_file
     }
-    return sequences_raw, labels_raw, seq_type, com_list
+    return sequences_raw, labels_raw, nifti_paths, seq_type, com_list
 
 
 
@@ -293,7 +293,7 @@ def load_DOU_data(args, subject, msg):
     # 2. Perform Quality Control and Data Cleaning
     sequences_qc, labels_qc, labels_metadata, msg = perform_DOU_QC(args, subject, sequences_raw, labels_raw, com_list, msg)
     
-    labels_metadata.update({"n_CMB_raw": len(com_list)})
+    labels_metadata[sequence_type].update({"n_CMB_raw": len(com_list)})
 
     # 3. Save plots for debugging
     utils_plt.generate_cmb_plots(
