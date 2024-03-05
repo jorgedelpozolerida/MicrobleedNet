@@ -113,6 +113,7 @@ def delete_study_files(args, study):
     """
     # Define paths to directories and files
     study_dir = os.path.join(args.data_dir_path, study)
+    cache_dir = os.path.join(args.cache_folder, study)  # Assuming args.cache_folder is the path to the cache directory
     pre_plots_dir = os.path.join(args.plots_path, "pre")
     post_plots_dir = os.path.join(args.plots_path, "post")
 
@@ -122,6 +123,13 @@ def delete_study_files(args, study):
             shutil.rmtree(study_dir)
         except OSError as e:
             print(f"Error deleting study directory {study_dir}: {e}")
+
+    # Delete cache directory and its contents recursively, only if not args.remove_cache
+    if not args.remove_cache and os.path.exists(cache_dir):
+        try:
+            shutil.rmtree(cache_dir)
+        except OSError as e:
+            print(f"Error deleting cache directory {cache_dir}: {e}")
 
     # Delete pre and post plots
     for plots_dir in [pre_plots_dir, post_plots_dir]:
@@ -133,7 +141,6 @@ def delete_study_files(args, study):
                         os.remove(file_path)
                     except OSError as e:
                         print(f"Error deleting file {file_path}: {e}")
-                        # Log error if deletion fails
 
 
 ##############################################################################
@@ -154,7 +161,7 @@ def process_study(args, subject, msg=''):
         str: Updated log message after completing processing.
     """
     # Ensure necessary directories exist
-    for sub_d in [args.mris_subdir, args.annotations_subdir, args.annotations_metadata_subdir]:
+    for sub_d in [args.mris_subdir, args.annotations_subdir, args.annotations_metadata_subdir, args.cache_folder]:
         dir_path = os.path.join(args.data_dir_path, subject, sub_d)
         utils_general.ensure_directory_exists(dir_path)
 
@@ -167,12 +174,12 @@ def process_study(args, subject, msg=''):
     # Skull stripping
     mris_noskull, brain_masks, msg = process_steps.skull_strip(args.synthstrip_docker, subject, mris_raw,
                                                     utils_general.ensure_directory_exists(
-                                                        os.path.join(args.cache_folder, "synthstrip")
+                                                        os.path.join(args.cache_folder, subject, "synthstrip")
                                                         ),
                                                     msg)
     
     # Crop images
-    mris_cropped, annotations_cropped =  process_steps.crop_mris_and_annotations(
+    mris_cropped, annotations_cropped, msg =  process_steps.crop_mris_and_annotations(
         mris_noskull, annotations_raw, brain_masks, prim_seq, msg, log_level="\t"
     )
 
@@ -243,7 +250,11 @@ def process_study(args, subject, msg=''):
     n_CMB_new = int(metadata_out['n_CMB_new'])
     n_CMB_old = int(metadata_out['n_CMB_raw'])
     if n_CMB_old != n_CMB_new:
-        msg += f"\t ISSUE: number of original CMBs differ before ({n_CMB_old}) and after ({n_CMB_new}) preprocessing\n"
+        msg += f"\tISSUE: number of original CMBs differ before ({n_CMB_old}) and after ({n_CMB_new}) preprocessing\n"
+
+    shutil.rmtree(os.path.join(args.cache_folder, subject))
+    msg += "\tRemoved temporary cache for study folder\n"
+
     return msg
 
 def process_single_study_worker(args, studies_pending: mp.Queue, studies_done: mp.Queue, processes_done: mp.Queue, worker_number: int):
@@ -287,6 +298,7 @@ def process_single_study_worker(args, studies_pending: mp.Queue, studies_done: m
         # delete files if failed
         if status == 'failed':
             delete_study_files(args, study)
+            
 
         # Indicate the study has been processed
         studies_done.put((study, status, msg))
@@ -488,6 +500,8 @@ def parse_args():
                         help='Path to the processed input directory of dataset')
     parser.add_argument('--synthstrip_docker', type=str, default="/datadrive_m2/jorge/synthstrip-docker",
                         help='Full path to docker image of Synthstrip')
+    parser.add_argument('--remove_cache', type=bool, default=True,
+                        help='Whether or not to remove cache')
     return parser.parse_args()
 
 

@@ -787,7 +787,7 @@ def prune_CMBs(args, annotations, annotations_resampled, labels_metadata, primar
         
         if all(0 <= idx < dim for idx, dim in zip(new_com, mask_filter.shape)):
             mask_filter_COM[new_com] = True
-            mask_filter = add_sphere_to_mask(mask_filter, new_com, mask_filter.shape, 1, 3)
+            mask_filter = add_sphere_to_mask(mask_filter, new_com, mask_filter.shape, 1, 2)
         else:
             msg_temp += f"{log_level}\tOut-of-bounds coordinate: {new_com} (old: {com}).\n"
 

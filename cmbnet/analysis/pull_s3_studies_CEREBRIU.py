@@ -2,10 +2,6 @@
 # -*-coding:utf-8 -*-
 """ Script to download into folder s3 studies
 
-
-{Long Description of Script}
-
-
 @author: jorgedelpozolerida
 @date: 03/03/2024
 """
@@ -91,7 +87,7 @@ def download_study_data(s3, dataset_name: str, study_uid: str, savedir: str, log
             file_name = obj['Key'].split('/')[-1]
             if file_name and (file_name.endswith(('.nii', '.nii.gz')) and "SWI" not in file_name and "T2S" not in file_name):
                 continue
-            if "not_needed" in obj:
+            if "not_needed" in obj['Key']:
                 continue
             if "EXCLUDED_" in file_name:
                 messages.append("ATTENTION: Exclusion file found, study will be ignored and folder removed")
@@ -106,14 +102,16 @@ def download_study_data(s3, dataset_name: str, study_uid: str, savedir: str, log
             messages.append(f"Successfully downloaded: {fname}")
 
     except Exception as e:
-        messages.append(f"Could not find or download files from AWS: {folder_aws_key}. Error: {str(e)}")
+        messages.append(f"Could not find or download files from AWS: {folder_aws_key}. Error: {str(e)}. Will now delete subdirectory.")
+        shutil.rmtree(local_save_dir)
         log_message(log_file_path, messages)
         return 0
 
     if downloaded_files:
         messages.append(f"Downloaded {len(downloaded_files)} files for study {study_uid}.")
     else:
-        messages.append(f"No files were downloaded for study {study_uid}.")
+        messages.append(f"No files were downloaded for study {study_uid}. Will delete subdir now")
+        shutil.rmtree(local_save_dir)
 
     log_message(log_file_path, messages)
     return 1
@@ -132,7 +130,8 @@ def main(args):
         utils_s3.confirm_execution()
         s3 = boto3.client('s3')
         df['Dataset'] = [utils_s3.find_s3_dataset(s3, BUCKET_NAME, x) for x in tqdm(df['StudyInstanceUID'], desc="Finding dataset for input studies")]
-
+        df.to_csv(os.path.join(args.cachefolder, "study_dataset_list.csv"))
+    
     # Handle missing studies
     df_nodataset = df[df['Dataset'].isnull()]
     if df_nodataset.shape[0] > 0:
@@ -165,7 +164,9 @@ def parse_args():
                         help='CSV containing StudyInstanceUID and possibly Dataset')
     parser.add_argument('--savedir', type=str, default=None,
                         help='Path where to save studies')
-    parser.add_argument('--logdir', type=str, default=None,
+    parser.add_argument('--cachefolder', type=str, default=os.getcwd(),
+                        help='Path where to save cache files. Current wd if not specified.')
+    parser.add_argument('--logdir', type=str, default=None, required=True,
                         help='Path where to save log file')
     return parser.parse_args()
 

@@ -288,7 +288,6 @@ def apply_synthstrip(synthstrip_docker, image_path, tmp_dir_path):
 
     command_list = [synthstrip_docker, '-i', tmp_image_normalized_path, '-o',
                     tmp_image_synthstripped_path, '-m', tmp_image_mask_path]
-    print(" ".join(command_list))
     subprocess.run(command_list,
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                     check=True, universal_newlines=True)
@@ -322,18 +321,18 @@ def skull_strip(synthstrip_docker, subject, mris, tmp_dir_path, msg=''):
     mris_copy = mris.copy()
     brain_masks = {}
     for sequence in mris_copy:
-        
+
         mri_path = os.path.join(tmp_dir_path, f"{subject}_{sequence}.nii.gz")
         nib.save(mris_copy[sequence], mri_path)
 
-        msg += '\t\tPerforming skull-stripping on {}...\n'.format(sequence)
+        msg += f'\t\tPerforming skull-stripping on {sequence}...\n'
 
         skull_stripped_image, brain_mask = apply_synthstrip(synthstrip_docker, mri_path, tmp_dir_path)
         mris_copy[sequence] = skull_stripped_image
         brain_masks[sequence] = brain_mask
 
     end = time.time()
-    msg += '\t\tSkull-stripping of MRIs took {} seconds!\n\n'.format(end-start)
+    msg += f'\t\tSkull-stripping of MRIs took {end - start} seconds!\n\n'
 
     return mris_copy, brain_masks, msg
 

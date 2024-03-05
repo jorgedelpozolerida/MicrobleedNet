@@ -90,4 +90,4 @@ negative_studies <- all_phases_merged_raw %>%
 negative_studies_distinct <- negative_studies %>% 
   distinct(StudyInstanceUID, .keep_all = T)
 write_csv(negative_studies, "/home/cerebriu/data/DM/MyCerebriu/CMB/negative_studies_duplicated.csv" )
-write_csv(negative_studies_distinct,  "/home/cerebriu/data/DM/MyCerebriu/CMB/negative_studies_distinct.csv" )
+write_csv(negative_studies_distinct %>% select(StudyInstanceUID),  "/home/cerebriu/data/DM/MyCerebriu/CMB/UIDs_negative_studies_distinct.csv" )
