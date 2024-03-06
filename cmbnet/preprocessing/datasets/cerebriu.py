@@ -18,6 +18,7 @@ import nibabel as nib
 from scipy.io import loadmat
 import glob
 import sys
+import json
 from typing import Tuple, Dict, List, Any
 
 import cmbnet.preprocessing.process_masks as process_masks
@@ -306,14 +307,27 @@ def perform_CEREBRIU_QC(args, subject, mris, annotations, sequence_type, seq_fol
     
     # Quality Control of Labels
     for anno_sequence, anno_im in annotations.items():
-        annotations_qc[anno_sequence], metadata, msg = process_cerebriu_anno(args, subject, anno_im, mris_qc[anno_sequence], seq_folder, msg)
-        annotations_metadata[anno_sequence] = metadata
+        
+        if args.reprocess_file is None:
+            annotations_qc[anno_sequence], metadata, msg = process_cerebriu_anno(args, subject, anno_im, mris_qc[anno_sequence], seq_folder, msg)
+            annotations_metadata[anno_sequence] = metadata
+            # Prepare metadata in correct format
+            metadata_out = {
+                sequence_type: {"healthy": "no" if annotations_metadata.get(sequence_type) else "yes",
+                "CMBs_old": annotations_metadata.get(sequence_type, {})}
+            }
+        else:
+            json_file = os.path.join(args.processed_dir, "Data", subject, "Annotations_metadata", f"{subject}_metadata.json")
+            with open(json_file, 'r') as file:
+                metadata_dict = json.load(file)
+            com_list = [tuple(int(i) for i in cc["CM"]) for cc in metadata_dict['CMBs_old'].values()]
 
-    # Prepare metadata in correct format
-    metadata_out = {
-        sequence_type: {"healthy": "no" if annotations_metadata.get(sequence_type) else "yes",
-        "CMBs_old": annotations_metadata.get(sequence_type, {})}
-    }
+            annotations_qc[anno_sequence], metadata, msg = process_masks.reprocess_study(
+                study=subject, processed_dir=args.processed_dir, mapping_file=args.reprocess_file,
+                dataset=args.dataset_name, 
+                mri_im=mris_qc[anno_sequence], com_list=com_list, msg=msg)
+            annotations_metadata[anno_sequence] = metadata
+            metadata_out = { sequence_type: metadata}
 
     return mris_qc, annotations_qc, metadata_out, msg
 
@@ -382,7 +396,7 @@ def load_CEREBRIUneg_raw(input_dir, study):
     if not mri_files:
         raise ValueError("No MRI files found")
     elif len(mri_files) > 1:
-        raise ValueError(f"Multiple mri files found in {mri_dir}")
+        mri_files = [f for f in mri_files if "SWI" in f] # preference to negative SWI as there are less
 
     # Get the CMB file and determine corresponding MRI subfolder
     mri_file = mri_files[0]

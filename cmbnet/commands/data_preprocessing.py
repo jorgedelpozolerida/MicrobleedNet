@@ -425,7 +425,6 @@ def main(args):
         subjects_used = df_log_fail['studyUID'].to_list() + unprocessed_studies
         msg += f"Collected a total of {len(subjects_used)} subjects (Failed: {len(df_log_fail)}, Unprocessed: {len(unprocessed_studies)}) out of {len(subjects)} from log file {args.start_from_log}\n"
         subjects = subjects_used
-
         if args.remove_studies:
             utils_general.confirm_action(f"Will delete {len(subjects)} studies if present already")
             for stud in subjects:

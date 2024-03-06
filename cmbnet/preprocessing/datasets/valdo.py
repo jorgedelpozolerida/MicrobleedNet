@@ -10,6 +10,7 @@ paper:
 import os
 import argparse
 import traceback
+import json
 
 import logging                                                                      
 import numpy as np                                                                  
@@ -80,7 +81,7 @@ def process_VALDO_mri(mri_im, msg='', log_level='\t\t'):
     return processed_mri_im, msg
 
 
-def perform_VALDO_QC(mris, annotations, msg):
+def perform_VALDO_QC(args, subject, mris, annotations, msg):
     """
     Perform Quality Control (QC) specific to the VALDO dataset on MRI sequences and labels.
 
@@ -99,21 +100,40 @@ def perform_VALDO_QC(mris, annotations, msg):
     """
 
     mris_qc, annotations_qc, annotations_metadata = {}, {}, {}
-
-    # Quality Control of Labels
-    for anno_sequence, anno_im in annotations.items():
-        annotations_qc[anno_sequence], metadata, msg = process_masks.process_cmb_mask(anno_im, msg)
-        annotations_metadata[anno_sequence] = metadata
-
+    
     # Quality Control of MRI Sequences
     for mri_sequence, mri_im in mris.items():
         mris_qc[mri_sequence], msg = process_VALDO_mri(mri_im, msg)
-    
-    # Prepare metadta in correct format
-    metadata_out = {
-        "healthy": "no" if annotations_metadata.get("T2S") else "yes",
-        "CMBs_old": annotations_metadata.get("T2S", {}),
-    }
+        
+    # # Quality Control of Labels
+    # for anno_sequence, anno_im in annotations.items():
+    #     annotations_qc[anno_sequence], metadata, msg = process_masks.process_cmb_mask(anno_im, msg)
+    #     annotations_metadata[anno_sequence] = metadata
+
+    # Quality Control of Labels
+    for anno_sequence, anno_im in annotations.items():
+        
+        if args.reprocess_file is None:
+            annotations_qc[anno_sequence], metadata, msg = process_masks.process_cmb_mask(anno_im, msg)
+            annotations_metadata[anno_sequence] = metadata
+            # Prepare metadta in correct format
+            metadata_out = {
+                "healthy": "no" if annotations_metadata.get("T2S") else "yes",
+                "CMBs_old": annotations_metadata.get("T2S", {}),
+            }
+
+        else:
+            json_file = os.path.join(args.processed_dir, "Data", subject, "Annotations_metadata", f"{subject}_metadata.json")
+            with open(json_file, 'r') as file:
+                metadata_dict = json.load(file)
+            com_list = [tuple(int(i) for i in cc["CM"]) for cc in metadata_dict['CMBs_old'].values()]
+
+            annotations_qc[anno_sequence], metadata, msg = process_masks.reprocess_study(
+                study=subject, processed_dir=args.processed_dir, mapping_file=args.reprocess_file,
+                dataset=args.dataset_name, 
+                mri_im=mris_qc[anno_sequence], com_list=com_list, msg=msg)
+            annotations_metadata[anno_sequence] = metadata
+            metadata_out = metadata
 
     return mris_qc, annotations_qc, metadata_out, msg
 
@@ -150,7 +170,7 @@ def load_VALDO_data(args, subject, msg):
     }
     
     # 3. Perform Quality Control (QC) on Loaded Data
-    sequences_qc, labels_qc, labels_metadata, msg = perform_VALDO_QC(sequences_raw, labels_raw, msg)
+    sequences_qc, labels_qc, labels_metadata, msg = perform_VALDO_QC(args, subject, sequences_raw, labels_raw, msg)
     
     # 4. Save plots for debugging
     utils_plt.generate_cmb_plots(

@@ -20,6 +20,7 @@ import nibabel as nib
 from scipy.io import loadmat
 import glob
 import sys
+import json
 from typing import Tuple, Dict, List, Any
 
 from scipy.ndimage import center_of_mass
@@ -27,6 +28,7 @@ from scipy.ndimage import center_of_mass
 import cmbnet.preprocessing.process_masks as process_masks
 import cmbnet.utils.utils_general as utils_general
 import cmbnet.visualization.utils_plotting as utils_plt
+import cmbnet.preprocessing.loading as loading
 
 
 logging.basicConfig(level=logging.INFO)
@@ -72,7 +74,7 @@ def load_RODEJA_raw(input_dir: str, study: str, msg: str, log_level: str) -> Tup
     label_filepaths = find_macthing_files(f"{study}mask.nii", annotations_dir)
     assert len(label_filepaths) == 1, f"More or no label files found: {label_filepaths}"
     im_anno = nib.load(label_filepaths[0])
-    im_anno_modified, cmb_info = process_rawmask_rodeja(im_anno)
+    im_anno_modified, cmb_info, msg = process_rawmask_rodeja(im_anno, msg)
     labels_raw[seq_type] = im_anno_modified
 
     assert labels_raw, f"{log_level}Label not found for subject: {study}"
@@ -92,11 +94,13 @@ def load_RODEJA_raw(input_dir: str, study: str, msg: str, log_level: str) -> Tup
         seq_type: mri_filepaths[0],
         "CMB": label_filepaths[0]
     }
+    
+    assert sequences_raw[seq_type].shape == labels_raw[seq_type].shape, f"Different shapes, revise data"
 
     return sequences_raw, labels_raw, nifti_paths, seq_type, cmb_info, msg
 
 
-def process_rawmask_rodeja(im_anno):
+def process_rawmask_rodeja(im_anno, msg):
     """
     Process a NIfTI mask file to identify CMBs, calculate their size and center of mass,
     and convert the mask into a binary format.
@@ -107,32 +111,115 @@ def process_rawmask_rodeja(im_anno):
     Returns:
         binary_im_anno (nib.Nifti1Image): Binary mask as a NIfTI image.
         cmb_info (list): List of dictionaries with 'label', 'size', and 'center_of_mass' for each CMB.
+        msg
     """
     mask_data = im_anno.get_fdata()
+    msg += f"\t\tCombining labels from original masks\n"
 
     # Identify unique labels in the mask, excluding the background
     unique_labels = np.unique(mask_data)
     unique_labels = unique_labels[unique_labels != 0]  # Exclude background
 
-    cmb_info = []  # List to store information about each CMB
+    cmb_info = {}
+    com_list = []
+    binary_mask_data = np.zeros_like(mask_data, dtype=bool)
 
-    for lbl in unique_labels:
+    for i, lbl in enumerate(unique_labels):
         cmb_mask = (mask_data == lbl)  # Create a mask for the current label
         cmb_size = np.sum(cmb_mask)  # Calculate the size (count of voxels for the current label)
         cmb_com = center_of_mass(cmb_mask)  # Calculate the center of mass for the current label
         cmb_com = int(cmb_com[0]), int(cmb_com[1]), int(cmb_com[2])
-        cmb_info.append({
-            'label': int(lbl),
+        com_list.append(cmb_com)
+        cmb_info[i] = {
+            'label': lbl,
             'size': cmb_size,
-            'center_of_mass': cmb_com
-        })
-    # Convert the original mask to binary format (1 for any CMB, 0 for background)
-    binary_mask_data = (mask_data > 0).astype(int)
+            'CM': cmb_com
+        }
+        # Ensure there's no overlap with previously processed masks
+        if np.any(np.logical_and(binary_mask_data, cmb_mask)):
+
+            msg += f"\t\t\tCAUTION: Overlap detected at {cmb_com}\n" + \
+                    f"\t\t\t         Previosly visited CMBs: {com_list[:i]}\n"
+        # Update the final mask and metadata
+        binary_mask_data |= cmb_mask
+
 
     # Create a new NIfTI image for the binary mask
     binary_im_anno = nib.Nifti1Image(binary_mask_data, im_anno.affine, im_anno.header)
 
-    return binary_im_anno, cmb_info
+    return binary_im_anno, cmb_info, msg
+
+def reprocess_RODEJA_study(study, processed_dir, mapping_file, dataset,
+                    mri_im: nib.Nifti1Image, 
+                    cmb_info: list, msg: str,
+                    log_level="\t\t"):
+    """
+    Re-Process annotations for dataset subject by creating a sphere.
+    Radius is derived from:
+    - Manually set radius in "manual_fixes.csv" file 
+    OR
+    - Using Region Growing estimated radius from first run
+    """
+    # Get study metadata
+    json_file = os.path.join(processed_dir, "Data", study, "Annotations_metadata", f"{study}_metadata.json")
+    with open(json_file, 'r') as file:
+        metadata_dict = json.load(file)
+
+    # Get mapping list
+    msg += f"{log_level}---- Study found in manual fixes mapping CSV ----\n"
+
+    # Compute size threshold and maximum distance in voxels
+    size_th, max_dist_voxels = process_masks.calculate_size_and_distance_thresholds(mri_im, max_dist_mm=10)
+
+    # Initialize the final processed mask
+    final_processed_mask = np.zeros_like(mri_im.get_fdata(), dtype=bool)
+    old_metadata = {}  # To collect metadata from original masks
+
+    # Process each CMB based on its center of mass
+    visited_coms = []
+    for i, com_meta in cmb_info.items():
+        
+        com = com_meta['CM']
+        size = com_meta['size']
+        radius_orig = (3 * int(size) / (4 * np.pi))**(1/3)
+        msg += f"{log_level}\tCMB-{i}\n"
+
+        # Get from previous execution
+        radius = radius_orig * 0.3
+        msg += f"{log_level}\t\tWill use original radius of {radius_orig}, reduced to {radius}\n"
+
+        processed_mask, metadata, msg = process_masks.grow_3D_sphere(
+            example_im=mri_im,  # nibabel object
+            seeds=[com],
+            rad=radius,
+            size_threshold=size_th,
+            max_dist_voxels=max_dist_voxels,
+            log_level=f"{log_level}\t\t",
+            msg=msg
+        )
+        processed_mask = processed_mask.astype(bool)
+        radius_new = (3 * int(metadata['n_pixels']) / (4 * np.pi))**(1/3)
+        met_sph = metadata
+        msg += f"{log_level}\t\tSphere created with radius {radius_new}mm, size={np.sum(processed_mask)}\n"
+
+        if np.any(np.logical_and(final_processed_mask, processed_mask)):
+            msg += f"{log_level}\t\tCAUTION: Overlap detected at {com}\n" + \
+                    f"{log_level}\t\t         Previously visited CMBs: {visited_coms[:int(i)]}\n"
+
+        final_processed_mask |= processed_mask
+        old_metadata[i] = {
+            "CM": com,
+            "size": np.sum(processed_mask),
+            "radius": round(radius, ndigits=2),
+            "raw_metadata": com_meta,
+            "sphere": met_sph
+        }
+        visited_coms.append(com)
+
+    metadata_out = old_metadata
+    annotation_processed_nib = nib.Nifti1Image(final_processed_mask.astype(np.int16), mri_im.affine, mri_im.header)
+
+    return annotation_processed_nib, metadata_out, msg
 
 def process_RODEJA_mri(mri_im, msg='', log_level='\t\t'):
     """
@@ -174,7 +261,7 @@ def process_RODEJA_mri(mri_im, msg='', log_level='\t\t'):
 
     return processed_mri_im, msg
 
-def perform_RODEJA_QC(mris, annotations, msg):
+def perform_RODEJA_QC(args, subject, cmb_info, mris, annotations, msg):
     """
     Perform Quality Control (QC) specific to the RODEJA dataset on MRI sequences and labels.
 
@@ -193,16 +280,28 @@ def perform_RODEJA_QC(mris, annotations, msg):
     """
 
     mris_qc, annotations_qc, annotations_metadata = {}, {}, {}
-
-    # Quality Control of Labels
-    for anno_sequence, anno_im in annotations.items():
-        annotations_qc[anno_sequence], metadata, msg = process_masks.process_cmb_mask(anno_im, msg)
-        annotations_metadata[anno_sequence] = metadata
-
+    
+    map_df = loading.get_sphere_df(args.reprocess_file, subject, args.dataset_name)
+    subjects4reprocess = map_df['studyUID'].to_list()
+    
     # Quality Control of MRI Sequences
     for mri_sequence, mri_im in mris.items():
         mris_qc[mri_sequence], msg = process_RODEJA_mri(mri_im, msg)
-    
+
+    # Quality Control of Labels
+    for anno_sequence, anno_im in annotations.items():
+        if args.reprocess_file is not None and subject in subjects4reprocess:
+                annotations_qc[anno_sequence], metadata, msg = reprocess_RODEJA_study(
+                    study=subject, processed_dir=args.processed_dir, mapping_file=args.reprocess_file,
+                    dataset=args.dataset_name, 
+                    mri_im=mris_qc[anno_sequence], 
+                    cmb_info=cmb_info, 
+                    msg=msg)
+                annotations_metadata[anno_sequence] = metadata
+        else:
+            annotations_qc[anno_sequence], metadata, msg = process_masks.process_cmb_mask(anno_im, msg)
+            annotations_metadata[anno_sequence] = metadata
+        
     # Prepare metadta in correct format
     metadata_out = {
         "healthy": "no" if annotations_metadata.get("SWI") else "yes",
@@ -230,15 +329,15 @@ def load_RODEJA_data(args, subject, msg):
     sequences_raw, labels_raw, nifti_paths, seq_type, cmb_info, msg = load_RODEJA_raw(args.input_dir, subject,
                                                                             msg, log_level="\t\t")
 
-    # 3. Perform Quality Control (QC) on Loaded Data
-    sequences_qc, labels_qc, labels_metadata, msg = perform_RODEJA_QC(sequences_raw, labels_raw, msg)
+    # 2. Perform Quality Control (QC) on Loaded Data
+    sequences_qc, labels_qc, labels_metadata, msg = perform_RODEJA_QC(args, subject, cmb_info, sequences_raw, labels_raw, msg)
 
     new_n_CMB = len(labels_metadata['CMBs_old'])
     old_n_CMB = len(cmb_info)
     if old_n_CMB != new_n_CMB:
         msg += f"\t\tCAUTION: there were originally {old_n_CMB} CMB labels and now {new_n_CMB} CCs detected\n"
     
-    labels_metadata.update({"n_CMB_raw": old_n_CMB,"CMB_raw": cmb_info})
+    labels_metadata.update({"n_CMB_raw": old_n_CMB, "CMB_raw": cmb_info})
 
     # 4. Save plots for debugging
     utils_plt.generate_cmb_plots(

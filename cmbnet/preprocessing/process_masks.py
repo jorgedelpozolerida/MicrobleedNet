@@ -644,7 +644,7 @@ def reprocess_study(study, processed_dir, mapping_file, dataset,
     # Initialize the final processed mask
     final_processed_mask = np.zeros_like(mri_im.get_fdata(), dtype=bool)
     rg_metadata = {}  # To collect metadata from region growing
-    msg += f"{log_level}Applying Region Growing with max_distance={max_dist_voxels}, max_size={size_th}\n\n"
+    msg += f"{log_level}Generating spheres...\n\n"
 
     # Process each CMB based on its center of mass
     for i, com in enumerate(com_list):
@@ -653,7 +653,7 @@ def reprocess_study(study, processed_dir, mapping_file, dataset,
 
         # Get from previous execution
         metadata_i = metadata_dict['CMBs_old'][str(i)]
-        metadata_rg_i = metadata_i['region_growing']
+        metadata_rg_i = metadata_i.get('region_growing', {})
         com_i = tuple(int(i) for i in metadata_i["CM"])
         assert com_i == com  # both are tuples
         map_temp = map_df[(map_df['x'] == com_i[0]) & (map_df['y'] == com_i[1]) & (map_df['z'] == com_i[2])]
@@ -761,8 +761,12 @@ def prune_CMBs(args, annotations, annotations_resampled, labels_metadata, primar
     Tuple containing updated annotations (with pruned CMBs), modified labels_metadata, and an updated msg.
     """
     # Skip if dataset is not 'rodeja'
-    if args.dataset_name not in ["rodeja", "valdo", "dou"]:
+    if args.dataset_name not in ["rodeja", "valdo", "dou", "cerebriu"]:
         return annotations_resampled, labels_metadata, msg
+    elif args.dataset_name == "dou":
+        rad_sphere = 1.5
+    else:
+        rad_sphere = 2
 
     # Affine transformations
     affine_before = annotations[primary_seq].affine
@@ -791,7 +795,7 @@ def prune_CMBs(args, annotations, annotations_resampled, labels_metadata, primar
         if all(0 <= idx < dim for idx, dim in zip(new_com, mask_filter.shape)):
             # mask_filter_COM[new_com] = True
             mask_filter[new_com] = 1
-            mask_filter = add_sphere_to_mask(mask_filter, new_com, mask_filter.shape, 1, 2)
+            mask_filter = add_sphere_to_mask(mask_filter, new_com, mask_filter.shape, voxel_size_mm=1, radius_mm=rad_sphere)
         else:
             msg_temp += f"{log_level}\tOut-of-bounds coordinate: {new_com} (old: {com}).\n"
 
