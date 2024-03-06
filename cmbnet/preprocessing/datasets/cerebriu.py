@@ -22,6 +22,7 @@ from typing import Tuple, Dict, List, Any
 
 import cmbnet.preprocessing.process_masks as process_masks
 import cmbnet.utils.utils_general as utils_general
+import cmbnet.visualization.utils_plotting as utils_plt
 
 
 logging.basicConfig(level=logging.INFO)
@@ -126,40 +127,74 @@ def process_CEREBRIU_cmb(label_im: nib.Nifti1Image,
     voxel_size = label_im.header.get_zooms()  # Extract voxel size from the image
     mask_filt_single_list = process_masks.isolate_single_CMBs(mask_filt, voxel_size)
 
-    rg_metadata = []
+    rg_metadata = {}
     seeds_calculated = []
     final_processed_mask = np.zeros_like(mask_data, dtype=bool)
-    msg += f'{log_level}Number of CMBs found in label id {str(labelid)}: {str(len(mask_filt_single_list))}.\n'
+    msg += f'{log_level}Number of CMBs found in label id {labelid}: {len(mask_filt_single_list)}.\n'
 
     # Processing loop with optional progress bar
     iterator = range(len(mask_filt_single_list))
     if show_progress:
         iterator = tqdm(iterator, total=len(mask_filt_single_list), desc="Processing CMBs")
 
+    com_list = []
+    intensity_mod_ = "point"
+    diff_mode_ = "normal"
+    connectivity_ = 6
+
     for i in iterator:
         cmb_single_mask = mask_filt_single_list[i]
         seeds = [tuple(seed) for seed in np.array(np.where(cmb_single_mask)).T]
         seeds_calculated.extend(seeds)
+
+        seeds_array = np.array(seeds)
+        average_seed = np.mean(seeds_array, axis=0)
+        average_seed_int = np.round(average_seed).astype(int)
+        com = tuple(int(i) for i in average_seed_int)
 
         processed_mask, metadata, msg = process_masks.region_growing_with_auto_tolerance(
             volume=mri_data,
             seeds=seeds,    
             size_threshold=size_threshold,
             max_dist_voxels=max_dist_voxels,
-            tolerance_values=np.arange(0, 150, 0.5), 
-            connectivity=6,
+            tolerance_values=np.arange(0, 150, 0.5), # TODO: explore better for CERBRIU data how
+            connectivity=connectivity_,
             show_progress=show_progress,
+            diff_mode=diff_mode_,
+            log_level=f"{log_level}\t", 
             msg=msg,
-            log_level=f"{log_level}\t",
-            intensity_mode="point"
+            intensity_mode=intensity_mod_
         )
 
         # Check for overlap
         if np.any(final_processed_mask & processed_mask):
+            print(f"{log_level}\t\tCAUTION: Overlap detected at {com}\n" + \
+                    f"{log_level}\t\t         Previosly visited CMBs: {com_list[:i]}\n")
             raise RuntimeError("Overlap detected between individual processed masks")
 
         final_processed_mask = final_processed_mask | processed_mask
-        rg_metadata.append(metadata)
+
+        # radius
+        radius = (3 * int(metadata['n_pixels']) / (4 * np.pi))**(1/3)
+
+        rg_metadata[i] = {
+            "CM": com,
+            "size": metadata['n_pixels'],
+            "radius": round(radius, 2),
+            "region_growing": {
+                "distance_th": max_dist_voxels,
+                "size_th": size_threshold,
+                "sphericity_ind": metadata['sphericity_ind'],
+                "selected_tolerance": metadata['tolerance_selected'],
+                "n_tolerances": metadata['tolerances_inspected'],
+                "elbow_i": metadata['elbow_i'],
+                "elbow2end_tol": metadata['elbow2end_tol'],
+                "connectivity": connectivity_,  # Assuming connectivity is fixed in this example
+                "intensity_mode": intensity_mod_,  # Assuming this is fixed for all CMBs
+                "diff_mode": diff_mode_,  # Placeholder if different modes are considered
+            }
+        }
+
         msg += f"{log_level}Processed CMB {i}. n_seeds={len(seeds)}, new_size={np.sum(processed_mask)}\n"
 
     if not multiple and len(mask_filt_single_list) > 1:
@@ -210,6 +245,9 @@ def process_cerebriu_anno(args: Any,
     msg = f"{log_level}Thresholds for RegionGrowing --> Max. distance ={max_dist_voxels}, Max Size={size_th}\n"
 
     label_mask_all = np.zeros_like(label_im.get_fdata(), dtype=bool)
+    
+    all_metadata = {}
+    metadata_counter = 0 
 
     for labelid, mask_dict in extracted_data["segmentMap"].items():
         multiple = mask_dict['attributes'].get('Multiple', False)
@@ -218,6 +256,15 @@ def process_cerebriu_anno(args: Any,
         label_mask, raw_mask, seeds, cmb_metadata, msg = process_CEREBRIU_cmb(
             label_im, labelid, mri_im, size_th, max_dist_voxels, msg, multiple)
 
+        # Store metadata into single dict to keep consistency across datasets
+        for k, cmb_data in cmb_metadata.items():
+            all_metadata[str(metadata_counter)] = {
+                **cmb_data,
+                "seeds": seeds,
+                "labelid": labelid
+            }
+            metadata_counter += 1
+        
         # Check for overlap
         if np.any(label_mask_all & label_mask):
             raise RuntimeError("Overlap detected between different CMB annotated masks")
@@ -225,16 +272,15 @@ def process_cerebriu_anno(args: Any,
         label_mask_all |= label_mask
 
     annotation_processed_nib = nib.Nifti1Image(label_mask_all.astype(np.int16), label_im.affine, label_im.header)
-    processed_mask_nib, metadata, msg = process_masks.process_cmb_mask(annotation_processed_nib, msg, log_level="\t\t")
 
-    return processed_mask_nib, metadata, msg
+    return annotation_processed_nib, all_metadata, msg
 
 
 def process_CEREBRIU_mri(args, subject, mri_im, seq_folder, msg):
 
     return mri_im, msg
 
-def perform_CEREBRIU_QC(args, subject, mris, annotations, seq_folder, msg):
+def perform_CEREBRIU_QC(args, subject, mris, annotations, sequence_type, seq_folder, msg):
     """
     Perform Quality Control (QC) specific to the CEREBRIU dataset on MRI sequences and labels.
 
@@ -263,7 +309,13 @@ def perform_CEREBRIU_QC(args, subject, mris, annotations, seq_folder, msg):
         annotations_qc[anno_sequence], metadata, msg = process_cerebriu_anno(args, subject, anno_im, mris_qc[anno_sequence], seq_folder, msg)
         annotations_metadata[anno_sequence] = metadata
 
-    return mris_qc, annotations_qc, annotations_metadata, msg
+    # Prepare metadata in correct format
+    metadata_out = {
+        sequence_type: {"healthy": "no" if annotations_metadata.get(sequence_type) else "yes",
+        "CMBs_old": annotations_metadata.get(sequence_type, {})}
+    }
+
+    return mris_qc, annotations_qc, metadata_out, msg
 
 
 def load_CEREBRIU_data(args, subject, msg):
@@ -286,14 +338,20 @@ def load_CEREBRIU_data(args, subject, msg):
     sequences_raw, labels_raw, nifti_paths, sequence_type, seq_folder = load_CEREBRIU_raw(args.input_dir, subject)
 
     # 2. Perform Quality Control (QC) and Data Cleaning
-    sequences_qc, labels_qc, labels_metadata, msg = perform_CEREBRIU_QC(args, subject, sequences_raw, labels_raw, seq_folder, msg)
+    sequences_qc, labels_qc, labels_metadata, msg = perform_CEREBRIU_QC(args, subject, sequences_raw, labels_raw, sequence_type, seq_folder, msg)
     
 
-    new_n_CMB = len(labels_metadata['CMBs_old'])
+    new_n_CMB = len(labels_metadata[sequence_type]['CMBs_old'])
+    labels_metadata[sequence_type].update({"n_CMB_raw": new_n_CMB, "CMB_raw": []})
 
-    labels_metadata.update({"n_CMB_raw": new_n_CMB, "CMB_raw": []})
+    # 3. Save plots for debugging
+    utils_plt.generate_cmb_plots(
+        subject, sequences_raw[sequence_type], labels_raw[sequence_type], 
+        labels_qc[sequence_type], labels_metadata[sequence_type]['CMBs_old'], 
+        plots_path=utils_general.ensure_directory_exists(os.path.join(args.plots_path, "pre")),
+        zoom_size=100
+    )
 
-    
     return sequences_qc, labels_qc, nifti_paths, labels_metadata, sequence_type, msg
 
 
@@ -375,7 +433,7 @@ def perform_CEREBRIUneg_QC(args, subject, mris, annotations, sequence_type, msg)
     for mri_sequence, mri_im in mris.items():
         mris_qc[mri_sequence], msg = process_CEREBRIU_mri(args, subject, mri_im, None, msg)
     
-    # Prepare metadta in correct format
+    # Prepare metadata in correct format
     metadata_out = {
         sequence_type: {"healthy": "no" if annotations_metadata.get(sequence_type) else "yes",
         "CMBs_old": annotations_metadata.get(sequence_type, {})}

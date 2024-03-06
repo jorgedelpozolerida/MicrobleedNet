@@ -325,10 +325,10 @@ def process_all_studies(args, studies):
         progress_bar = tqdm(total=studies_pending.qsize())
         number_of_studies_done_so_far = 0
 
-    # start processes
-    processes = []
     if studies_pending.qsize() > 0:
         number_of_workers = min(args.num_workers, studies_pending.qsize())
+        # start processes
+        processes = []
         for i in range(number_of_workers):
             process = mp.Process(target=process_single_study_worker,
                                     args=(args, studies_pending, studies_done,
