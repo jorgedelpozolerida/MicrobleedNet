@@ -761,7 +761,7 @@ def prune_CMBs(args, annotations, annotations_resampled, labels_metadata, primar
     Tuple containing updated annotations (with pruned CMBs), modified labels_metadata, and an updated msg.
     """
     # Skip if dataset is not 'rodeja'
-    if args.dataset_name != "rodeja":
+    if args.dataset_name not in ["rodeja", "valdo", "dou"]:
         return annotations_resampled, labels_metadata, msg
 
     # Affine transformations
