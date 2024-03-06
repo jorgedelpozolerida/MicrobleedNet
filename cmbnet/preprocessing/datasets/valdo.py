@@ -136,15 +136,17 @@ def load_VALDO_data(args, subject, msg):
     subject_old_dir = os.path.join(args.input_dir, subject)
 
     # 1. Load Raw MRI Sequences
+    t2s_path = os.path.join(subject_old_dir, f"{subject}_space-T2S_desc-masked_T2S.nii.gz")
     sequences_raw = {
         # "T1": nib.load(os.path.join(subject_old_dir, f"{subject}_space-T2S_desc-masked_T1.nii.gz")),
         # "T2": nib.load(os.path.join(subject_old_dir, f"{subject}_space-T2S_desc-masked_T2.nii.gz")),
-        "T2S": nib.load(os.path.join(subject_old_dir, f"{subject}_space-T2S_desc-masked_T2S.nii.gz"))
+        "T2S": nib.load(t2s_path)
     }
     
     # 2. Load Raw Labels (Annotations are made in T2S space for VALDO dataset)
+    cmb_path = os.path.join(subject_old_dir, f"{subject}_space-T2S_CMB.nii.gz")
     labels_raw = {
-        "T2S": nib.load(os.path.join(subject_old_dir, f"{subject}_space-T2S_CMB.nii.gz"))
+        "T2S": nib.load(cmb_path)
     }
     
     # 3. Perform Quality Control (QC) on Loaded Data
@@ -157,5 +159,12 @@ def load_VALDO_data(args, subject, msg):
         plots_path=utils_general.ensure_directory_exists(os.path.join(args.plots_path, "pre")),
         zoom_size=100
     )
+    nifti_paths = {
+        "T2S": t2s_path,
+        "CMB": cmb_path
+    }
+    new_n_CMB = len(labels_metadata['CMBs_old'])
+    labels_metadata.update({"n_CMB_raw": new_n_CMB,"CMB_raw": []})
+
     metadata_out = {"T2S": labels_metadata }
-    return sequences_qc, labels_qc, metadata_out, "T2S", msg
+    return sequences_qc, labels_qc, nifti_paths, metadata_out, "T2S", msg

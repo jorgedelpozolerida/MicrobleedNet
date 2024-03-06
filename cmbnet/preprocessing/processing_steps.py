@@ -407,6 +407,6 @@ def crop_mris_and_annotations(mris, annotations, brain_masks, prim_seq, msg, log
     msg += '\t\tAnnotations shape after cropping: {}\n'.format(annotations_cropped[prim_seq].shape)
 
     end = time.time()
-    msg += f'{log_level}Cropping completed in {end - start:.2f} seconds.\n'
+    msg += f'{log_level}Cropping completed in {end - start:.2f} seconds.\n\n'
 
     return mris_cropped, annotations_cropped, msg
