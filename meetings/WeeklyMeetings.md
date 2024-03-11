@@ -4,6 +4,7 @@
 * [19 February 2024](#date-19-february-2024)
 * [26 February 2024](#date-26-february-2024)
 * [04 March 2024](#date-04-march-2024)
+* [11 March 2024](#date-11-march-2024)
 
 <!-- *
 * [12 February 2024](#date-12-february-2024)
@@ -278,20 +279,67 @@ which makes debugging very complex
 ### Date: 11 March 2024
 
 #### What did you achieve/do?
-* n/a
+* All datasets preprocessed!! Took a full month but done finally :'). 
 
 #### What did you struggle with?
-* n/a
+* During dataset preprocessing many unexpected behaviour could be observed that affected the final count of microbleeds: resampling effect (splitting CMBs-upsampling or joining two together-downsampling), morphological operations messing with masks, region growing having unexpected results, annotations being incorrectly placed...etc But managed to keep original count intact at least for all real CMBs
 
 #### What would you like to work on next ?
-* n/a
+* Decide on how to use data for training in best way
+* Start pre-training with negative + synthetic + real
+* While it trains, start writing Data Preprocessing section, as well as intro and background
 
 #### Where do you need help from Veronika?
-* n/a
+* Ideas on how to split data for training-test?
 
 #### Others
 
-* n/a
+* _Processing steps_: mask cleaning (RG, CC decomposition, possibly sphere creation..etc) + reorientation +  skull stripping + cropping  + resampling + CMB count checking
+* CSV indicating studies-CMBs where manually set radius size is used (dou and momeni) or where spheres are created instead of using original mask (rodeja): [manual_fixes.csv](../data-misc/processing/manual_fixes.csv)
+
+* Table summarizing all data available:
+
+| Dataset | res_level | seq_type | n_patients | n_patients_h | n_series | n_series_h | n_CMB |
+|----------|-----------|----------|------------|--------------|----------|------------|-------|
+| CRB      | high      | T2S      |          3 |            0 |        3 |          0 |    37 |
+| CRB      | low       | SWI      |          4 |            0 |        4 |          0 |    47 |
+| CRB      | low       | T2S      |          1 |            0 |        1 |          0 |    12 |
+| CRBneg   | high      | SWI      |          1 |            1 |        1 |          1 |     0 |
+| CRBneg   | high      | T2S      |        442 |          442 |      442 |        442 |     0 |
+| CRBneg   | low       | SWI      |        200 |          200 |      200 |        200 |     0 |
+| CRBneg   | low       | T2S      |         99 |           99 |       99 |         99 |     0 |
+| DOU      | high      | SWI      |         20 |            0 |       20 |          0 |    74 |
+| MOMENI   | low       | SWI      |        118 |          100 |      370 |        313 |   146 |
+| RODEJA   | high      | SWI      |         88 |           32 |       88 |         32 |   286 |
+| RODEJA   | low       | SWI      |         15 |           10 |       15 |         10 |    71 |
+| VALDO    | high      | T2S      |         45 |           22 |       45 |         22 |   219 |
+| VALDO    | low       | T2S      |         27 |            0 |       27 |          0 |    34 |
+| sMOMENI  | low       | SWI      |        118 |            0 |     3700 |          0 | 36812 |
+| Total    | -         | -        |       1027 |          897 |     5015 |       1119 | 37738 |
+
+* Summary table with more info for every dataset:
+
+| Dataset      | Study        | Demographics                                                                                | Location                   | Field Strength | Scanner Model                                                                                                                 | Flip Angle | TR      | TE      | Slice Thickness | Rating Scale            | TR/TE           |
+|--------------|--------------|---------------------------------------------------------------------------------------------|----------------------------|----------------|-------------------------------------------------------------------------------------------------------------------------------|------------|---------|---------|-----------------|-------------------------|-----------------|
+| VALDO        | VALDO-SABRE  | Tri-ethnic, high cardiovascular risk, 36-92 years old, mean age 72.                         | London, UK                 | 3              | Philips                                                                                                                       | 18         | 1288    | 21      | 3               | BOMBS                   | 1288/21         |
+| VALDO        | VALDO-RSS    | Aging population >45 without dementia                                                       | Rotterdam, Netherlands     | 1.5            | GE MRI                                                                                                                        | 13         | 45      | 31      | 0.8             | (Vernooij et al., 2008) | 45/31           |
+| VALDO        | VALDO-ALFA   | Enriched for APOE4, family risk of Alzheimer’s. Cognitively normal participants aged 45-74 | Barcelona, Spain           | 3              | GE Discovery                                                                                                                  | 15         | 1300    | 23      | 3               | BOMBS                   | 1300/23         |
+| RODEJA       | RODEJA       | Unknown                                                                                     | Copenhagen region, Denmark | 1.5/3          | Several                                                                                                                       | Several    | Several | Several | Several         | Unknown                 | Several/Several |
+| CEREBRIU     | CEREBRIU     | Unknown                                                                                     | Brazil                     | 1.5            | GE Optima MR450w 1.5                                                                                                          | 15         | 75      | 48      | NA              | BOMBS                   | 75/48           |
+| CEREBRIU     | CEREBRIU     | Unknown                                                                                     | India                      | 1.5            | Siemens Symphony 1.5                                                                                                          | 12         | 48      | 40      | NA              | BOMBS                   | 48/40           |
+| CEREBRIU     | CEREBRIU     | Unknown                                                                                     | India                      | 1.5/3          | 33% Siemens MAGNETOM Sempra 1.5, 33% Siemens Sempra 1.5, 33% Siemens Spectra 3                                                | 20         | 688-872 | 19-25   | NA              | BOMBS                   | 688-872/19-25   |
+| CEREBRIU     | CEREBRIU     | Unknown                                                                                     | U.S.A                      | 3              | Siemens MAGNETOM Vida 3                                                                                                       | 15         | 27      | 20      | NA              | BOMBS                   | 27/20           |
+| CEREBRIU_neg | CEREBRIU_neg | Unknown                                                                                     | Brazil                     | 1.5            | 34% GE Brivo MR355 1.5, 31% GE GENESIS_SIGNA 1.5, 35% GE Optima MR450w 1.5                                                    | 15-20      | 74-717  | 19-50   | NA              | BOMBS                   | 74-717/19-50    |
+| CEREBRIU_neg | CEREBRIU_neg | Unknown                                                                                     | India                      | 1.5/3          | 50% Siemens MAGNETOM_ESSENZA 1.5, 50% Siemens Spectra 3                                                                       | 20         | 657-762 | 19      | NA              | BOMBS                   | 657-762/19      |
+| CEREBRIU_neg | CEREBRIU_neg | Unknown                                                                                     | India                      | 1.5            | 56% Siemens MAGNETOM_ESSENZA 1.5, 44% Siemens Symphony 1.5                                                                    | 12-20      | 48-688  | 20-40   | NA              | BOMBS                   | 48-688/20-40    |
+| CEREBRIU_neg | CEREBRIU_neg | Unknown                                                                                     | India                      | 1.5/3          | 53% Siemens MAGNETOM Sempra 1.5, 3% Siemens MAGNETOM_ESSENZA 1.5, 5% Siemens NA 1.5, 26% Siemens Sempra 1.5, 14% Siemens Spectra 3 | 20         | 657-968 | 19-25   | NA              | BOMBS                   | 657-968/19-25   |
+| CEREBRIU_neg | CEREBRIU_neg | Unknown                                                                                     | U.S.A                      | 1.5/3          | 7% Siemens MAGNETOM Sola 1.5, 68% Siemens MAGNETOM Vida 3, 3% Siemens NA 3, 20% Siemens Prisma_fit 3, 1% Siemens TrioTim 3    | 15-20      | 27-782  | 20-40   | NA              | BOMBS                   | 27-782/20-40    |
+| MOMENI       | MOMENI       | Alzheimer’s disease (AD), mild cognitive impairment (MCI) and cognitively normal (CN)       | Australia                  | 3              | Siemens TRIM TRIO scanner                                                                                                     | 20         | 27      | 20      | 1.75            | MARS                    | 27/20           |
+| DOU          | DOU          | 10 cases with stroke and 10 cases of normal aging                                           | China?                     | 3              | Philips Medical System                                                                                                        | 20         | 17      | 24      | 2               | MARS                    | 17/24           |
+| sMOMENI      | MOMENI       | Alzheimer’s disease (AD), mild cognitive impairment (MCI) and cognitively normal (CN)       | Australia                  | 3              | Siemens TRIM TRIO scanner                                                                                                     | 20         | 27      | 20      | 1.75            | MARS                    | 27/20           |
+
+
+* My idea is to stratify by seq type (SWI/T2S), original resolution level and field strength. Maybe leave some full dataset like DOU out (20 cases, also publicly avaialble) as test set.
 
 <br><br><br><br><br>
 

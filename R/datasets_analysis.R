@@ -2,7 +2,7 @@
 #' Title: 
 #' Author: Jorge del Pozo Lerida
 #' Date: 2024-02-20
-#' Description: 
+#' Description:
 ################################################################################
 
 ## Setup -------------------------------------------------------------------
@@ -10,27 +10,86 @@
 # Load necessary packages
 library(tidyverse)
 library(e1071)
-cmb_new <- read_csv("/home/cerebriu/data/RESEARCH/MicrobleedNet/data-misc/csv/cmb_new_overview.csv")
-cmb_old <- read_csv("/home/cerebriu/data/RESEARCH/MicrobleedNet/data-misc/csv/cmb_old_overview.csv")
-studies <- read_csv("/home/cerebriu/data/RESEARCH/MicrobleedNet/data-misc/csv/datasets_overview.csv")
+
+csv_dir <- "/home/cerebriu/data/RESEARCH/MicrobleedNet/data-misc/csv"
+cmb_new <- read_csv(file.path(csv_dir, "cmb_new_overview.csv"))
+cmb_old <- read_csv(file.path(csv_dir, "cmb_old_overview.csv"))
+studies <- read_csv(file.path(csv_dir, "datasets_overview.csv"))
 
 
-func_getmomeni_patientid <- function(x){
+func_getmomeni_patientid <- function(x) {
   xsplit <- str_split(x, "_")
-  subjectid <- sapply(xsplit, '[', 1)
+  subjectid <- sapply(xsplit, "[", 1)
   return(subjectid)
 }
-func_getmomeni_seriesuid <- function(x){
+func_getmomeni_seriesuid <- function(x, y) {
   xsplit <- str_split(x, "_")
-  subjectid <- sapply(xsplit, '[', 1)
-  scanid <- sapply(xsplit, '[', 2)
-  seriesuid <- paste(subjectid, scanid, sep="_")
+  subjectid <- sapply(xsplit, "[", 1)
+  scanid <- sapply(xsplit, "[", 2)
+  type <- ifelse(y == "yes", "H", "CMB")
+  seriesuid <- paste(subjectid, scanid, sep = "_")
+  seriesuid <- paste(seriesuid, type, sep = "-")
   return(seriesuid)
 }
-func_getvaldo_patientid <- function(x){
+func_getmomenisynth_seriesuid <- function(x) {
+  xsplit <- str_split(x, "_")
+  subjectid <- sapply(xsplit, "[", 1)
+  scanid <- sapply(xsplit, "[", 2)
+  iteration_id <- sapply(xsplit, function(x) tail(x, 1))
+  type <- sapply(sapply(xsplit, function(x) tail(x, 2)), "[", 1)
+  seriesuid <- paste(subjectid, scanid, iteration_id, sep = "_")
+  seriesuid <- paste(seriesuid, type, sep = "-")
+
+  return(seriesuid)
+}
+func_valdo_seriesuid <- function(x, y) {
   xsplit <- str_split(x, "-")
-  subjectid <- sapply(xsplit, '[', 2)
+  subjectid <- sapply(xsplit, "[", 2)
+  type <- ifelse(y == "yes", "H", "CMB")
+  seriesuid <- paste(subjectid, sep = "_")
+  seriesuid <- paste(seriesuid, type, sep = "-")
+
+  return(seriesuid)
+}
+func_generic_seriesuid <- function(x, y) {
+  type <- ifelse(y == "yes", "H", "CMB")
+  seriesuid <- paste(x, sep = "_")
+  seriesuid <- paste(seriesuid, type, sep = "-")
+  return(seriesuid)
+}
+func_getvaldo_patientid <- function(x) {
+  xsplit <- str_split(x, "-")
+  subjectid <- sapply(xsplit, "[", 2)
   return(subjectid)
+}
+calc_summary <- function(x) {
+  # If x is a factor or character, calculate percentages
+  if (is.factor(x) || is.character(x)) {
+    freq <- table(x)
+    percent <- round(100 * freq / sum(freq), 2)
+
+    # Check if only one category exists
+    if (length(freq) == 1) {
+      return(names(freq))
+    } else {
+      return(paste(paste0(round(percent), "%"), names(freq), sep = "", collapse = ", "))
+    }
+  }
+  # If x is numeric, calculate min-max
+  else if (is.numeric(x)) {
+    min_val <- min(x, na.rm = TRUE)
+    max_val <- max(x, na.rm = TRUE)
+    # Check if min and max are the same
+    if (min_val == max_val) {
+      return(paste0(min_val))
+    } else {
+      return(paste0(min_val, "-", max_val))
+    }
+  }
+  # Return NA for other types or if unable to calculate
+  else {
+    return(NA)
+  }
 }
 
 ## Select studies to be used ---------------------------------------------
@@ -40,80 +99,324 @@ func_getvaldo_patientid <- function(x){
 
 
 ## Clean data ------------------------------------------------------------
-studies_clean <- studies %>% 
-  mutate(dat=Dataset) %>% 
-  group_by(Dataset) %>% 
+studies_clean <- studies %>%
+  mutate(Dataset = sub("^p", "", Dataset)) %>%
+  mutate(studyUID_old = subject) %>%
   mutate(
-    patient = case_when(
-      str_detect(tolower(dat), "momeni") ~ func_getmomeni_patientid(subject),
-      str_detect(tolower(dat), "valdo") ~ func_getvaldo_patientid(subject),
+    patientUID = case_when(
+      str_detect(tolower(Dataset), "momeni") ~ func_getmomeni_patientid(subject),
+      str_detect(tolower(Dataset), "valdo") ~ func_getvaldo_patientid(subject),
+      # str_detect(tolower(Dataset), "cerebriu") ~ func_cerebriu_patientid(subject),
       TRUE ~ subject
     ),
     series = case_when(
-      str_detect(tolower(dat), "momeni")  ~ func_getmomeni_seriesuid(subject),
-      TRUE ~ subject
+      Dataset == "MOMENI" ~ func_getmomeni_seriesuid(subject, healthy),
+      Dataset == "MOMENI_synth" ~ func_getmomenisynth_seriesuid(subject),
+      Dataset == "VALDO" ~ func_valdo_seriesuid(subject, healthy),
+      TRUE ~ func_generic_seriesuid(subject, healthy)
     )
   ) %>%
+  mutate(
+    seriesUID = paste(series, Dataset, sep = "-")
+  ) %>%
+  relocate(seriesUID, n_CMB_new, n_CMB_old) %>% 
+  mutate(
+    Dataset2 = case_when(
+      Dataset == "MOMENI_synth" ~ "sMOMENI",
+      Dataset == "CEREBRIU_neg" ~ "CRBneg",
+      Dataset == "CEREBRIU" ~ "CRB",
+      T ~ Dataset)
+  ) %>% 
+  group_by(Dataset) %>% 
+  arrange(patientUID, series) %>% 
+  mutate(n_indataset=row_number()) %>% 
   ungroup() %>% 
-  group_by(Dataset, patient) %>% 
-  arrange(series) %>% 
-  mutate(seriesUID = row_number()) %>% 
-  ungroup() %>% 
-  group_by(Dataset) %>%
-  arrange(patient) %>% 
-  mutate(patientUID = row_number()) %>% 
-  ungroup() %>% 
-  mutate(patientUID = case_when(
-    str_detect(tolower(dat), "momeni") ~ paste0(patientUID, "-", "momeni"),
-    TRUE ~ paste0(patientUID, "-", dat))
-            ) %>% 
-  mutate(n = row_number()) %>% 
-  mutate(seriesUID = paste0(n,"-", dat, "-", seriesUID) ) %>%
-  arrange(Dataset) %>% 
-  mutate(id = row_number()) %>% 
-  relocate(id, seriesUID, patientUID) %>% 
-  select(-dat, -patient, -series, -n) %>% 
-  group_by(patientUID) %>% 
-  mutate(patient_scan_num = row_number()) %>% 
-  ungroup()
+  mutate(
+    seriesUID = paste(Dataset2, n_indataset, series,  sep = "-")
+  ) %>%
+  mutate(
+    res_level = sapply(old_voxel_dim, function(x) {
+      nums <- as.numeric(unlist(str_extract_all(x, "\\d+\\.\\d+")))
+      if(length(nums) >= 2 && all(nums[1:2] > 0.5)) {
+        "low"
+      } else {
+        "high"
+      }
+    })
+  )
+
+momeni_scan_params <- data.frame(
+  field_strength = "3T",
+  scanner_model = "Siemens TRIM TRIO scanner",
+  flip_angle = "20",
+  TR = 27,
+  TE = 20,
+  slice_thickness = 1.75,
+  rating_scale = "MARS",
+  demographics = "Alzheimer’s disease (AD), mild cognitive impairment (MCI) and cognitively normal (CN)",
+  location = "Australia"
+) %>% mutate(Dataset = "MOMENI")
+
+dou_scan_params <- data.frame(
+  field_strength = "3T",
+  scanner_model = " Philips Medical System",
+  flip_angle = "20",
+  TR = 17,
+  TE = 24,
+  slice_thickness = 2,
+  rating_scale = "MARS",
+  demographics = "10 cases with stroke and 10 cases of normal aging",
+  location = "China?" # clarify with author
+) %>% mutate(Dataset = "DOU")
+
+# mix of definite and possible
+# The N4 bias field correction technique was applied on all the SWI dataset (JORGE: is applied?)
+# where SWI were reconstructed online using the scanner system (software VB17)
+
+
+valdo_scan_params <- data.frame(
+  Study = c("SABRE", "RSS", "ALFA"),
+  demographics = c(
+    "Tri-ethnic, high cardiovascular risk, 36-92 years old, mean age 72. ",
+    "Aging population >45 without dementia",
+    "Enriched for APOE4, family risk of Alzheimer’s.  cognitively normal participants aged 45-74"
+  ),
+  location = c("London, UK", "Rotterdam, Netherlands", "Barcelona, Spain"),
+  field_strength = c("3T", "1.5T", "3T"),
+  scanner_model = c("Philips", "GE MRI", "GE Discovery"),
+  flip_angle = c("18", "13", "15"), # Removing the degree symbol for numerical analysis
+  TR = c(1288, 45, 1300),
+  TE = c(21, 31, 23),
+  slice_thickness = c(3.0, 0.8, 3.0), # Assuming the last dimension in Voxel_Size_mm3 is the slice thickness
+  rating_scale = c("BOMBS", "(Vernooij et al., 2008)", "BOMBS"), # Placeholder, as this data is not provided
+  stringsAsFactors = FALSE # To avoid automatic conversion to factors
+) %>% mutate(Dataset = "VALDO")
+# SABRE: initially recruited in 1988 with the purpose of investigating metabolic and cardiovascular
+# diseases across ethnicities
+# RSS: population-based study that aims to investigate chronic illness in theelderly
+# ALFA: details of relatives (generally offspring) of patients with Alzheimer’s Disease making up for a cohort naturally enriched for genetic predisposition to AD
+
+
+rodeja_scan_params <- data.frame(
+  field_strength = "1.5/3T",
+  scanner_model = "several",
+  flip_angle = "several",
+  TR = "several",
+  TE = "several",
+  slice_thickness = "several",
+  rating_scale = "unknown",
+  demographics = "unknown", # clarify with author
+  location = "Copenhagen region, Denmark"
+) %>% mutate(Dataset = "RODEJA")
+
+#### cerebriu_scan_params - negative
+crbr_study_metadata <- read_csv("/home/cerebriu/data/DM/MyCerebriu/Pathology_Overview/all_studies_final.csv")
+
+cerebriu_data <- read_csv("/home/cerebriu/data/RESEARCH/MicrobleedNet/data-misc/csv/cerebriu_metadata.csv") %>%
+  filter(StudyInstanceUID %in% studies_clean$subject) %>%
+  left_join(studies_clean %>% select(subject, Dataset), by = c("StudyInstanceUID" = "subject")) %>%
+  # Add study-level
+  left_join(
+    crbr_study_metadata %>%
+      select(-Dataset, -Step),
+    by = ("StudyInstanceUID")
+  ) 
+
+summary_cerebriu <- cerebriu_data %>%
+  group_by(Dataset, Hospital) %>%
+  mutate(
+    country = sapply(str_split(Dataset, "-"), `[`, 1),
+    country = case_when(
+      country == "BR" ~ "Brazil",
+      country == "IN" ~ "India",
+      country == "US" ~ "U.S.A"
+    ),
+    MagneticFieldStrength = round(as.numeric(MagneticFieldStrength), 2),
+    MagneticFieldStrength = case_when(
+      MagneticFieldStrength == "15000" ~ 1.5,
+      TRUE ~ MagneticFieldStrength
+    ),
+    Demographics = "Not available",
+    field_strength = MagneticFieldStrength,
+  ) %>%
+  mutate(    scanner_model = paste0(Manufacturer, " ", ManufacturerModelName, " ", field_strength)
+  ) %>% 
+  summarise(
+    # Demographics = calc_summary(Demographics),
+    location = calc_summary(Location),
+    scanner_model = calc_summary(scanner_model),
+    field_strength = calc_summary(field_strength),
+    TR_TE = calc_summary(`TR/TE (ms)`),
+    TR = calc_summary(`TR (ms)`),
+    TE = calc_summary(`TE (ms)`),
+    flip_angle = calc_summary(`Flip Angle`)
+  ) %>%
+  ungroup() %>%
+  mutate(rating_scale = "BOMBS", demographics = "unknown")
+
+
+# Convert all columns in each dataset to character type
+valdo_scan_params[] <- lapply(valdo_scan_params, as.character)
+rodeja_scan_params[] <- lapply(rodeja_scan_params, as.character)
+summary_cerebriu[] <- lapply(summary_cerebriu, as.character)
+momeni_scan_params[] <- lapply(momeni_scan_params, as.character)
+dou_scan_params[] <- lapply(dou_scan_params, as.character)
+
+# Combine all the datasets into one dataframe
+all_scan_params <- bind_rows(
+  valdo_scan_params,
+  rodeja_scan_params,
+  summary_cerebriu,
+  momeni_scan_params,
+  dou_scan_params
+) %>%
+  mutate(Study = paste0(Dataset, ifelse(is.na(Study), "", paste0("-", Study)))) %>%
+  select(-Hospital) %>%
+  mutate(
+    TR_TE = paste0(TR, "/", TE)
+    ) %>% 
+    mutate(
+      field_strength = str_replace_all(field_strength, "-", "/"), # Replace - with /
+      field_strength = str_replace(field_strength, "[A-Za-z]+$", "") # Remove letters at the end
+    )
+all_scan_params <- all_scan_params %>% 
+  # Duplicate rows where Dataset is "MOMENI", changing Dataset to "sMOMENIrs" and "sMOMENIs"
+  bind_rows(
+    all_scan_params %>%
+      filter(Dataset == "MOMENI") %>%
+      mutate(Dataset = "sMOMENI"), # Duplicate with modified Dataset
+  ) %>% 
+  mutate(Dataset2 = sapply(str_split(Dataset, "-"), function(x) x[1])) %>% 
+  relocate(Dataset, Study)
   
-studies_clean_real <- studies_clean %>% filter(Dataset!="pMOMENI_synth")
+
+problematic <- studies_clean %>%
+  filter(n_CMB_old != n_CMB_new)
+
+studies_clean_real <- studies_clean %>% filter(Dataset != "sMOMENI")
+
 
 
 
 
 
 # Summaries ---------------------------------------------------------------
-
+# studies_clean_enriched <- studies_clean %>% 
+#   left_join(all_scan_params, by="Dataset2")
 ##########
 # Studies, patients
 ##########
-summ_studies <- data.frame(
-  n_patients = studies_clean %>% distinct(patientUID) %>% nrow(),
-  n_patients_h = studies_clean %>% filter(healthy == "yes") %>% distinct(patientUID) %>% nrow(),
-  n_series = studies_clean %>% distinct(seriesUID) %>% nrow(),
-  n_series_h = studies_clean %>% filter(healthy == "yes") %>% distinct(seriesUID) %>% nrow(),
-  n_CMB = studies_clean  %>% select(n_CMB_new) %>% unlist() %>% as.numeric() %>% sum()
-)
+
 # Summaries by dataset for all studies
-summ_studies_dat <- studies_clean %>%
-  group_by(Dataset) %>%
+summ_studies_dat_seq <- studies_clean %>%
+  group_by(Dataset2, seq_type) %>%
   summarise(
     n_patients = n_distinct(patientUID),
-    n_patients_h = sum(healthy == "yes", na.rm = TRUE),
+    n_patients_h = n_distinct(patientUID[healthy == "yes"]),
     n_series = n_distinct(seriesUID),
-    n_series_h = sum(healthy == "yes" & !is.na(seriesUID), na.rm = TRUE),
+    n_series_h = n_distinct(seriesUID[healthy == "yes"]),
     n_CMB = sum(n_CMB_new, na.rm = TRUE),
     .groups = 'drop'
+  ) %>%
+  ungroup() %>%
+  # Adding totals
+  bind_rows(
+    studies_clean %>%
+      summarise(
+        Dataset2 = "Total",
+        seq_type="-",
+        n_patients = n_distinct(patientUID),
+        n_patients_h = n_distinct(patientUID[healthy == "yes"]),
+        n_series = n_distinct(seriesUID),
+        n_series_h = sum(healthy == "yes" & !is.na(seriesUID), na.rm = TRUE),
+        n_CMB = sum(n_CMB_new, na.rm = TRUE)
+      )
   )
 
-summ_studies_nosynth <- data.frame(
-  n_patients = studies_clean_real %>% distinct(patientUID) %>% nrow(),
-  n_patients_h = studies_clean_real %>% filter(healthy == "yes") %>% distinct(patientUID) %>% nrow(),
-  n_series = studies_clean_real %>% distinct(seriesUID) %>% nrow(),
-  n_series_h = studies_clean_real %>% filter(healthy == "yes") %>% distinct(seriesUID) %>% nrow(),
-  n_CMB = studies_clean_real  %>% select(n_CMB_new) %>% unlist() %>% as.numeric() %>% sum()
-)
+summ_studies_dat_res <- studies_clean %>%
+  group_by(Dataset2, res_level) %>%
+  summarise(
+    n_patients = n_distinct(patientUID),
+    n_patients_h = n_distinct(patientUID[healthy == "yes"]),
+    n_series = n_distinct(seriesUID),
+    n_series_h = n_distinct(seriesUID[healthy == "yes"]),
+    n_CMB = sum(n_CMB_new, na.rm = TRUE),
+    .groups = 'drop'
+  ) %>%
+  ungroup() %>%
+  # Adding totals
+  bind_rows(
+    studies_clean %>%
+      summarise(
+        Dataset2 = "Total",
+        res_level="-",
+        n_patients = n_distinct(patientUID),
+        n_patients_h = n_distinct(patientUID[healthy == "yes"]),
+        n_series = n_distinct(seriesUID),
+        n_series_h = sum(healthy == "yes" & !is.na(seriesUID), na.rm = TRUE),
+        n_CMB = sum(n_CMB_new, na.rm = TRUE)
+      )
+  )
+
+summ_studies_dat_res_seq <- studies_clean %>%
+  group_by(Dataset2, res_level, seq_type) %>%
+  summarise(
+    n_patients = n_distinct(patientUID),
+    n_patients_h = n_distinct(patientUID[healthy == "yes"]),
+    n_series = n_distinct(seriesUID),
+    n_series_h = n_distinct(seriesUID[healthy == "yes"]),
+    n_CMB = sum(n_CMB_new, na.rm = TRUE),
+    .groups = 'drop'
+  ) %>%
+  ungroup() %>%
+  # Adding totals
+  bind_rows(
+    studies_clean %>%
+      summarise(
+        Dataset2 = "Total",
+        res_level="-",
+        seq_type="-",
+        n_patients = n_distinct(patientUID),
+        n_patients_h = n_distinct(patientUID[healthy == "yes"]),
+        n_series = n_distinct(seriesUID),
+        n_series_h = sum(healthy == "yes" & !is.na(seriesUID), na.rm = TRUE),
+        n_CMB = sum(n_CMB_new, na.rm = TRUE)
+      )
+  )
+
+
+# summ_studies_dat_res_seq <- studies_clean %>%
+#   group_by(Dataset2, res_level, seq_type, field_stregth) %>%
+#   summarise(
+#     n_patients = n_distinct(patientUID),
+#     n_patients_h = n_distinct(patientUID[healthy == "yes"]),
+#     n_series = n_distinct(seriesUID),
+#     n_series_h = n_distinct(seriesUID[healthy == "yes"]),
+#     n_CMB = sum(n_CMB_new, na.rm = TRUE),
+#     .groups = 'drop'
+#   ) %>%
+#   ungroup() %>%
+#   # Adding totals
+#   bind_rows(
+#     studies_clean %>%
+#       summarise(
+#         Dataset2 = "Total",
+#         res_level="-",
+#         seq_type="-",
+#         field_stregth="-",
+#         n_patients = n_distinct(patientUID),
+#         n_patients_h = n_distinct(patientUID[healthy == "yes"]),
+#         n_series = n_distinct(seriesUID),
+#         n_series_h = sum(healthy == "yes" & !is.na(seriesUID), na.rm = TRUE),
+#         n_CMB = sum(n_CMB_new, na.rm = TRUE)
+#       )
+#   )
+
+
+
+
+
+
 # Summaries by dataset for no synthetic (real) studies
 summ_studies_nosynth_dat <- studies_clean_real %>%
   group_by(Dataset) %>%
@@ -230,7 +533,7 @@ summ_radCMB_real <- cmb_new %>%
 # resolutions, scan params, scanner
 ##########
 # Function to calculate percentages and format output
-calc_percent <- function(x) {
+calc_summary <- function(x) {
   freq <- table(x)
   percent <- round(100 * freq / sum(freq), 2)
   
@@ -244,19 +547,19 @@ calc_percent <- function(x) {
 
 summ_reso <- studies_clean %>%
   summarise(
-    # # Demographics = calc_percent(Demographics),
-    # Location = calc_percent(Location),
-    # `Scanner Type` = calc_percent(`Scanner Type`),
-    # `Scanner Model` = calc_percent(`Scanner Model`),
-    # `Seq. Type` = calc_percent(`Seq. Type`),
-    # `TR/TE (ms)` = calc_percent(`TR/TE (ms)`),
-    # # `TR (ms)` = calc_percent(`TR (ms)`),
-    # # `TE (ms)` = calc_percent(`TE (ms)`),
-    # `Flip Angle` = calc_percent(`Flip Angle`),
-    Resolution = calc_percent(new_shape),
-    Resolution_old = calc_percent(old_shape),
-    `Voxel Size (mm3)` = calc_percent(new_voxel_dim),
-    `Voxel Size (mm3) - OLD` = calc_percent(old_voxel_dim),
+    # # Demographics = calc_summary(Demographics),
+    # Location = calc_summary(Location),
+    # `Scanner Type` = calc_summary(`Scanner Type`),
+    # `Scanner Model` = calc_summary(`Scanner Model`),
+    # `Seq. Type` = calc_summary(`Seq. Type`),
+    # `TR/TE (ms)` = calc_summary(`TR/TE (ms)`),
+    # # `TR (ms)` = calc_summary(`TR (ms)`),
+    # # `TE (ms)` = calc_summary(`TE (ms)`),
+    # `Flip Angle` = calc_summary(`Flip Angle`),
+    Resolution = calc_summary(new_shape),
+    Resolution_old = calc_summary(old_shape),
+    `Voxel Size (mm3)` = calc_summary(new_voxel_dim),
+    `Voxel Size (mm3) - OLD` = calc_summary(old_voxel_dim),
     
     `# patients` = n()
   )
@@ -264,38 +567,38 @@ summ_reso <- studies_clean %>%
 summ_reso_dat <- studies_clean %>%
   group_by(Dataset) %>%
   summarise(
-    # # Demographics = calc_percent(Demographics),
-    # Location = calc_percent(Location),
-    # `Scanner Type` = calc_percent(`Scanner Type`),
-    # `Scanner Model` = calc_percent(`Scanner Model`),
-    # `Seq. Type` = calc_percent(`Seq. Type`),
-    # `TR/TE (ms)` = calc_percent(`TR/TE (ms)`),
-    # # `TR (ms)` = calc_percent(`TR (ms)`),
-    # # `TE (ms)` = calc_percent(`TE (ms)`),
-    # `Flip Angle` = calc_percent(`Flip Angle`),
-    Resolution = calc_percent(new_shape),
-    Resolution_old = calc_percent(old_shape),
-    `Voxel Size (mm3)` = calc_percent(new_voxel_dim),
-    `Voxel Size (mm3) - OLD` = calc_percent(old_voxel_dim),
+    # # Demographics = calc_summary(Demographics),
+    # Location = calc_summary(Location),
+    # `Scanner Type` = calc_summary(`Scanner Type`),
+    # `Scanner Model` = calc_summary(`Scanner Model`),
+    # `Seq. Type` = calc_summary(`Seq. Type`),
+    # `TR/TE (ms)` = calc_summary(`TR/TE (ms)`),
+    # # `TR (ms)` = calc_summary(`TR (ms)`),
+    # # `TE (ms)` = calc_summary(`TE (ms)`),
+    # `Flip Angle` = calc_summary(`Flip Angle`),
+    Resolution = calc_summary(new_shape),
+    Resolution_old = calc_summary(old_shape),
+    `Voxel Size (mm3)` = calc_summary(new_voxel_dim),
+    `Voxel Size (mm3) - OLD` = calc_summary(old_voxel_dim),
     
     `# patients` = n()
   )
 
 summ_reso_real <- studies_clean_real %>%
   summarise(
-    # # Demographics = calc_percent(Demographics),
-    # Location = calc_percent(Location),
-    # `Scanner Type` = calc_percent(`Scanner Type`),
-    # `Scanner Model` = calc_percent(`Scanner Model`),
-    # `Seq. Type` = calc_percent(`Seq. Type`),
-    # `TR/TE (ms)` = calc_percent(`TR/TE (ms)`),
-    # # `TR (ms)` = calc_percent(`TR (ms)`),
-    # # `TE (ms)` = calc_percent(`TE (ms)`),
-    # `Flip Angle` = calc_percent(`Flip Angle`),
-    Resolution = calc_percent(new_shape),
-    Resolution_old = calc_percent(old_shape),
-    `Voxel Size (mm3)` = calc_percent(new_voxel_dim),
-    `Voxel Size (mm3) - OLD` = calc_percent(old_voxel_dim),
+    # # Demographics = calc_summary(Demographics),
+    # Location = calc_summary(Location),
+    # `Scanner Type` = calc_summary(`Scanner Type`),
+    # `Scanner Model` = calc_summary(`Scanner Model`),
+    # `Seq. Type` = calc_summary(`Seq. Type`),
+    # `TR/TE (ms)` = calc_summary(`TR/TE (ms)`),
+    # # `TR (ms)` = calc_summary(`TR (ms)`),
+    # # `TE (ms)` = calc_summary(`TE (ms)`),
+    # `Flip Angle` = calc_summary(`Flip Angle`),
+    Resolution = calc_summary(new_shape),
+    Resolution_old = calc_summary(old_shape),
+    `Voxel Size (mm3)` = calc_summary(new_voxel_dim),
+    `Voxel Size (mm3) - OLD` = calc_summary(old_voxel_dim),
     
     `# patients` = n()
   )
@@ -303,19 +606,19 @@ summ_reso_real <- studies_clean_real %>%
 summ_reso_dat_real <- studies_clean_real %>%
   group_by(Dataset) %>%
   summarise(
-    # # Demographics = calc_percent(Demographics),
-    # Location = calc_percent(Location),
-    # `Scanner Type` = calc_percent(`Scanner Type`),
-    # `Scanner Model` = calc_percent(`Scanner Model`),
-    # `Seq. Type` = calc_percent(`Seq. Type`),
-    # `TR/TE (ms)` = calc_percent(`TR/TE (ms)`),
-    # # `TR (ms)` = calc_percent(`TR (ms)`),
-    # # `TE (ms)` = calc_percent(`TE (ms)`),
-    # `Flip Angle` = calc_percent(`Flip Angle`),
-    Resolution = calc_percent(new_shape),
-    Resolution_old = calc_percent(old_shape),
-    `Voxel Size (mm3)` = calc_percent(new_voxel_dim),
-    `Voxel Size (mm3) - OLD` = calc_percent(old_voxel_dim),
+    # # Demographics = calc_summary(Demographics),
+    # Location = calc_summary(Location),
+    # `Scanner Type` = calc_summary(`Scanner Type`),
+    # `Scanner Model` = calc_summary(`Scanner Model`),
+    # `Seq. Type` = calc_summary(`Seq. Type`),
+    # `TR/TE (ms)` = calc_summary(`TR/TE (ms)`),
+    # # `TR (ms)` = calc_summary(`TR (ms)`),
+    # # `TE (ms)` = calc_summary(`TE (ms)`),
+    # `Flip Angle` = calc_summary(`Flip Angle`),
+    Resolution = calc_summary(new_shape),
+    Resolution_old = calc_summary(old_shape),
+    `Voxel Size (mm3)` = calc_summary(new_voxel_dim),
+    `Voxel Size (mm3) - OLD` = calc_summary(old_voxel_dim),
     
     `# patients` = n()
   )

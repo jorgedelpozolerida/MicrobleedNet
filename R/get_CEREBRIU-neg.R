@@ -22,7 +22,7 @@ all_phases_merged <- all_phases_merged_raw %>%
 
 patterns <- c("microbleeds", "micro-bleeds", "micro bleeds", 
               "microhemorrhages", "micro-hemorrhages", 
-              "micro hemorrhages")
+              "micro hemorrhages", "microbleedopathy")
 
 # Initialize an empty data frame to store results
 results <- data.frame(id = character(),
