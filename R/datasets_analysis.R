@@ -20,7 +20,8 @@ studies <- read_csv(file.path(csv_dir, "datasets_overview.csv"))
 func_getmomeni_patientid <- function(x) {
   xsplit <- str_split(x, "_")
   subjectid <- sapply(xsplit, "[", 1)
-  return(subjectid)
+  patientid <- paste0(subjectid, "mom")
+  return(patientid)
 }
 func_getmomeni_seriesuid <- function(x, y) {
   xsplit <- str_split(x, "_")
@@ -48,7 +49,6 @@ func_valdo_seriesuid <- function(x, y) {
   type <- ifelse(y == "yes", "H", "CMB")
   seriesuid <- paste(subjectid, sep = "_")
   seriesuid <- paste(seriesuid, type, sep = "-")
-
   return(seriesuid)
 }
 func_generic_seriesuid <- function(x, y) {
@@ -60,7 +60,8 @@ func_generic_seriesuid <- function(x, y) {
 func_getvaldo_patientid <- function(x) {
   xsplit <- str_split(x, "-")
   subjectid <- sapply(xsplit, "[", 2)
-  return(subjectid)
+  patientid <- paste0(subjectid, "val")
+  return(patientid)
 }
 calc_summary <- function(x) {
   # If x is a factor or character, calculate percentages
@@ -172,9 +173,6 @@ studies_clean <- studies %>%
 problematic_cmb <- studies_clean %>% 
   filter(diffCMB==T)
 
-studies_clean %>% 
-  group_by(field_strength, res_level, seq_type, healthy_all, CMB_level) %>% 
-  summarise(n=n())
 
 
 # Scan parameters building ------------------------------------------------
@@ -322,14 +320,11 @@ all_scan_params <- all_scan_params %>%
   mutate(Dataset2 = sapply(str_split(Dataset, "-"), function(x) x[1])) %>%
   relocate(Dataset, Study)
 
-fields_TE_datasets <- data.frame(
-  
-)
-  
-studies_clean <- studies_clean %>% 
-  left_join(fields_TE_datasets, by="Dataset")
+studies_clean %>% 
+  group_by(field_strength, res_level, seq_type, healthy_all, CMB_level) %>% 
+  summarise(n=n())
 
-
+write_csv(studies_clean, "/home/cerebriu/data/RESEARCH/MicrobleedNet/data-misc/csv/ALL_studies.csv")
 
 
 
@@ -453,23 +448,6 @@ summ_studies_dat_res_seq <- studies_clean %>%
 
 
 
-
-
-
-# Summaries by dataset for no synthetic (real) studies
-summ_studies_nosynth_dat <- studies_clean_real %>%
-  group_by(Dataset) %>%
-  summarise(
-    n_patients = n_distinct(patientUID),
-    n_patients_h = sum(healthy == "yes", na.rm = TRUE),
-    n_series = n_distinct(seriesUID),
-    n_series_h = sum(healthy == "yes" & !is.na(seriesUID), na.rm = TRUE),
-    n_CMB = sum(n_CMB_new, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-
-
 ##########
 # n CMB
 ##########
@@ -503,172 +481,172 @@ summ_nCMB <- studies_clean %>%
     Range = max(numeric_var, na.rm = TRUE) - min(numeric_var, na.rm = TRUE),
     IQR = IQR(numeric_var, na.rm = TRUE)
   )
-summ_nCMB_real <- studies_clean_real %>%
-  distinct(seriesUID, .keep_all = T) %>%
-  select(seriesUID, n_CMB_new) %>%
-  mutate(numeric_var = replace_na(n_CMB_new, 0)) %>%
-  filter(numeric_var != 0) %>%
-  summarise(
-    Count = n(),
-    Mean = mean(numeric_var, na.rm = TRUE),
-    Median = median(numeric_var, na.rm = TRUE),
-    Std_Deviation = sd(numeric_var, na.rm = TRUE),
-    Min = min(numeric_var, na.rm = TRUE),
-    Max = max(numeric_var, na.rm = TRUE),
-    Range = max(numeric_var, na.rm = TRUE) - min(numeric_var, na.rm = TRUE),
-    IQR = IQR(numeric_var, na.rm = TRUE)
-  )
-
-##########
-# size and radius CMB
-##########
-summ_sizeCMB <- cmb_new %>%
-  distinct(subject, Dataset, .keep_all = T) %>%
-  mutate(numeric_var = replace_na(size, 0)) %>%
-  filter(numeric_var != 0) %>%
-  summarise(
-    Count = n(),
-    Mean = mean(numeric_var, na.rm = TRUE),
-    Median = median(numeric_var, na.rm = TRUE),
-    Std_Deviation = sd(numeric_var, na.rm = TRUE),
-    Min = min(numeric_var, na.rm = TRUE),
-    Max = max(numeric_var, na.rm = TRUE),
-    Range = max(numeric_var, na.rm = TRUE) - min(numeric_var, na.rm = TRUE),
-    IQR = IQR(numeric_var, na.rm = TRUE)
-  )
-summ_sizeCMB_real <- cmb_new %>%
-  filter(Dataset != "pMOMENI_synth") %>%
-  distinct(subject, Dataset, .keep_all = T) %>%
-  mutate(numeric_var = replace_na(size, 0)) %>%
-  filter(numeric_var != 0) %>%
-  summarise(
-    Count = n(),
-    Mean = mean(numeric_var, na.rm = TRUE),
-    Median = median(numeric_var, na.rm = TRUE),
-    Std_Deviation = sd(numeric_var, na.rm = TRUE),
-    Min = min(numeric_var, na.rm = TRUE),
-    Max = max(numeric_var, na.rm = TRUE),
-    Range = max(numeric_var, na.rm = TRUE) - min(numeric_var, na.rm = TRUE),
-    IQR = IQR(numeric_var, na.rm = TRUE)
-  )
-
-summ_radCMB <- cmb_new %>%
-  distinct(subject, Dataset, .keep_all = T) %>%
-  mutate(numeric_var = replace_na(radius, 0)) %>%
-  filter(numeric_var != 0) %>%
-  summarise(
-    Count = n(),
-    Mean = mean(numeric_var, na.rm = TRUE),
-    Median = median(numeric_var, na.rm = TRUE),
-    Std_Deviation = sd(numeric_var, na.rm = TRUE),
-    Min = min(numeric_var, na.rm = TRUE),
-    Max = max(numeric_var, na.rm = TRUE),
-    Range = max(numeric_var, na.rm = TRUE) - min(numeric_var, na.rm = TRUE),
-    IQR = IQR(numeric_var, na.rm = TRUE)
-  )
-summ_radCMB_real <- cmb_new %>%
-  filter(Dataset != "pMOMENI_synth") %>%
-  distinct(subject, Dataset, .keep_all = T) %>%
-  mutate(numeric_var = replace_na(radius, 0)) %>%
-  filter(numeric_var != 0) %>%
-  summarise(
-    Count = n(),
-    Mean = mean(numeric_var, na.rm = TRUE),
-    Median = median(numeric_var, na.rm = TRUE),
-    Std_Deviation = sd(numeric_var, na.rm = TRUE),
-    Min = min(numeric_var, na.rm = TRUE),
-    Max = max(numeric_var, na.rm = TRUE),
-    Range = max(numeric_var, na.rm = TRUE) - min(numeric_var, na.rm = TRUE),
-    IQR = IQR(numeric_var, na.rm = TRUE)
-  )
-
-
-##########
-# resolutions, scan params, scanner
-##########
-# Function to calculate percentages and format output
-calc_summary <- function(x) {
-  freq <- table(x)
-  percent <- round(100 * freq / sum(freq), 2)
-
-  # Check if only one category exists
-  if (length(freq) == 1) {
-    return(names(freq))
-  } else {
-    return(paste(paste0(round(percent), "%"), names(freq), sep = ": ", collapse = ", "))
-  }
-}
-
-summ_reso <- studies_clean %>%
-  summarise(
-    # # Demographics = calc_summary(Demographics),
-    # Location = calc_summary(Location),
-    # `Scanner Type` = calc_summary(`Scanner Type`),
-    # `Scanner Model` = calc_summary(`Scanner Model`),
-    # `Seq. Type` = calc_summary(`Seq. Type`),
-    # `TR/TE (ms)` = calc_summary(`TR/TE (ms)`),
-    # # `TR (ms)` = calc_summary(`TR (ms)`),
-    # # `TE (ms)` = calc_summary(`TE (ms)`),
-    # `Flip Angle` = calc_summary(`Flip Angle`),
-    Resolution = calc_summary(new_shape),
-    Resolution_old = calc_summary(old_shape),
-    `Voxel Size (mm3)` = calc_summary(new_voxel_dim),
-    `Voxel Size (mm3) - OLD` = calc_summary(old_voxel_dim),
-    `# patients` = n()
-  )
-
-summ_reso_dat <- studies_clean %>%
-  group_by(Dataset) %>%
-  summarise(
-    # # Demographics = calc_summary(Demographics),
-    # Location = calc_summary(Location),
-    # `Scanner Type` = calc_summary(`Scanner Type`),
-    # `Scanner Model` = calc_summary(`Scanner Model`),
-    # `Seq. Type` = calc_summary(`Seq. Type`),
-    # `TR/TE (ms)` = calc_summary(`TR/TE (ms)`),
-    # # `TR (ms)` = calc_summary(`TR (ms)`),
-    # # `TE (ms)` = calc_summary(`TE (ms)`),
-    # `Flip Angle` = calc_summary(`Flip Angle`),
-    Resolution = calc_summary(new_shape),
-    Resolution_old = calc_summary(old_shape),
-    `Voxel Size (mm3)` = calc_summary(new_voxel_dim),
-    `Voxel Size (mm3) - OLD` = calc_summary(old_voxel_dim),
-    `# patients` = n()
-  )
-
-summ_reso_real <- studies_clean_real %>%
-  summarise(
-    # # Demographics = calc_summary(Demographics),
-    # Location = calc_summary(Location),
-    # `Scanner Type` = calc_summary(`Scanner Type`),
-    # `Scanner Model` = calc_summary(`Scanner Model`),
-    # `Seq. Type` = calc_summary(`Seq. Type`),
-    # `TR/TE (ms)` = calc_summary(`TR/TE (ms)`),
-    # # `TR (ms)` = calc_summary(`TR (ms)`),
-    # # `TE (ms)` = calc_summary(`TE (ms)`),
-    # `Flip Angle` = calc_summary(`Flip Angle`),
-    Resolution = calc_summary(new_shape),
-    Resolution_old = calc_summary(old_shape),
-    `Voxel Size (mm3)` = calc_summary(new_voxel_dim),
-    `Voxel Size (mm3) - OLD` = calc_summary(old_voxel_dim),
-    `# patients` = n()
-  )
-
-summ_reso_dat_real <- studies_clean_real %>%
-  group_by(Dataset) %>%
-  summarise(
-    # # Demographics = calc_summary(Demographics),
-    # Location = calc_summary(Location),
-    # `Scanner Type` = calc_summary(`Scanner Type`),
-    # `Scanner Model` = calc_summary(`Scanner Model`),
-    # `Seq. Type` = calc_summary(`Seq. Type`),
-    # `TR/TE (ms)` = calc_summary(`TR/TE (ms)`),
-    # # `TR (ms)` = calc_summary(`TR (ms)`),
-    # # `TE (ms)` = calc_summary(`TE (ms)`),
-    # `Flip Angle` = calc_summary(`Flip Angle`),
-    Resolution = calc_summary(new_shape),
-    Resolution_old = calc_summary(old_shape),
-    `Voxel Size (mm3)` = calc_summary(new_voxel_dim),
-    `Voxel Size (mm3) - OLD` = calc_summary(old_voxel_dim),
-    `# patients` = n()
-  )
+# summ_nCMB_real <- studies_clean_real %>%
+#   distinct(seriesUID, .keep_all = T) %>%
+#   select(seriesUID, n_CMB_new) %>%
+#   mutate(numeric_var = replace_na(n_CMB_new, 0)) %>%
+#   filter(numeric_var != 0) %>%
+#   summarise(
+#     Count = n(),
+#     Mean = mean(numeric_var, na.rm = TRUE),
+#     Median = median(numeric_var, na.rm = TRUE),
+#     Std_Deviation = sd(numeric_var, na.rm = TRUE),
+#     Min = min(numeric_var, na.rm = TRUE),
+#     Max = max(numeric_var, na.rm = TRUE),
+#     Range = max(numeric_var, na.rm = TRUE) - min(numeric_var, na.rm = TRUE),
+#     IQR = IQR(numeric_var, na.rm = TRUE)
+#   )
+# 
+# ##########
+# # size and radius CMB
+# ##########
+# summ_sizeCMB <- cmb_new %>%
+#   distinct(subject, Dataset, .keep_all = T) %>%
+#   mutate(numeric_var = replace_na(size, 0)) %>%
+#   filter(numeric_var != 0) %>%
+#   summarise(
+#     Count = n(),
+#     Mean = mean(numeric_var, na.rm = TRUE),
+#     Median = median(numeric_var, na.rm = TRUE),
+#     Std_Deviation = sd(numeric_var, na.rm = TRUE),
+#     Min = min(numeric_var, na.rm = TRUE),
+#     Max = max(numeric_var, na.rm = TRUE),
+#     Range = max(numeric_var, na.rm = TRUE) - min(numeric_var, na.rm = TRUE),
+#     IQR = IQR(numeric_var, na.rm = TRUE)
+#   )
+# summ_sizeCMB_real <- cmb_new %>%
+#   filter(Dataset != "pMOMENI_synth") %>%
+#   distinct(subject, Dataset, .keep_all = T) %>%
+#   mutate(numeric_var = replace_na(size, 0)) %>%
+#   filter(numeric_var != 0) %>%
+#   summarise(
+#     Count = n(),
+#     Mean = mean(numeric_var, na.rm = TRUE),
+#     Median = median(numeric_var, na.rm = TRUE),
+#     Std_Deviation = sd(numeric_var, na.rm = TRUE),
+#     Min = min(numeric_var, na.rm = TRUE),
+#     Max = max(numeric_var, na.rm = TRUE),
+#     Range = max(numeric_var, na.rm = TRUE) - min(numeric_var, na.rm = TRUE),
+#     IQR = IQR(numeric_var, na.rm = TRUE)
+#   )
+# 
+# summ_radCMB <- cmb_new %>%
+#   distinct(subject, Dataset, .keep_all = T) %>%
+#   mutate(numeric_var = replace_na(radius, 0)) %>%
+#   filter(numeric_var != 0) %>%
+#   summarise(
+#     Count = n(),
+#     Mean = mean(numeric_var, na.rm = TRUE),
+#     Median = median(numeric_var, na.rm = TRUE),
+#     Std_Deviation = sd(numeric_var, na.rm = TRUE),
+#     Min = min(numeric_var, na.rm = TRUE),
+#     Max = max(numeric_var, na.rm = TRUE),
+#     Range = max(numeric_var, na.rm = TRUE) - min(numeric_var, na.rm = TRUE),
+#     IQR = IQR(numeric_var, na.rm = TRUE)
+#   )
+# summ_radCMB_real <- cmb_new %>%
+#   filter(Dataset != "pMOMENI_synth") %>%
+#   distinct(subject, Dataset, .keep_all = T) %>%
+#   mutate(numeric_var = replace_na(radius, 0)) %>%
+#   filter(numeric_var != 0) %>%
+#   summarise(
+#     Count = n(),
+#     Mean = mean(numeric_var, na.rm = TRUE),
+#     Median = median(numeric_var, na.rm = TRUE),
+#     Std_Deviation = sd(numeric_var, na.rm = TRUE),
+#     Min = min(numeric_var, na.rm = TRUE),
+#     Max = max(numeric_var, na.rm = TRUE),
+#     Range = max(numeric_var, na.rm = TRUE) - min(numeric_var, na.rm = TRUE),
+#     IQR = IQR(numeric_var, na.rm = TRUE)
+#   )
+# 
+# 
+# ##########
+# # resolutions, scan params, scanner
+# ##########
+# # Function to calculate percentages and format output
+# calc_summary <- function(x) {
+#   freq <- table(x)
+#   percent <- round(100 * freq / sum(freq), 2)
+# 
+#   # Check if only one category exists
+#   if (length(freq) == 1) {
+#     return(names(freq))
+#   } else {
+#     return(paste(paste0(round(percent), "%"), names(freq), sep = ": ", collapse = ", "))
+#   }
+# }
+# 
+# summ_reso <- studies_clean %>%
+#   summarise(
+#     # # Demographics = calc_summary(Demographics),
+#     # Location = calc_summary(Location),
+#     # `Scanner Type` = calc_summary(`Scanner Type`),
+#     # `Scanner Model` = calc_summary(`Scanner Model`),
+#     # `Seq. Type` = calc_summary(`Seq. Type`),
+#     # `TR/TE (ms)` = calc_summary(`TR/TE (ms)`),
+#     # # `TR (ms)` = calc_summary(`TR (ms)`),
+#     # # `TE (ms)` = calc_summary(`TE (ms)`),
+#     # `Flip Angle` = calc_summary(`Flip Angle`),
+#     Resolution = calc_summary(new_shape),
+#     Resolution_old = calc_summary(old_shape),
+#     `Voxel Size (mm3)` = calc_summary(new_voxel_dim),
+#     `Voxel Size (mm3) - OLD` = calc_summary(old_voxel_dim),
+#     `# patients` = n()
+#   )
+# 
+# summ_reso_dat <- studies_clean %>%
+#   group_by(Dataset) %>%
+#   summarise(
+#     # # Demographics = calc_summary(Demographics),
+#     # Location = calc_summary(Location),
+#     # `Scanner Type` = calc_summary(`Scanner Type`),
+#     # `Scanner Model` = calc_summary(`Scanner Model`),
+#     # `Seq. Type` = calc_summary(`Seq. Type`),
+#     # `TR/TE (ms)` = calc_summary(`TR/TE (ms)`),
+#     # # `TR (ms)` = calc_summary(`TR (ms)`),
+#     # # `TE (ms)` = calc_summary(`TE (ms)`),
+#     # `Flip Angle` = calc_summary(`Flip Angle`),
+#     Resolution = calc_summary(new_shape),
+#     Resolution_old = calc_summary(old_shape),
+#     `Voxel Size (mm3)` = calc_summary(new_voxel_dim),
+#     `Voxel Size (mm3) - OLD` = calc_summary(old_voxel_dim),
+#     `# patients` = n()
+#   )
+# 
+# summ_reso_real <- studies_clean_real %>%
+#   summarise(
+#     # # Demographics = calc_summary(Demographics),
+#     # Location = calc_summary(Location),
+#     # `Scanner Type` = calc_summary(`Scanner Type`),
+#     # `Scanner Model` = calc_summary(`Scanner Model`),
+#     # `Seq. Type` = calc_summary(`Seq. Type`),
+#     # `TR/TE (ms)` = calc_summary(`TR/TE (ms)`),
+#     # # `TR (ms)` = calc_summary(`TR (ms)`),
+#     # # `TE (ms)` = calc_summary(`TE (ms)`),
+#     # `Flip Angle` = calc_summary(`Flip Angle`),
+#     Resolution = calc_summary(new_shape),
+#     Resolution_old = calc_summary(old_shape),
+#     `Voxel Size (mm3)` = calc_summary(new_voxel_dim),
+#     `Voxel Size (mm3) - OLD` = calc_summary(old_voxel_dim),
+#     `# patients` = n()
+#   )
+# 
+# summ_reso_dat_real <- studies_clean_real %>%
+#   group_by(Dataset) %>%
+#   summarise(
+#     # # Demographics = calc_summary(Demographics),
+#     # Location = calc_summary(Location),
+#     # `Scanner Type` = calc_summary(`Scanner Type`),
+#     # `Scanner Model` = calc_summary(`Scanner Model`),
+#     # `Seq. Type` = calc_summary(`Seq. Type`),
+#     # `TR/TE (ms)` = calc_summary(`TR/TE (ms)`),
+#     # # `TR (ms)` = calc_summary(`TR (ms)`),
+#     # # `TE (ms)` = calc_summary(`TE (ms)`),
+#     # `Flip Angle` = calc_summary(`Flip Angle`),
+#     Resolution = calc_summary(new_shape),
+#     Resolution_old = calc_summary(old_shape),
+#     `Voxel Size (mm3)` = calc_summary(new_voxel_dim),
+#     `Voxel Size (mm3) - OLD` = calc_summary(old_voxel_dim),
+#     `# patients` = n()
+#   )
