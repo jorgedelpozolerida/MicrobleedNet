@@ -1,5 +1,5 @@
 ################################################################################
-#' Title: 
+#' Title:
 #' Author: Jorge del Pozo Lerida
 #' Date: 2024-02-20
 #' Description:
@@ -96,8 +96,6 @@ calc_summary <- function(x) {
 
 # NOTE: idea is that I filter out already here anything not to be used (after manual inspection)
 
-
-
 ## Clean data ------------------------------------------------------------
 studies_clean <- studies %>%
   mutate(Dataset = sub("^p", "", Dataset)) %>%
@@ -106,7 +104,6 @@ studies_clean <- studies %>%
     patientUID = case_when(
       str_detect(tolower(Dataset), "momeni") ~ func_getmomeni_patientid(subject),
       str_detect(tolower(Dataset), "valdo") ~ func_getvaldo_patientid(subject),
-      # str_detect(tolower(Dataset), "cerebriu") ~ func_cerebriu_patientid(subject),
       TRUE ~ subject
     ),
     series = case_when(
@@ -119,31 +116,68 @@ studies_clean <- studies %>%
   mutate(
     seriesUID = paste(series, Dataset, sep = "-")
   ) %>%
-  relocate(seriesUID, n_CMB_new, n_CMB_old) %>% 
+  relocate(seriesUID, n_CMB_new, n_CMB_old) %>%
   mutate(
-    Dataset2 = case_when(
+    Dataset = case_when(
       Dataset == "MOMENI_synth" ~ "sMOMENI",
       Dataset == "CEREBRIU_neg" ~ "CRBneg",
       Dataset == "CEREBRIU" ~ "CRB",
-      T ~ Dataset)
-  ) %>% 
-  group_by(Dataset) %>% 
-  arrange(patientUID, series) %>% 
-  mutate(n_indataset=row_number()) %>% 
-  ungroup() %>% 
+      T ~ Dataset
+    )
+  ) %>%
+  group_by(Dataset) %>%
+  arrange(patientUID, series) %>%
+  mutate(n_indataset = row_number()) %>%
+  ungroup() %>%
   mutate(
-    seriesUID = paste(Dataset2, n_indataset, series,  sep = "-")
+    seriesUID = paste(Dataset, n_indataset, series, sep = "-")
   ) %>%
   mutate(
     res_level = sapply(old_voxel_dim, function(x) {
       nums <- as.numeric(unlist(str_extract_all(x, "\\d+\\.\\d+")))
-      if(length(nums) >= 2 && all(nums[1:2] > 0.5)) {
+      if (length(nums) >= 2 && all(nums[1:2] > 0.5)) {
         "low"
       } else {
         "high"
       }
     })
-  )
+  ) %>% 
+  # detect CMBs missed in some of the reads (to filter out)
+  group_by(Dataset, patientUID) %>% 
+  mutate(newCMB=ifelse(length(unique(healthy == "yes"))>1, T, F)) %>% 
+  ungroup() %>% 
+  # detect CMBs number in some of the reads (to filter out)
+  group_by(Dataset, patientUID) %>% 
+  mutate(diffCMB=ifelse(length(unique(n_CMB_new))>1, T, F)) %>% 
+  ungroup() %>% 
+  relocate(seriesUID, patientUID, n_CMB_new, Dataset, subject, seq_type, res_level, healthy) %>% 
+  select(-studyUID_old, -series) %>% 
+  # Create more binary fields to stritify the training
+  group_by(Dataset, patientUID) %>% 
+  mutate(
+    healthy_all = all(healthy == "yes"),
+    nCMB_avg = mean(n_CMB_new)
+  ) %>% 
+  ungroup() %>% 
+  mutate(
+    CMB_level = ifelse(nCMB_avg > 3, "high", "low") # based on statistics observed and clinical relevance
+  ) %>% 
+  # Add scan params
+  left_join(tibble(
+    Dataset = c("CRB", "CRBneg", "DOU", "MOMENI", "RODEJA", "VALDO", "sMOMENI"),
+    field_strength = c("1.5/3", "1.5", "3", "3", "1.5/3", "1.5/3", "3"),
+    TE = c(32.5, 27.1, 24.0, 20.0, NA, 25.0, 20.0)
+  ), by="Dataset")
+
+problematic_cmb <- studies_clean %>% 
+  filter(diffCMB==T)
+
+studies_clean %>% 
+  group_by(field_strength, res_level, seq_type, healthy_all, CMB_level) %>% 
+  summarise(n=n())
+
+
+# Scan parameters building ------------------------------------------------
 
 momeni_scan_params <- data.frame(
   field_strength = "3T",
@@ -220,9 +254,9 @@ cerebriu_data <- read_csv("/home/cerebriu/data/RESEARCH/MicrobleedNet/data-misc/
     crbr_study_metadata %>%
       select(-Dataset, -Step),
     by = ("StudyInstanceUID")
-  ) 
+  )
 
-summary_cerebriu <- cerebriu_data %>%
+cerebriu_scan_params <- cerebriu_data %>%
   group_by(Dataset, Hospital) %>%
   mutate(
     country = sapply(str_split(Dataset, "-"), `[`, 1),
@@ -239,8 +273,7 @@ summary_cerebriu <- cerebriu_data %>%
     Demographics = "Not available",
     field_strength = MagneticFieldStrength,
   ) %>%
-  mutate(    scanner_model = paste0(Manufacturer, " ", ManufacturerModelName, " ", field_strength)
-  ) %>% 
+  mutate(scanner_model = paste0(Manufacturer, " ", ManufacturerModelName, " ", field_strength)) %>%
   summarise(
     # Demographics = calc_summary(Demographics),
     location = calc_summary(Location),
@@ -258,7 +291,7 @@ summary_cerebriu <- cerebriu_data %>%
 # Convert all columns in each dataset to character type
 valdo_scan_params[] <- lapply(valdo_scan_params, as.character)
 rodeja_scan_params[] <- lapply(rodeja_scan_params, as.character)
-summary_cerebriu[] <- lapply(summary_cerebriu, as.character)
+cerebriu_scan_params[] <- lapply(cerebriu_scan_params, as.character)
 momeni_scan_params[] <- lapply(momeni_scan_params, as.character)
 dou_scan_params[] <- lapply(dou_scan_params, as.character)
 
@@ -266,7 +299,7 @@ dou_scan_params[] <- lapply(dou_scan_params, as.character)
 all_scan_params <- bind_rows(
   valdo_scan_params,
   rodeja_scan_params,
-  summary_cerebriu,
+  cerebriu_scan_params,
   momeni_scan_params,
   dou_scan_params
 ) %>%
@@ -274,26 +307,28 @@ all_scan_params <- bind_rows(
   select(-Hospital) %>%
   mutate(
     TR_TE = paste0(TR, "/", TE)
-    ) %>% 
-    mutate(
-      field_strength = str_replace_all(field_strength, "-", "/"), # Replace - with /
-      field_strength = str_replace(field_strength, "[A-Za-z]+$", "") # Remove letters at the end
-    )
-all_scan_params <- all_scan_params %>% 
+  ) %>%
+  mutate(
+    field_strength = str_replace_all(field_strength, "-", "/"), # Replace - with /
+    field_strength = str_replace(field_strength, "[A-Za-z]+$", "") # Remove letters at the end
+  )
+all_scan_params <- all_scan_params %>%
   # Duplicate rows where Dataset is "MOMENI", changing Dataset to "sMOMENIrs" and "sMOMENIs"
   bind_rows(
     all_scan_params %>%
       filter(Dataset == "MOMENI") %>%
       mutate(Dataset = "sMOMENI"), # Duplicate with modified Dataset
-  ) %>% 
-  mutate(Dataset2 = sapply(str_split(Dataset, "-"), function(x) x[1])) %>% 
+  ) %>%
+  mutate(Dataset2 = sapply(str_split(Dataset, "-"), function(x) x[1])) %>%
   relocate(Dataset, Study)
+
+fields_TE_datasets <- data.frame(
   
+)
+  
+studies_clean <- studies_clean %>% 
+  left_join(fields_TE_datasets, by="Dataset")
 
-problematic <- studies_clean %>%
-  filter(n_CMB_old != n_CMB_new)
-
-studies_clean_real <- studies_clean %>% filter(Dataset != "sMOMENI")
 
 
 
@@ -301,30 +336,34 @@ studies_clean_real <- studies_clean %>% filter(Dataset != "sMOMENI")
 
 
 # Summaries ---------------------------------------------------------------
-# studies_clean_enriched <- studies_clean %>% 
-#   left_join(all_scan_params, by="Dataset2")
+
+studies_clean_real <- studies_clean %>% filter(Dataset != "sMOMENI")
+
+
 ##########
 # Studies, patients
 ##########
 
 # Summaries by dataset for all studies
 summ_studies_dat_seq <- studies_clean %>%
-  group_by(Dataset2, seq_type) %>%
+  group_by(Dataset, seq_type) %>%
   summarise(
     n_patients = n_distinct(patientUID),
+    n_patients_cmb = n_distinct(patientUID[healthy == "no"]),
     n_patients_h = n_distinct(patientUID[healthy == "yes"]),
     n_series = n_distinct(seriesUID),
+    n_series_cmb = n_distinct(seriesUID),
     n_series_h = n_distinct(seriesUID[healthy == "yes"]),
     n_CMB = sum(n_CMB_new, na.rm = TRUE),
-    .groups = 'drop'
+    .groups = "drop"
   ) %>%
   ungroup() %>%
   # Adding totals
   bind_rows(
     studies_clean %>%
       summarise(
-        Dataset2 = "Total",
-        seq_type="-",
+        Dataset = "Total",
+        seq_type = "-",
         n_patients = n_distinct(patientUID),
         n_patients_h = n_distinct(patientUID[healthy == "yes"]),
         n_series = n_distinct(seriesUID),
@@ -334,22 +373,22 @@ summ_studies_dat_seq <- studies_clean %>%
   )
 
 summ_studies_dat_res <- studies_clean %>%
-  group_by(Dataset2, res_level) %>%
+  group_by(Dataset, res_level) %>%
   summarise(
     n_patients = n_distinct(patientUID),
     n_patients_h = n_distinct(patientUID[healthy == "yes"]),
     n_series = n_distinct(seriesUID),
     n_series_h = n_distinct(seriesUID[healthy == "yes"]),
     n_CMB = sum(n_CMB_new, na.rm = TRUE),
-    .groups = 'drop'
+    .groups = "drop"
   ) %>%
   ungroup() %>%
   # Adding totals
   bind_rows(
     studies_clean %>%
       summarise(
-        Dataset2 = "Total",
-        res_level="-",
+        Dataset = "Total",
+        res_level = "-",
         n_patients = n_distinct(patientUID),
         n_patients_h = n_distinct(patientUID[healthy == "yes"]),
         n_series = n_distinct(seriesUID),
@@ -359,23 +398,23 @@ summ_studies_dat_res <- studies_clean %>%
   )
 
 summ_studies_dat_res_seq <- studies_clean %>%
-  group_by(Dataset2, res_level, seq_type) %>%
+  group_by(Dataset, res_level, seq_type) %>%
   summarise(
     n_patients = n_distinct(patientUID),
     n_patients_h = n_distinct(patientUID[healthy == "yes"]),
     n_series = n_distinct(seriesUID),
     n_series_h = n_distinct(seriesUID[healthy == "yes"]),
     n_CMB = sum(n_CMB_new, na.rm = TRUE),
-    .groups = 'drop'
+    .groups = "drop"
   ) %>%
   ungroup() %>%
   # Adding totals
   bind_rows(
     studies_clean %>%
       summarise(
-        Dataset2 = "Total",
-        res_level="-",
-        seq_type="-",
+        Dataset = "Total",
+        res_level = "-",
+        seq_type = "-",
         n_patients = n_distinct(patientUID),
         n_patients_h = n_distinct(patientUID[healthy == "yes"]),
         n_series = n_distinct(seriesUID),
@@ -386,7 +425,7 @@ summ_studies_dat_res_seq <- studies_clean %>%
 
 
 # summ_studies_dat_res_seq <- studies_clean %>%
-#   group_by(Dataset2, res_level, seq_type, field_stregth) %>%
+#   group_by(Dataset, res_level, seq_type, field_stregth) %>%
 #   summarise(
 #     n_patients = n_distinct(patientUID),
 #     n_patients_h = n_distinct(patientUID[healthy == "yes"]),
@@ -400,7 +439,7 @@ summ_studies_dat_res_seq <- studies_clean %>%
 #   bind_rows(
 #     studies_clean %>%
 #       summarise(
-#         Dataset2 = "Total",
+#         Dataset = "Total",
 #         res_level="-",
 #         seq_type="-",
 #         field_stregth="-",
@@ -426,7 +465,7 @@ summ_studies_nosynth_dat <- studies_clean_real %>%
     n_series = n_distinct(seriesUID),
     n_series_h = sum(healthy == "yes" & !is.na(seriesUID), na.rm = TRUE),
     n_CMB = sum(n_CMB_new, na.rm = TRUE),
-    .groups = 'drop'
+    .groups = "drop"
   )
 
 
@@ -434,11 +473,26 @@ summ_studies_nosynth_dat <- studies_clean_real %>%
 ##########
 # n CMB
 ##########
-summ_nCMB <- studies_clean %>% 
-  distinct(seriesUID, .keep_all = T) %>% 
-  select(seriesUID, n_CMB_new) %>% 
+filtered_data <- studies_clean %>%
+  filter(healthy_all!=T) %>% 
+  filter(Dataset != "sMOMENI") %>% 
+  distinct(Dataset, patientUID, nCMB_avg, CMB_level)
+
+# Create a histogram of 'n_CMB_new', grouped by 'PATIENTiD'
+ggplot(filtered_data, aes(x = nCMB_avg)) +
+  geom_histogram(binwidth = 1, fill = "skyblue", color = "black") + # You can adjust the binwidth as needed
+  theme_minimal() +
+  labs(title = "Histogram of CMB by patientUID",
+       x = "CMB",
+       y = "Frequency") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Improves readability of x-axis labels if needed
+
+
+summ_nCMB <- studies_clean %>%
+  distinct(seriesUID, .keep_all = T) %>%
+  select(seriesUID, n_CMB_new) %>%
   mutate(numeric_var = replace_na(n_CMB_new, 0)) %>%
-  filter(numeric_var != 0) %>% 
+  filter(numeric_var != 0) %>%
   summarise(
     Count = n(),
     Mean = mean(numeric_var, na.rm = TRUE),
@@ -449,11 +503,11 @@ summ_nCMB <- studies_clean %>%
     Range = max(numeric_var, na.rm = TRUE) - min(numeric_var, na.rm = TRUE),
     IQR = IQR(numeric_var, na.rm = TRUE)
   )
-summ_nCMB_real <- studies_clean_real %>% 
-  distinct(seriesUID, .keep_all = T) %>% 
-  select(seriesUID, n_CMB_new) %>% 
+summ_nCMB_real <- studies_clean_real %>%
+  distinct(seriesUID, .keep_all = T) %>%
+  select(seriesUID, n_CMB_new) %>%
   mutate(numeric_var = replace_na(n_CMB_new, 0)) %>%
-  filter(numeric_var != 0) %>% 
+  filter(numeric_var != 0) %>%
   summarise(
     Count = n(),
     Mean = mean(numeric_var, na.rm = TRUE),
@@ -468,10 +522,10 @@ summ_nCMB_real <- studies_clean_real %>%
 ##########
 # size and radius CMB
 ##########
-summ_sizeCMB <- cmb_new %>% 
-  distinct(subject, Dataset, .keep_all = T) %>% 
+summ_sizeCMB <- cmb_new %>%
+  distinct(subject, Dataset, .keep_all = T) %>%
   mutate(numeric_var = replace_na(size, 0)) %>%
-  filter(numeric_var != 0) %>% 
+  filter(numeric_var != 0) %>%
   summarise(
     Count = n(),
     Mean = mean(numeric_var, na.rm = TRUE),
@@ -482,11 +536,11 @@ summ_sizeCMB <- cmb_new %>%
     Range = max(numeric_var, na.rm = TRUE) - min(numeric_var, na.rm = TRUE),
     IQR = IQR(numeric_var, na.rm = TRUE)
   )
-summ_sizeCMB_real <- cmb_new %>% 
-  filter(Dataset!="pMOMENI_synth") %>% 
-  distinct(subject, Dataset, .keep_all = T) %>% 
+summ_sizeCMB_real <- cmb_new %>%
+  filter(Dataset != "pMOMENI_synth") %>%
+  distinct(subject, Dataset, .keep_all = T) %>%
   mutate(numeric_var = replace_na(size, 0)) %>%
-  filter(numeric_var != 0) %>% 
+  filter(numeric_var != 0) %>%
   summarise(
     Count = n(),
     Mean = mean(numeric_var, na.rm = TRUE),
@@ -498,10 +552,10 @@ summ_sizeCMB_real <- cmb_new %>%
     IQR = IQR(numeric_var, na.rm = TRUE)
   )
 
-summ_radCMB <- cmb_new %>% 
-  distinct(subject, Dataset, .keep_all = T) %>% 
+summ_radCMB <- cmb_new %>%
+  distinct(subject, Dataset, .keep_all = T) %>%
   mutate(numeric_var = replace_na(radius, 0)) %>%
-  filter(numeric_var != 0) %>% 
+  filter(numeric_var != 0) %>%
   summarise(
     Count = n(),
     Mean = mean(numeric_var, na.rm = TRUE),
@@ -512,11 +566,11 @@ summ_radCMB <- cmb_new %>%
     Range = max(numeric_var, na.rm = TRUE) - min(numeric_var, na.rm = TRUE),
     IQR = IQR(numeric_var, na.rm = TRUE)
   )
-summ_radCMB_real <- cmb_new %>% 
-  filter(Dataset!="pMOMENI_synth") %>% 
-  distinct(subject, Dataset, .keep_all = T) %>% 
+summ_radCMB_real <- cmb_new %>%
+  filter(Dataset != "pMOMENI_synth") %>%
+  distinct(subject, Dataset, .keep_all = T) %>%
   mutate(numeric_var = replace_na(radius, 0)) %>%
-  filter(numeric_var != 0) %>% 
+  filter(numeric_var != 0) %>%
   summarise(
     Count = n(),
     Mean = mean(numeric_var, na.rm = TRUE),
@@ -536,12 +590,12 @@ summ_radCMB_real <- cmb_new %>%
 calc_summary <- function(x) {
   freq <- table(x)
   percent <- round(100 * freq / sum(freq), 2)
-  
+
   # Check if only one category exists
   if (length(freq) == 1) {
     return(names(freq))
   } else {
-    return(paste(paste0(round(percent), "%"), names(freq), sep=": ", collapse=", "))
+    return(paste(paste0(round(percent), "%"), names(freq), sep = ": ", collapse = ", "))
   }
 }
 
@@ -560,7 +614,6 @@ summ_reso <- studies_clean %>%
     Resolution_old = calc_summary(old_shape),
     `Voxel Size (mm3)` = calc_summary(new_voxel_dim),
     `Voxel Size (mm3) - OLD` = calc_summary(old_voxel_dim),
-    
     `# patients` = n()
   )
 
@@ -580,7 +633,6 @@ summ_reso_dat <- studies_clean %>%
     Resolution_old = calc_summary(old_shape),
     `Voxel Size (mm3)` = calc_summary(new_voxel_dim),
     `Voxel Size (mm3) - OLD` = calc_summary(old_voxel_dim),
-    
     `# patients` = n()
   )
 
@@ -599,7 +651,6 @@ summ_reso_real <- studies_clean_real %>%
     Resolution_old = calc_summary(old_shape),
     `Voxel Size (mm3)` = calc_summary(new_voxel_dim),
     `Voxel Size (mm3) - OLD` = calc_summary(old_voxel_dim),
-    
     `# patients` = n()
   )
 
@@ -619,6 +670,5 @@ summ_reso_dat_real <- studies_clean_real %>%
     Resolution_old = calc_summary(old_shape),
     `Voxel Size (mm3)` = calc_summary(new_voxel_dim),
     `Voxel Size (mm3) - OLD` = calc_summary(old_voxel_dim),
-    
     `# patients` = n()
   )
