@@ -5,13 +5,14 @@
 * [26 February 2024](#date-26-february-2024)
 * [04 March 2024](#date-04-march-2024)
 * [11 March 2024](#date-11-march-2024)
+* [18 March 2024](#date-18-march-2024)
+
 
 <!-- *
 * [12 February 2024](#date-12-february-2024)
 * [26 February 2024](#date-26-february-2024)
 * [04 March 2024](#date-04-march-2024)
 * [11 March 2024](#date-11-march-2024)
-* [18 March 2024](#date-18-march-2024)
 * [25 March 2024](#date-25-march-2024)
 * [01 April 2024](#date-01-april-2024)
 * [08 April 2024](#date-08-april-2024)
@@ -349,20 +350,35 @@ which makes debugging very complex
 ### Date: 18 March 2024
 
 #### What did you achieve/do?
-* n/a
+* Preprocessing finished. Also renamed all studies with nice id to facilitate tracking experiments
+* Adapted metadata to be ingested correctly by ClearML
+* Created splits file both for pre-training and fine-tuning phase (more details after)
+* Started configuring ClearML for my pretraining task
 
 #### What did you struggle with?
-* n/a
+* ClearML bugs in code
 
 #### What would you like to work on next ?
-* n/a
+* Run several exepriments to choose best set of hyperparams: patch size, loss function, ...etc
+* Add data augmentations 
 
 #### Where do you need help from Veronika?
-* n/a
+* I will start writing report this week in Overleaf. Because i intend to submit to some MICCAI Workshop, I wanted to follow its format already. Hoever I see it is Springer format iwth a lot of margins and one-column, so maybe it is not fititng ITU guidelines? Would you abandon this idea? 
 
-#### Others
+#### Others:
 
-* n/a
+#### Splits file
+* Splitting of studies has been somewhat tricky. I did the split straified by the following conditions: 
+- field strength
+- resolution level
+- sequence type
+- source of data (dataset)
+- healthy/unhealthy
+- cmb per case (<=5, >5)
+
+* I made sure that same patient was never in both trianing and validaiton set.
+* 25 - 75 % valid-train split
+* For pre-training, I will add ONLY to trianing set the CRB negative samples (which I collected form internal database and coudl maybe not be fully negative) and the synthetic CMBs.  
 
 <br><br><br><br><br>
 

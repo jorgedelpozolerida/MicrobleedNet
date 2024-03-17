@@ -5,11 +5,13 @@
 #' Description:
 ################################################################################
 
-## Setup -------------------------------------------------------------------
+## Setup ----------------------------- --------------------------------------
 
 # Load necessary packages
 library(tidyverse)
 library(e1071)
+
+set.seed(42)
 
 csv_dir <- "/home/cerebriu/data/RESEARCH/MicrobleedNet/data-misc/csv"
 cmb_new <- read_csv(file.path(csv_dir, "cmb_new_overview.csv"))
@@ -161,7 +163,8 @@ studies_clean <- studies %>%
   ) %>% 
   ungroup() %>% 
   mutate(
-    CMB_level = ifelse(nCMB_avg > 3, "high", "low") # based on statistics observed and clinical relevance
+    CMB_level = ifelse(nCMB_avg > 3, "high", "low"), # based on clinical relevance
+    CMB_level = ifelse(nCMB_avg == 0, NA,CMB_level )
   ) %>% 
   # Add scan params
   left_join(tibble(
@@ -320,9 +323,9 @@ all_scan_params <- all_scan_params %>%
   mutate(Dataset2 = sapply(str_split(Dataset, "-"), function(x) x[1])) %>%
   relocate(Dataset, Study)
 
-studies_clean %>% 
-  group_by(field_strength, res_level, seq_type, healthy_all, CMB_level) %>% 
-  summarise(n=n())
+print(studies_clean %>% 
+  group_by(Dataset,field_strength, res_level, seq_type, healthy_all, CMB_level) %>% 
+  summarise(n=n()), n=50)
 
 write_csv(studies_clean, "/home/cerebriu/data/RESEARCH/MicrobleedNet/data-misc/csv/ALL_studies.csv")
 
@@ -347,7 +350,7 @@ summ_studies_dat_seq <- studies_clean %>%
     n_patients_cmb = n_distinct(patientUID[healthy == "no"]),
     n_patients_h = n_distinct(patientUID[healthy == "yes"]),
     n_series = n_distinct(seriesUID),
-    n_series_cmb = n_distinct(seriesUID),
+    n_series_cmb = n_distinct(seriesUID[healthy == "no"]),
     n_series_h = n_distinct(seriesUID[healthy == "yes"]),
     n_CMB = sum(n_CMB_new, na.rm = TRUE),
     .groups = "drop"
@@ -360,63 +363,65 @@ summ_studies_dat_seq <- studies_clean %>%
         Dataset = "Total",
         seq_type = "-",
         n_patients = n_distinct(patientUID),
+        n_patients_cmb = n_distinct(patientUID[healthy == "no"]),
         n_patients_h = n_distinct(patientUID[healthy == "yes"]),
         n_series = n_distinct(seriesUID),
+        n_series_cmb = sum(healthy == "no" & !is.na(seriesUID), na.rm = TRUE),
         n_series_h = sum(healthy == "yes" & !is.na(seriesUID), na.rm = TRUE),
         n_CMB = sum(n_CMB_new, na.rm = TRUE)
       )
   )
-
-summ_studies_dat_res <- studies_clean %>%
-  group_by(Dataset, res_level) %>%
-  summarise(
-    n_patients = n_distinct(patientUID),
-    n_patients_h = n_distinct(patientUID[healthy == "yes"]),
-    n_series = n_distinct(seriesUID),
-    n_series_h = n_distinct(seriesUID[healthy == "yes"]),
-    n_CMB = sum(n_CMB_new, na.rm = TRUE),
-    .groups = "drop"
-  ) %>%
-  ungroup() %>%
-  # Adding totals
-  bind_rows(
-    studies_clean %>%
-      summarise(
-        Dataset = "Total",
-        res_level = "-",
-        n_patients = n_distinct(patientUID),
-        n_patients_h = n_distinct(patientUID[healthy == "yes"]),
-        n_series = n_distinct(seriesUID),
-        n_series_h = sum(healthy == "yes" & !is.na(seriesUID), na.rm = TRUE),
-        n_CMB = sum(n_CMB_new, na.rm = TRUE)
-      )
-  )
-
-summ_studies_dat_res_seq <- studies_clean %>%
-  group_by(Dataset, res_level, seq_type) %>%
-  summarise(
-    n_patients = n_distinct(patientUID),
-    n_patients_h = n_distinct(patientUID[healthy == "yes"]),
-    n_series = n_distinct(seriesUID),
-    n_series_h = n_distinct(seriesUID[healthy == "yes"]),
-    n_CMB = sum(n_CMB_new, na.rm = TRUE),
-    .groups = "drop"
-  ) %>%
-  ungroup() %>%
-  # Adding totals
-  bind_rows(
-    studies_clean %>%
-      summarise(
-        Dataset = "Total",
-        res_level = "-",
-        seq_type = "-",
-        n_patients = n_distinct(patientUID),
-        n_patients_h = n_distinct(patientUID[healthy == "yes"]),
-        n_series = n_distinct(seriesUID),
-        n_series_h = sum(healthy == "yes" & !is.na(seriesUID), na.rm = TRUE),
-        n_CMB = sum(n_CMB_new, na.rm = TRUE)
-      )
-  )
+# 
+# summ_studies_dat_res <- studies_clean %>%
+#   group_by(Dataset, res_level) %>%
+#   summarise(
+#     n_patients = n_distinct(patientUID),
+#     n_patients_h = n_distinct(patientUID[healthy == "yes"]),
+#     n_series = n_distinct(seriesUID),
+#     n_series_h = n_distinct(seriesUID[healthy == "yes"]),
+#     n_CMB = sum(n_CMB_new, na.rm = TRUE),
+#     .groups = "drop"
+#   ) %>%
+#   ungroup() %>%
+#   # Adding totals
+#   bind_rows(
+#     studies_clean %>%
+#       summarise(
+#         Dataset = "Total",
+#         res_level = "-",
+#         n_patients = n_distinct(patientUID),
+#         n_patients_h = n_distinct(patientUID[healthy == "yes"]),
+#         n_series = n_distinct(seriesUID),
+#         n_series_h = sum(healthy == "yes" & !is.na(seriesUID), na.rm = TRUE),
+#         n_CMB = sum(n_CMB_new, na.rm = TRUE)
+#       )
+#   )
+# 
+# summ_studies_dat_res_seq <- studies_clean %>%
+#   group_by(Dataset, res_level, seq_type) %>%
+#   summarise(
+#     n_patients = n_distinct(patientUID),
+#     n_patients_h = n_distinct(patientUID[healthy == "yes"]),
+#     n_series = n_distinct(seriesUID),
+#     n_series_h = n_distinct(seriesUID[healthy == "yes"]),
+#     n_CMB = sum(n_CMB_new, na.rm = TRUE),
+#     .groups = "drop"
+#   ) %>%
+#   ungroup() %>%
+#   # Adding totals
+#   bind_rows(
+#     studies_clean %>%
+#       summarise(
+#         Dataset = "Total",
+#         res_level = "-",
+#         seq_type = "-",
+#         n_patients = n_distinct(patientUID),
+#         n_patients_h = n_distinct(patientUID[healthy == "yes"]),
+#         n_series = n_distinct(seriesUID),
+#         n_series_h = sum(healthy == "yes" & !is.na(seriesUID), na.rm = TRUE),
+#         n_CMB = sum(n_CMB_new, na.rm = TRUE)
+#       )
+#   )
 
 
 # summ_studies_dat_res_seq <- studies_clean %>%
