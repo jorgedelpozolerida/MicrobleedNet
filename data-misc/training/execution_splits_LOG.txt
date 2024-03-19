@@ -1,0 +1,238 @@
+/datadrive_m2/jorge/MicrobleedNet/cmbnet/commands/generate_train_splits.py:100: FutureWarning: Setting an item of incompatible dtype is deprecated and will raise in a future error of pandas. Value 'Unspecified' has dtype incompatible with float64, please explicitly cast to a compatible dtype first.
+  studies.fillna("Unspecified", inplace=True)
+Filtered from 5015 -->  4987 --> 545 (no synth, no neg)
+/datadrive_m2/jorge/MicrobleedNet/cmbnet/commands/generate_train_splits.py:110: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  studies_filt_cmb_real['stratify_label'] = studies_filt_cmb_real[columns_of_interest].astype(str).agg('-'.join, axis=1)
+All data strata:
++----------------+----------------------------------------------------+-------+----------------+
+|     Column     |                       Value                        | Count | Proportion (%) |
++----------------+----------------------------------------------------+-------+----------------+
+|    Dataset     |                       MOMENI                       |  370  |     67.89%     |
+|    Dataset     |                       RODEJA                       |  103  |     18.9%      |
+|    Dataset     |                       VALDO                        |  72   |     13.21%     |
+|  healthy_all   |                        True                        |  344  |     63.12%     |
+|  healthy_all   |                       False                        |  201  |     36.88%     |
+|    seq_type    |                        SWI                         |  473  |     86.79%     |
+|    seq_type    |                        T2S                         |  72   |     13.21%     |
+|   res_level    |                        low                         |  412  |     75.6%      |
+|   res_level    |                        high                        |  133  |     24.4%      |
+| field_strength |                         3                          |  370  |     67.89%     |
+| field_strength |                       1.5/3                        |  175  |     32.11%     |
+|   CMB_level    |                    Unspecified                     |  344  |     63.12%     |
+|   CMB_level    |                        low                         |  161  |     29.54%     |
+|   CMB_level    |                        high                        |  40   |     7.34%      |
+|       TE       |                        20.0                        |  370  |     67.89%     |
+|       TE       |                    Unspecified                     |  103  |     18.9%      |
+|       TE       |                        25.0                        |  72   |     13.21%     |
+| stratify_label |       MOMENI-True-SWI-low-3-Unspecified-20.0       |  280  |     51.38%     |
+| stratify_label |          MOMENI-False-SWI-low-3-low-20.0           |  79   |     14.5%      |
+| stratify_label |    RODEJA-False-SWI-high-1.5/3-low-Unspecified     |  39   |     7.16%      |
+| stratify_label | RODEJA-True-SWI-high-1.5/3-Unspecified-Unspecified |  32   |     5.87%      |
+| stratify_label |         VALDO-False-T2S-low-1.5/3-low-25.0         |  27   |     4.95%      |
+| stratify_label |     VALDO-True-T2S-high-1.5/3-Unspecified-25.0     |  22   |     4.04%      |
+| stratify_label |    RODEJA-False-SWI-high-1.5/3-high-Unspecified    |  17   |     3.12%      |
+| stratify_label |        VALDO-False-T2S-high-1.5/3-low-25.0         |  13   |     2.39%      |
+| stratify_label |          MOMENI-False-SWI-low-3-high-20.0          |  11   |     2.02%      |
+| stratify_label | RODEJA-True-SWI-low-1.5/3-Unspecified-Unspecified  |  10   |     1.83%      |
+| stratify_label |        VALDO-False-T2S-high-1.5/3-high-25.0        |  10   |     1.83%      |
+| stratify_label |     RODEJA-False-SWI-low-1.5/3-low-Unspecified     |   3   |     0.55%      |
+| stratify_label |    RODEJA-False-SWI-low-1.5/3-high-Unspecified     |   2   |     0.37%      |
++----------------+----------------------------------------------------+-------+----------------+
+Training split: 463 series (84.95%) with 249 (84.98%) unique patients
+Validation split: 82 series (15.05%) with 44 (15.02%) unique patients
+
+Training split stratification:
++----------------+----------------------------------------------------+-------+----------------+
+|     Column     |                       Value                        | Count | Proportion (%) |
++----------------+----------------------------------------------------+-------+----------------+
+|    Dataset     |                       MOMENI                       |  314  |     67.82%     |
+|    Dataset     |                       RODEJA                       |  87   |     18.79%     |
+|    Dataset     |                       VALDO                        |  62   |     13.39%     |
+|  healthy_all   |                        True                        |  294  |     63.5%      |
+|  healthy_all   |                       False                        |  169  |     36.5%      |
+|    seq_type    |                        SWI                         |  401  |     86.61%     |
+|    seq_type    |                        T2S                         |  62   |     13.39%     |
+|   res_level    |                        low                         |  350  |     75.59%     |
+|   res_level    |                        high                        |  113  |     24.41%     |
+| field_strength |                         3                          |  314  |     67.82%     |
+| field_strength |                       1.5/3                        |  149  |     32.18%     |
+|   CMB_level    |                    Unspecified                     |  294  |     63.5%      |
+|   CMB_level    |                        low                         |  135  |     29.16%     |
+|   CMB_level    |                        high                        |  34   |     7.34%      |
+|       TE       |                        20.0                        |  314  |     67.82%     |
+|       TE       |                    Unspecified                     |  87   |     18.79%     |
+|       TE       |                        25.0                        |  62   |     13.39%     |
+| stratify_label |       MOMENI-True-SWI-low-3-Unspecified-20.0       |  240  |     51.84%     |
+| stratify_label |          MOMENI-False-SWI-low-3-low-20.0           |  65   |     14.04%     |
+| stratify_label |    RODEJA-False-SWI-high-1.5/3-low-Unspecified     |  33   |     7.13%      |
+| stratify_label | RODEJA-True-SWI-high-1.5/3-Unspecified-Unspecified |  27   |     5.83%      |
+| stratify_label |         VALDO-False-T2S-low-1.5/3-low-25.0         |  23   |     4.97%      |
+| stratify_label |     VALDO-True-T2S-high-1.5/3-Unspecified-25.0     |  19   |      4.1%      |
+| stratify_label |    RODEJA-False-SWI-high-1.5/3-high-Unspecified    |  14   |     3.02%      |
+| stratify_label |        VALDO-False-T2S-high-1.5/3-low-25.0         |  11   |     2.38%      |
+| stratify_label |        VALDO-False-T2S-high-1.5/3-high-25.0        |   9   |     1.94%      |
+| stratify_label |          MOMENI-False-SWI-low-3-high-20.0          |   9   |     1.94%      |
+| stratify_label | RODEJA-True-SWI-low-1.5/3-Unspecified-Unspecified  |   8   |     1.73%      |
+| stratify_label |     RODEJA-False-SWI-low-1.5/3-low-Unspecified     |   3   |     0.65%      |
+| stratify_label |    RODEJA-False-SWI-low-1.5/3-high-Unspecified     |   2   |     0.43%      |
++----------------+----------------------------------------------------+-------+----------------+
+
+Validation split stratification:
++----------------+----------------------------------------------------+-------+----------------+
+|     Column     |                       Value                        | Count | Proportion (%) |
++----------------+----------------------------------------------------+-------+----------------+
+|    Dataset     |                       MOMENI                       |  56   |     68.29%     |
+|    Dataset     |                       RODEJA                       |  16   |     19.51%     |
+|    Dataset     |                       VALDO                        |  10   |     12.2%      |
+|  healthy_all   |                        True                        |  50   |     60.98%     |
+|  healthy_all   |                       False                        |  32   |     39.02%     |
+|    seq_type    |                        SWI                         |  72   |     87.8%      |
+|    seq_type    |                        T2S                         |  10   |     12.2%      |
+|   res_level    |                        low                         |  62   |     75.61%     |
+|   res_level    |                        high                        |  20   |     24.39%     |
+| field_strength |                         3                          |  56   |     68.29%     |
+| field_strength |                       1.5/3                        |  26   |     31.71%     |
+|   CMB_level    |                    Unspecified                     |  50   |     60.98%     |
+|   CMB_level    |                        low                         |  26   |     31.71%     |
+|   CMB_level    |                        high                        |   6   |     7.32%      |
+|       TE       |                        20.0                        |  56   |     68.29%     |
+|       TE       |                    Unspecified                     |  16   |     19.51%     |
+|       TE       |                        25.0                        |  10   |     12.2%      |
+| stratify_label |       MOMENI-True-SWI-low-3-Unspecified-20.0       |  40   |     48.78%     |
+| stratify_label |          MOMENI-False-SWI-low-3-low-20.0           |  14   |     17.07%     |
+| stratify_label |    RODEJA-False-SWI-high-1.5/3-low-Unspecified     |   6   |     7.32%      |
+| stratify_label | RODEJA-True-SWI-high-1.5/3-Unspecified-Unspecified |   5   |      6.1%      |
+| stratify_label |         VALDO-False-T2S-low-1.5/3-low-25.0         |   4   |     4.88%      |
+| stratify_label |    RODEJA-False-SWI-high-1.5/3-high-Unspecified    |   3   |     3.66%      |
+| stratify_label |     VALDO-True-T2S-high-1.5/3-Unspecified-25.0     |   3   |     3.66%      |
+| stratify_label | RODEJA-True-SWI-low-1.5/3-Unspecified-Unspecified  |   2   |     2.44%      |
+| stratify_label |        VALDO-False-T2S-high-1.5/3-low-25.0         |   2   |     2.44%      |
+| stratify_label |          MOMENI-False-SWI-low-3-high-20.0          |   2   |     2.44%      |
+| stratify_label |        VALDO-False-T2S-high-1.5/3-high-25.0        |   1   |     1.22%      |
++----------------+----------------------------------------------------+-------+----------------+
+Initial split without sMOMENI and CRBneg. Train: 463, Valid: 82
+Filtered sMOMENI and CRBneg to exclude validation patientUIDs. Now, Train: 4345, Valid: 82
+A total of 560 sMOMENI/CRBneg studies removed to avoid patientID repetition in training.
+/datadrive_m2/jorge/MicrobleedNet/cmbnet/commands/generate_train_splits.py:100: FutureWarning: Setting an item of incompatible dtype is deprecated and will raise in a future error of pandas. Value 'Unspecified' has dtype incompatible with float64, please explicitly cast to a compatible dtype first.
+  studies.fillna("Unspecified", inplace=True)
+Filtered from 5015 -->  4987 --> 545 (no synth, no neg)
+/datadrive_m2/jorge/MicrobleedNet/cmbnet/commands/generate_train_splits.py:110: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  studies_filt_cmb_real['stratify_label'] = studies_filt_cmb_real[columns_of_interest].astype(str).agg('-'.join, axis=1)
+All data strata:
++----------------+----------------------------------------------------+-------+----------------+
+|     Column     |                       Value                        | Count | Proportion (%) |
++----------------+----------------------------------------------------+-------+----------------+
+|    Dataset     |                       MOMENI                       |  370  |     67.89%     |
+|    Dataset     |                       RODEJA                       |  103  |     18.9%      |
+|    Dataset     |                       VALDO                        |  72   |     13.21%     |
+|  healthy_all   |                        True                        |  344  |     63.12%     |
+|  healthy_all   |                       False                        |  201  |     36.88%     |
+|    seq_type    |                        SWI                         |  473  |     86.79%     |
+|    seq_type    |                        T2S                         |  72   |     13.21%     |
+|   res_level    |                        low                         |  412  |     75.6%      |
+|   res_level    |                        high                        |  133  |     24.4%      |
+| field_strength |                         3                          |  370  |     67.89%     |
+| field_strength |                       1.5/3                        |  175  |     32.11%     |
+|   CMB_level    |                    Unspecified                     |  344  |     63.12%     |
+|   CMB_level    |                        low                         |  161  |     29.54%     |
+|   CMB_level    |                        high                        |  40   |     7.34%      |
+|       TE       |                        20.0                        |  370  |     67.89%     |
+|       TE       |                    Unspecified                     |  103  |     18.9%      |
+|       TE       |                        25.0                        |  72   |     13.21%     |
+| stratify_label |       MOMENI-True-SWI-low-3-Unspecified-20.0       |  280  |     51.38%     |
+| stratify_label |          MOMENI-False-SWI-low-3-low-20.0           |  79   |     14.5%      |
+| stratify_label |    RODEJA-False-SWI-high-1.5/3-low-Unspecified     |  39   |     7.16%      |
+| stratify_label | RODEJA-True-SWI-high-1.5/3-Unspecified-Unspecified |  32   |     5.87%      |
+| stratify_label |         VALDO-False-T2S-low-1.5/3-low-25.0         |  27   |     4.95%      |
+| stratify_label |     VALDO-True-T2S-high-1.5/3-Unspecified-25.0     |  22   |     4.04%      |
+| stratify_label |    RODEJA-False-SWI-high-1.5/3-high-Unspecified    |  17   |     3.12%      |
+| stratify_label |        VALDO-False-T2S-high-1.5/3-low-25.0         |  13   |     2.39%      |
+| stratify_label |          MOMENI-False-SWI-low-3-high-20.0          |  11   |     2.02%      |
+| stratify_label | RODEJA-True-SWI-low-1.5/3-Unspecified-Unspecified  |  10   |     1.83%      |
+| stratify_label |        VALDO-False-T2S-high-1.5/3-high-25.0        |  10   |     1.83%      |
+| stratify_label |     RODEJA-False-SWI-low-1.5/3-low-Unspecified     |   3   |     0.55%      |
+| stratify_label |    RODEJA-False-SWI-low-1.5/3-high-Unspecified     |   2   |     0.37%      |
++----------------+----------------------------------------------------+-------+----------------+
+Training split: 463 series (84.95%) with 249 (84.98%) unique patients
+Validation split: 82 series (15.05%) with 44 (15.02%) unique patients
+
+Training split stratification:
++----------------+----------------------------------------------------+-------+----------------+
+|     Column     |                       Value                        | Count | Proportion (%) |
++----------------+----------------------------------------------------+-------+----------------+
+|    Dataset     |                       MOMENI                       |  314  |     67.82%     |
+|    Dataset     |                       RODEJA                       |  87   |     18.79%     |
+|    Dataset     |                       VALDO                        |  62   |     13.39%     |
+|  healthy_all   |                        True                        |  294  |     63.5%      |
+|  healthy_all   |                       False                        |  169  |     36.5%      |
+|    seq_type    |                        SWI                         |  401  |     86.61%     |
+|    seq_type    |                        T2S                         |  62   |     13.39%     |
+|   res_level    |                        low                         |  350  |     75.59%     |
+|   res_level    |                        high                        |  113  |     24.41%     |
+| field_strength |                         3                          |  314  |     67.82%     |
+| field_strength |                       1.5/3                        |  149  |     32.18%     |
+|   CMB_level    |                    Unspecified                     |  294  |     63.5%      |
+|   CMB_level    |                        low                         |  135  |     29.16%     |
+|   CMB_level    |                        high                        |  34   |     7.34%      |
+|       TE       |                        20.0                        |  314  |     67.82%     |
+|       TE       |                    Unspecified                     |  87   |     18.79%     |
+|       TE       |                        25.0                        |  62   |     13.39%     |
+| stratify_label |       MOMENI-True-SWI-low-3-Unspecified-20.0       |  240  |     51.84%     |
+| stratify_label |          MOMENI-False-SWI-low-3-low-20.0           |  65   |     14.04%     |
+| stratify_label |    RODEJA-False-SWI-high-1.5/3-low-Unspecified     |  33   |     7.13%      |
+| stratify_label | RODEJA-True-SWI-high-1.5/3-Unspecified-Unspecified |  27   |     5.83%      |
+| stratify_label |         VALDO-False-T2S-low-1.5/3-low-25.0         |  23   |     4.97%      |
+| stratify_label |     VALDO-True-T2S-high-1.5/3-Unspecified-25.0     |  19   |      4.1%      |
+| stratify_label |    RODEJA-False-SWI-high-1.5/3-high-Unspecified    |  14   |     3.02%      |
+| stratify_label |        VALDO-False-T2S-high-1.5/3-low-25.0         |  11   |     2.38%      |
+| stratify_label |        VALDO-False-T2S-high-1.5/3-high-25.0        |   9   |     1.94%      |
+| stratify_label |          MOMENI-False-SWI-low-3-high-20.0          |   9   |     1.94%      |
+| stratify_label | RODEJA-True-SWI-low-1.5/3-Unspecified-Unspecified  |   8   |     1.73%      |
+| stratify_label |     RODEJA-False-SWI-low-1.5/3-low-Unspecified     |   3   |     0.65%      |
+| stratify_label |    RODEJA-False-SWI-low-1.5/3-high-Unspecified     |   2   |     0.43%      |
++----------------+----------------------------------------------------+-------+----------------+
+
+Validation split stratification:
++----------------+----------------------------------------------------+-------+----------------+
+|     Column     |                       Value                        | Count | Proportion (%) |
++----------------+----------------------------------------------------+-------+----------------+
+|    Dataset     |                       MOMENI                       |  56   |     68.29%     |
+|    Dataset     |                       RODEJA                       |  16   |     19.51%     |
+|    Dataset     |                       VALDO                        |  10   |     12.2%      |
+|  healthy_all   |                        True                        |  50   |     60.98%     |
+|  healthy_all   |                       False                        |  32   |     39.02%     |
+|    seq_type    |                        SWI                         |  72   |     87.8%      |
+|    seq_type    |                        T2S                         |  10   |     12.2%      |
+|   res_level    |                        low                         |  62   |     75.61%     |
+|   res_level    |                        high                        |  20   |     24.39%     |
+| field_strength |                         3                          |  56   |     68.29%     |
+| field_strength |                       1.5/3                        |  26   |     31.71%     |
+|   CMB_level    |                    Unspecified                     |  50   |     60.98%     |
+|   CMB_level    |                        low                         |  26   |     31.71%     |
+|   CMB_level    |                        high                        |   6   |     7.32%      |
+|       TE       |                        20.0                        |  56   |     68.29%     |
+|       TE       |                    Unspecified                     |  16   |     19.51%     |
+|       TE       |                        25.0                        |  10   |     12.2%      |
+| stratify_label |       MOMENI-True-SWI-low-3-Unspecified-20.0       |  40   |     48.78%     |
+| stratify_label |          MOMENI-False-SWI-low-3-low-20.0           |  14   |     17.07%     |
+| stratify_label |    RODEJA-False-SWI-high-1.5/3-low-Unspecified     |   6   |     7.32%      |
+| stratify_label | RODEJA-True-SWI-high-1.5/3-Unspecified-Unspecified |   5   |      6.1%      |
+| stratify_label |         VALDO-False-T2S-low-1.5/3-low-25.0         |   4   |     4.88%      |
+| stratify_label |    RODEJA-False-SWI-high-1.5/3-high-Unspecified    |   3   |     3.66%      |
+| stratify_label |     VALDO-True-T2S-high-1.5/3-Unspecified-25.0     |   3   |     3.66%      |
+| stratify_label | RODEJA-True-SWI-low-1.5/3-Unspecified-Unspecified  |   2   |     2.44%      |
+| stratify_label |        VALDO-False-T2S-high-1.5/3-low-25.0         |   2   |     2.44%      |
+| stratify_label |          MOMENI-False-SWI-low-3-high-20.0          |   2   |     2.44%      |
+| stratify_label |        VALDO-False-T2S-high-1.5/3-high-25.0        |   1   |     1.22%      |
++----------------+----------------------------------------------------+-------+----------------+
+Initial split without sMOMENI and CRBneg. Train: 463, Valid: 82
+Filtered sMOMENI and CRBneg to exclude validation patientUIDs. Now, Train: 4345, Valid: 82
+A total of 560 sMOMENI/CRBneg studies removed to avoid patientID repetition in training.
