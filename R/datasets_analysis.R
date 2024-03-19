@@ -132,9 +132,11 @@ studies_clean <- studies %>%
   arrange(patientUID, series) %>%
   mutate(n_indataset = row_number()) %>%
   ungroup() %>%
+  mutate(n_CMB_new2 = ifelse(n_CMB_new==0, "", paste0("-", n_CMB_new))) %>% 
   mutate(
-    seriesUID = paste(Dataset, n_indataset, series, sep = "-")
+    seriesUID = paste0(Dataset,"-", series,  n_CMB_new2)
   ) %>%
+    select(-n_CMB_new2) %>% 
   mutate(
     res_level = sapply(old_voxel_dim, function(x) {
       nums <- as.numeric(unlist(str_extract_all(x, "\\d+\\.\\d+")))
@@ -171,7 +173,10 @@ studies_clean <- studies %>%
     Dataset = c("CRB", "CRBneg", "DOU", "MOMENI", "RODEJA", "VALDO", "sMOMENI"),
     field_strength = c("1.5/3", "1.5", "3", "3", "1.5/3", "1.5/3", "3"),
     TE = c(32.5, 27.1, 24.0, 20.0, NA, 25.0, 20.0)
-  ), by="Dataset")
+  ), by="Dataset") %>% 
+  relocate(
+    seriesUID, n_CMB_new, seq_type,	res_level,	healthy, healthy_all, field_strength,	TE, subject
+  )
 
 problematic_cmb <- studies_clean %>% 
   filter(diffCMB==T)
