@@ -1,0 +1,52 @@
+# Epoch settings
+epochs: 1000 # TODO: maybe longer
+# TODO: set the following to something nice
+# train_steps_per_epoch: 500
+train_steps_per_epoch: 10
+# val_steps_per_epoch: 100
+val_steps_per_epoch: 1 # this is how many images in valid set
+
+
+# Optimizer and optional kwargs
+optimizer:
+  name: 'Adam'
+  kwargs:
+    learning_rate: 0.00005
+
+# Loss and optional kwargs
+loss:
+  name: 'WeightedMeanMultiLoss'
+  kwargs:
+    loss_funcs: ['focal_tversky_loss', 'ClassWeightedLoss']
+    weights: [1.0, 1]
+    per_loss_kwargs:
+      - gamma: 3
+        # Dice loss 
+        alpha: 0.5
+        beta: 0.5
+        smooth: 1.0
+      - loss_func: CategoricalCrossentropy
+        class_weights: [0.1, 5]
+
+# Other example 1
+# loss:
+#   name: 'CategoricalCrossentropy'
+
+# Other example 2
+# loss:
+#   name: 'focal_tversky_loss'
+#   kwargs:
+#     gamma: 0.65
+#     alpha: 0.35
+#     beta: 0.65
+#     smooth: 1.0
+
+# Optional list of metrics
+metrics:
+  #- 'CategoricalAccuracy'
+
+validation_routine:
+  validation_type: 'images'  # one of 'images' and 'batches'
+  kwargs:
+    cache_examples: 5  # Controls how many images are plotted each validation round
+    ignore_classes_in_avg: [0]

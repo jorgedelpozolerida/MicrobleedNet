@@ -1,0 +1,31 @@
+# This file contains the default configuration for a U-Net model.
+
+# The name of the model class to use.
+module_name: unet # TODO: change to Apollo
+class_name: UNet # TODO: change to Apollo
+
+# Hyperparameters for the model.
+config:
+  input_shape: [64, 64, 64]
+  n_channels: 1 # T2S/SWI
+  # filters_per_depth: [16, 32, 64, 128, 256]
+  filters_per_depth: [32, 64, 128, 256] # depth 4, more filters (check memory)
+  kernel_size: [3, 3, 3]
+  sampling_factor: 2
+  # sampling_factor: 2
+  n_classes: 2 # cmb and background
+  # n_conv_per_depth: [2, 2, 2, 2, 2]
+  n_conv_per_depth: 2
+  conv_kwargs:
+    padding: 'same'
+    strides: [1, 1, 1]
+  hidden_activation: "ELU"
+  output_activation: "Softmax"
+  up_sampling_type: "nearest"
+  merge_layer: 'Concatenate'
+  normalization: "GroupNormalization"
+  normalization_kwargs:
+    groups: 1
+  kernel_regularizer: 'L2'
+  kernel_regularizer_kwargs:
+    l2: 0.0001
