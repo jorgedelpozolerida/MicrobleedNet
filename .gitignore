@@ -166,3 +166,4 @@ cython_debug/
 old/*
 synthstrip-docker
 TESTING/*
+__*

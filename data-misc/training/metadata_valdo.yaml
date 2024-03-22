@@ -1,0 +1,2644 @@
+sub-101:
+  segmentation/mapped_labels/label_counts:
+    '0': 63998337
+    '1': 1663
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 12
+      component_bboxes:
+      - - - 119
+          - 123
+        - - 241
+          - 244
+        - - 150
+          - 158
+      - - - 124
+          - 132
+        - - 136
+          - 144
+        - - 133
+          - 142
+      - - - 139
+          - 143
+        - - 220
+          - 223
+        - - 134
+          - 142
+      - - - 140
+          - 143
+        - - 200
+          - 204
+        - - 160
+          - 168
+      - - - 147
+          - 151
+        - - 223
+          - 227
+        - - 157
+          - 165
+      - - - 154
+          - 158
+        - - 149
+          - 153
+        - - 130
+          - 139
+      - - - 160
+          - 165
+        - - 232
+          - 236
+        - - 188
+          - 196
+      - - - 165
+          - 170
+        - - 228
+          - 232
+        - - 276
+          - 284
+      - - - 166
+          - 178
+        - - 229
+          - 244
+        - - 186
+          - 203
+      - - - 229
+          - 237
+        - - 229
+          - 237
+        - - 182
+          - 198
+      - - - 236
+          - 241
+        - - 221
+          - 224
+        - - 182
+          - 190
+      - - - 256
+          - 261
+        - - 126
+          - 131
+        - - 180
+          - 188
+      component_coords:
+      - - 121
+        - 242
+        - 153
+      - - 127
+        - 140
+        - 137
+      - - 140
+        - 221
+        - 138
+      - - 141
+        - 202
+        - 163
+      - - 149
+        - 225
+        - 160
+      - - 155
+        - 151
+        - 134
+      - - 162
+        - 234
+        - 191
+      - - 167
+        - 229
+        - 280
+      - - 171
+        - 237
+        - 196
+      - - 233
+        - 232
+        - 189
+      - - 238
+        - 222
+        - 185
+      - - 258
+        - 128
+        - 184
+sub-102:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999569
+    '1': 431
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 143
+          - 152
+        - - 226
+          - 234
+        - - 204
+          - 213
+      component_coords:
+      - - 148
+        - 229
+        - 208
+sub-103:
+  segmentation/mapped_labels/label_counts:
+    '0': 63998412
+    '1': 1588
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 6
+      component_bboxes:
+      - - - 164
+          - 169
+        - - 120
+          - 126
+        - - 99
+          - 108
+      - - - 206
+          - 214
+        - - 198
+          - 207
+        - - 203
+          - 212
+      - - - 218
+          - 225
+        - - 173
+          - 181
+        - - 201
+          - 217
+      - - - 234
+          - 238
+        - - 198
+          - 202
+        - - 235
+          - 243
+      - - - 251
+          - 256
+        - - 204
+          - 209
+        - - 228
+          - 236
+      - - - 252
+          - 261
+        - - 143
+          - 150
+        - - 214
+          - 230
+      component_coords:
+      - - 166
+        - 123
+        - 103
+      - - 210
+        - 202
+        - 207
+      - - 221
+        - 177
+        - 209
+      - - 235
+        - 200
+        - 238
+      - - 253
+        - 206
+        - 231
+      - - 256
+        - 146
+        - 224
+sub-105:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+sub-107:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999795
+    '1': 205
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 2
+      component_bboxes:
+      - - - 241
+          - 245
+        - - 143
+          - 148
+        - - 147
+          - 155
+      - - - 273
+          - 277
+        - - 126
+          - 132
+        - - 225
+          - 234
+      component_coords:
+      - - 243
+        - 145
+        - 150
+      - - 274
+        - 129
+        - 229
+sub-108:
+  segmentation/mapped_labels/label_counts:
+    '0': 63996240
+    '1': 3760
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 6
+      component_bboxes:
+      - - - 159
+          - 179
+        - - 223
+          - 249
+        - - 185
+          - 209
+      - - - 179
+          - 184
+        - - 243
+          - 249
+        - - 193
+          - 201
+      - - - 229
+          - 233
+        - - 237
+          - 240
+        - - 182
+          - 190
+      - - - 230
+          - 236
+        - - 123
+          - 129
+        - - 253
+          - 261
+      - - - 233
+          - 252
+        - - 223
+          - 238
+        - - 181
+          - 205
+      - - - 237
+          - 252
+        - - 209
+          - 225
+        - - 187
+          - 204
+      component_coords:
+      - - 169
+        - 237
+        - 199
+      - - 181
+        - 246
+        - 196
+      - - 231
+        - 238
+        - 185
+      - - 233
+        - 125
+        - 256
+      - - 242
+        - 229
+        - 195
+      - - 245
+        - 215
+        - 195
+sub-109:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+sub-110:
+  segmentation/mapped_labels/label_counts:
+    '0': 63988785
+    '1': 11215
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 71
+      component_bboxes:
+      - - - 105
+          - 108
+        - - 136
+          - 140
+        - - 136
+          - 145
+      - - - 134
+          - 138
+        - - 74
+          - 79
+        - - 243
+          - 251
+      - - - 143
+          - 147
+        - - 63
+          - 68
+        - - 209
+          - 218
+      - - - 144
+          - 148
+        - - 74
+          - 78
+        - - 203
+          - 211
+      - - - 148
+          - 152
+        - - 208
+          - 212
+        - - 204
+          - 212
+      - - - 154
+          - 159
+        - - 88
+          - 93
+        - - 261
+          - 270
+      - - - 154
+          - 158
+        - - 114
+          - 119
+        - - 289
+          - 297
+      - - - 193
+          - 198
+        - - 70
+          - 77
+        - - 212
+          - 220
+      - - - 201
+          - 204
+        - - 88
+          - 92
+        - - 239
+          - 247
+      - - - 202
+          - 206
+        - - 132
+          - 137
+        - - 277
+          - 285
+      - - - 203
+          - 207
+        - - 113
+          - 118
+        - - 290
+          - 299
+      - - - 205
+          - 209
+        - - 104
+          - 108
+        - - 265
+          - 273
+      - - - 206
+          - 210
+        - - 75
+          - 79
+        - - 261
+          - 270
+      - - - 206
+          - 209
+        - - 111
+          - 115
+        - - 250
+          - 258
+      - - - 210
+          - 225
+        - - 82
+          - 100
+        - - 231
+          - 263
+      - - - 211
+          - 214
+        - - 124
+          - 127
+        - - 260
+          - 268
+      - - - 212
+          - 216
+        - - 74
+          - 78
+        - - 261
+          - 270
+      - - - 213
+          - 221
+        - - 98
+          - 106
+        - - 281
+          - 306
+      - - - 213
+          - 217
+        - - 106
+          - 111
+        - - 282
+          - 290
+      - - - 213
+          - 217
+        - - 149
+          - 153
+        - - 239
+          - 247
+      - - - 214
+          - 218
+        - - 81
+          - 86
+        - - 157
+          - 166
+      - - - 214
+          - 217
+        - - 107
+          - 111
+        - - 266
+          - 274
+      - - - 214
+          - 218
+        - - 127
+          - 131
+        - - 300
+          - 309
+      - - - 215
+          - 221
+        - - 66
+          - 73
+        - - 196
+          - 205
+      - - - 215
+          - 218
+        - - 69
+          - 73
+        - - 212
+          - 221
+      - - - 215
+          - 219
+        - - 67
+          - 73
+        - - 261
+          - 269
+      - - - 216
+          - 220
+        - - 130
+          - 134
+        - - 277
+          - 285
+      - - - 216
+          - 220
+        - - 136
+          - 139
+        - - 278
+          - 286
+      - - - 220
+          - 227
+        - - 131
+          - 138
+        - - 293
+          - 318
+      - - - 221
+          - 227
+        - - 79
+          - 85
+        - - 271
+          - 279
+      - - - 221
+          - 225
+        - - 313
+          - 317
+        - - 236
+          - 244
+      - - - 222
+          - 226
+        - - 91
+          - 95
+        - - 288
+          - 296
+      - - - 222
+          - 225
+        - - 100
+          - 103
+        - - 297
+          - 305
+      - - - 223
+          - 228
+        - - 63
+          - 69
+        - - 252
+          - 261
+      - - - 223
+          - 227
+        - - 145
+          - 150
+        - - 230
+          - 239
+      - - - 226
+          - 229
+        - - 58
+          - 62
+        - - 220
+          - 228
+      - - - 226
+          - 229
+        - - 75
+          - 78
+        - - 238
+          - 246
+      - - - 226
+          - 229
+        - - 96
+          - 100
+        - - 297
+          - 305
+      - - - 226
+          - 229
+        - - 98
+          - 100
+        - - 281
+          - 289
+      - - - 228
+          - 238
+        - - 62
+          - 84
+        - - 222
+          - 253
+      - - - 232
+          - 235
+        - - 57
+          - 60
+        - - 220
+          - 228
+      - - - 233
+          - 239
+        - - 91
+          - 97
+        - - 280
+          - 289
+      - - - 233
+          - 238
+        - - 102
+          - 110
+        - - 274
+          - 291
+      - - - 235
+          - 239
+        - - 98
+          - 101
+        - - 281
+          - 290
+      - - - 237
+          - 242
+        - - 70
+          - 78
+        - - 214
+          - 230
+      - - - 237
+          - 241
+        - - 97
+          - 102
+        - - 136
+          - 145
+      - - - 238
+          - 242
+        - - 73
+          - 78
+        - - 238
+          - 246
+      - - - 240
+          - 243
+        - - 60
+          - 66
+        - - 212
+          - 221
+      - - - 240
+          - 248
+        - - 66
+          - 76
+        - - 245
+          - 254
+      - - - 241
+          - 245
+        - - 83
+          - 87
+        - - 256
+          - 264
+      - - - 247
+          - 251
+        - - 59
+          - 64
+        - - 220
+          - 229
+      - - - 248
+          - 251
+        - - 81
+          - 86
+        - - 199
+          - 207
+      - - - 248
+          - 253
+        - - 80
+          - 86
+        - - 247
+          - 264
+      - - - 250
+          - 255
+        - - 75
+          - 79
+        - - 247
+          - 255
+      - - - 251
+          - 254
+        - - 88
+          - 93
+        - - 257
+          - 265
+      - - - 251
+          - 254
+        - - 136
+          - 140
+        - - 222
+          - 231
+      - - - 255
+          - 258
+        - - 67
+          - 73
+        - - 222
+          - 230
+      - - - 256
+          - 276
+        - - 87
+          - 98
+        - - 242
+          - 274
+      - - - 259
+          - 263
+        - - 77
+          - 81
+        - - 239
+          - 248
+      - - - 261
+          - 265
+        - - 97
+          - 100
+        - - 258
+          - 266
+      - - - 265
+          - 277
+        - - 77
+          - 86
+        - - 248
+          - 257
+      - - - 267
+          - 274
+        - - 108
+          - 115
+        - - 252
+          - 260
+      - - - 269
+          - 281
+        - - 71
+          - 84
+        - - 223
+          - 241
+      - - - 269
+          - 276
+        - - 96
+          - 104
+        - - 259
+          - 275
+      - - - 271
+          - 275
+        - - 104
+          - 108
+        - - 227
+          - 235
+      - - - 271
+          - 274
+        - - 125
+          - 130
+        - - 254
+          - 262
+      - - - 274
+          - 280
+        - - 94
+          - 99
+        - - 250
+          - 258
+      - - - 277
+          - 282
+        - - 107
+          - 113
+        - - 252
+          - 269
+      - - - 279
+          - 283
+        - - 107
+          - 111
+        - - 212
+          - 220
+      - - - 283
+          - 290
+        - - 89
+          - 96
+        - - 242
+          - 250
+      - - - 283
+          - 288
+        - - 145
+          - 150
+        - - 144
+          - 152
+      component_coords:
+      - - 106
+        - 137
+        - 140
+      - - 135
+        - 76
+        - 246
+      - - 144
+        - 65
+        - 212
+      - - 146
+        - 76
+        - 207
+      - - 150
+        - 210
+        - 208
+      - - 156
+        - 90
+        - 265
+      - - 156
+        - 116
+        - 292
+      - - 195
+        - 73
+        - 216
+      - - 202
+        - 89
+        - 242
+      - - 204
+        - 134
+        - 280
+      - - 204
+        - 115
+        - 294
+      - - 207
+        - 105
+        - 269
+      - - 208
+        - 76
+        - 265
+      - - 207
+        - 113
+        - 253
+      - - 218
+        - 89
+        - 246
+      - - 212
+        - 125
+        - 264
+      - - 213
+        - 75
+        - 265
+      - - 217
+        - 101
+        - 293
+      - - 214
+        - 108
+        - 285
+      - - 214
+        - 151
+        - 243
+      - - 216
+        - 83
+        - 161
+      - - 215
+        - 109
+        - 269
+      - - 215
+        - 129
+        - 304
+      - - 217
+        - 69
+        - 200
+      - - 216
+        - 71
+        - 216
+      - - 217
+        - 70
+        - 264
+      - - 217
+        - 132
+        - 281
+      - - 218
+        - 137
+        - 282
+      - - 223
+        - 133
+        - 308
+      - - 224
+        - 81
+        - 274
+      - - 223
+        - 314
+        - 240
+      - - 224
+        - 92
+        - 292
+      - - 223
+        - 101
+        - 301
+      - - 225
+        - 66
+        - 256
+      - - 225
+        - 147
+        - 234
+      - - 227
+        - 59
+        - 224
+      - - 227
+        - 76
+        - 241
+      - - 227
+        - 97
+        - 301
+      - - 227
+        - 98
+        - 285
+      - - 232
+        - 70
+        - 237
+      - - 233
+        - 58
+        - 224
+      - - 235
+        - 93
+        - 284
+      - - 235
+        - 105
+        - 283
+      - - 236
+        - 99
+        - 286
+      - - 239
+        - 74
+        - 223
+      - - 239
+        - 99
+        - 140
+      - - 240
+        - 75
+        - 241
+      - - 241
+        - 63
+        - 216
+      - - 244
+        - 71
+        - 249
+      - - 243
+        - 84
+        - 260
+      - - 248
+        - 61
+        - 224
+      - - 249
+        - 83
+        - 202
+      - - 250
+        - 82
+        - 257
+      - - 252
+        - 77
+        - 251
+      - - 252
+        - 90
+        - 261
+      - - 252
+        - 137
+        - 226
+      - - 256
+        - 69
+        - 225
+      - - 265
+        - 92
+        - 257
+      - - 260
+        - 78
+        - 242
+      - - 263
+        - 98
+        - 262
+      - - 270
+        - 81
+        - 252
+      - - 270
+        - 111
+        - 255
+      - - 274
+        - 78
+        - 233
+      - - 272
+        - 99
+        - 267
+      - - 273
+        - 105
+        - 231
+      - - 272
+        - 127
+        - 257
+      - - 277
+        - 96
+        - 254
+      - - 279
+        - 110
+        - 260
+      - - 281
+        - 109
+        - 216
+      - - 286
+        - 92
+        - 245
+      - - 285
+        - 147
+        - 147
+sub-111:
+  segmentation/mapped_labels/label_counts:
+    '0': 63998721
+    '1': 1279
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 3
+      component_bboxes:
+      - - - 121
+          - 126
+        - - 240
+          - 245
+        - - 154
+          - 163
+      - - - 239
+          - 247
+        - - 293
+          - 303
+        - - 249
+          - 266
+      - - - 265
+          - 274
+        - - 229
+          - 240
+        - - 222
+          - 240
+      component_coords:
+      - - 123
+        - 242
+        - 158
+      - - 242
+        - 298
+        - 258
+      - - 269
+        - 234
+        - 231
+sub-201:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+sub-203:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+sub-205:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+sub-207:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999506
+    '1': 494
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 9
+      component_bboxes:
+      - - - 97
+          - 102
+        - - 240
+          - 246
+        - - 143
+          - 153
+      - - - 141
+          - 146
+        - - 208
+          - 213
+        - - 209
+          - 215
+      - - - 145
+          - 150
+        - - 217
+          - 220
+        - - 215
+          - 220
+      - - - 158
+          - 162
+        - - 297
+          - 300
+        - - 251
+          - 255
+      - - - 163
+          - 168
+        - - 136
+          - 138
+        - - 111
+          - 118
+      - - - 256
+          - 261
+        - - 252
+          - 255
+        - - 217
+          - 222
+      - - - 259
+          - 263
+        - - 220
+          - 223
+        - - 211
+          - 217
+      - - - 260
+          - 263
+        - - 230
+          - 233
+        - - 211
+          - 214
+      - - - 262
+          - 266
+        - - 215
+          - 219
+        - - 190
+          - 198
+      component_coords:
+      - - 99
+        - 242
+        - 148
+      - - 143
+        - 210
+        - 212
+      - - 147
+        - 218
+        - 217
+      - - 159
+        - 298
+        - 253
+      - - 165
+        - 136
+        - 114
+      - - 258
+        - 253
+        - 219
+      - - 261
+        - 221
+        - 214
+      - - 261
+        - 231
+        - 212
+      - - 264
+        - 217
+        - 193
+sub-209:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+sub-210:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+sub-211:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+sub-212:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999950
+    '1': 50
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 174
+          - 178
+        - - 329
+          - 333
+        - - 236
+          - 241
+      component_coords:
+      - - 175
+        - 330
+        - 238
+sub-215:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999952
+    '1': 48
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 176
+          - 180
+        - - 184
+          - 187
+        - - 195
+          - 201
+      component_coords:
+      - - 177
+        - 185
+        - 198
+sub-216:
+  segmentation/mapped_labels/label_counts:
+    '0': 63997557
+    '1': 2443
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 21
+      component_bboxes:
+      - - - 128
+          - 134
+        - - 118
+          - 123
+        - - 256
+          - 261
+      - - - 133
+          - 138
+        - - 222
+          - 226
+        - - 204
+          - 207
+      - - - 137
+          - 142
+        - - 206
+          - 209
+        - - 194
+          - 197
+      - - - 152
+          - 158
+        - - 156
+          - 162
+        - - 213
+          - 216
+      - - - 160
+          - 169
+        - - 88
+          - 97
+        - - 122
+          - 132
+      - - - 161
+          - 167
+        - - 123
+          - 128
+        - - 210
+          - 216
+      - - - 164
+          - 169
+        - - 200
+          - 206
+        - - 204
+          - 210
+      - - - 170
+          - 174
+        - - 118
+          - 121
+        - - 120
+          - 125
+      - - - 172
+          - 179
+        - - 229
+          - 235
+        - - 208
+          - 218
+      - - - 174
+          - 178
+        - - 178
+          - 182
+        - - 194
+          - 197
+      - - - 178
+          - 184
+        - - 130
+          - 136
+        - - 136
+          - 144
+      - - - 207
+          - 215
+        - - 220
+          - 228
+        - - 208
+          - 220
+      - - - 217
+          - 225
+        - - 203
+          - 212
+        - - 215
+          - 221
+      - - - 220
+          - 226
+        - - 195
+          - 198
+        - - 189
+          - 196
+      - - - 221
+          - 227
+        - - 209
+          - 215
+        - - 207
+          - 213
+      - - - 229
+          - 234
+        - - 195
+          - 199
+        - - 194
+          - 197
+      - - - 239
+          - 245
+        - - 228
+          - 234
+        - - 213
+          - 223
+      - - - 250
+          - 254
+        - - 289
+          - 293
+        - - 228
+          - 234
+      - - - 262
+          - 268
+        - - 122
+          - 127
+        - - 157
+          - 164
+      - - - 263
+          - 269
+        - - 215
+          - 220
+        - - 252
+          - 258
+      - - - 270
+          - 275
+        - - 145
+          - 150
+        - - 221
+          - 229
+      component_coords:
+      - - 130
+        - 120
+        - 258
+      - - 135
+        - 223
+        - 205
+      - - 139
+        - 207
+        - 195
+      - - 155
+        - 159
+        - 214
+      - - 164
+        - 92
+        - 127
+      - - 164
+        - 125
+        - 212
+      - - 166
+        - 203
+        - 206
+      - - 171
+        - 119
+        - 122
+      - - 175
+        - 231
+        - 212
+      - - 176
+        - 180
+        - 195
+      - - 181
+        - 133
+        - 140
+      - - 210
+        - 224
+        - 214
+      - - 220
+        - 207
+        - 218
+      - - 222
+        - 196
+        - 192
+      - - 223
+        - 211
+        - 210
+      - - 231
+        - 196
+        - 195
+      - - 241
+        - 231
+        - 217
+      - - 251
+        - 291
+        - 230
+      - - 265
+        - 124
+        - 159
+      - - 266
+        - 217
+        - 254
+      - - 272
+        - 147
+        - 224
+sub-218:
+  segmentation/mapped_labels/label_counts:
+    '0': 63998576
+    '1': 1424
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 26
+      component_bboxes:
+      - - - 72
+          - 77
+        - - 135
+          - 140
+        - - 191
+          - 199
+      - - - 80
+          - 85
+        - - 180
+          - 185
+        - - 238
+          - 244
+      - - - 97
+          - 101
+        - - 117
+          - 121
+        - - 262
+          - 268
+      - - - 100
+          - 104
+        - - 145
+          - 149
+        - - 142
+          - 148
+      - - - 105
+          - 109
+        - - 260
+          - 263
+        - - 234
+          - 239
+      - - - 109
+          - 113
+        - - 119
+          - 122
+        - - 201
+          - 206
+      - - - 117
+          - 122
+        - - 89
+          - 93
+        - - 174
+          - 180
+      - - - 123
+          - 127
+        - - 97
+          - 99
+        - - 265
+          - 270
+      - - - 132
+          - 136
+        - - 292
+          - 295
+        - - 201
+          - 206
+      - - - 137
+          - 143
+        - - 133
+          - 137
+        - - 255
+          - 262
+      - - - 150
+          - 155
+        - - 192
+          - 195
+        - - 209
+          - 215
+      - - - 159
+          - 164
+        - - 271
+          - 274
+        - - 286
+          - 290
+      - - - 167
+          - 172
+        - - 101
+          - 106
+        - - 271
+          - 278
+      - - - 167
+          - 170
+        - - 261
+          - 265
+        - - 252
+          - 257
+      - - - 170
+          - 173
+        - - 296
+          - 298
+        - - 222
+          - 225
+      - - - 172
+          - 176
+        - - 195
+          - 198
+        - - 214
+          - 220
+      - - - 176
+          - 180
+        - - 324
+          - 327
+        - - 289
+          - 294
+      - - - 177
+          - 181
+        - - 133
+          - 136
+        - - 210
+          - 215
+      - - - 177
+          - 181
+        - - 303
+          - 307
+        - - 226
+          - 231
+      - - - 180
+          - 184
+        - - 96
+          - 100
+        - - 220
+          - 226
+      - - - 210
+          - 215
+        - - 98
+          - 102
+        - - 236
+          - 242
+      - - - 220
+          - 224
+        - - 238
+          - 241
+        - - 294
+          - 298
+      - - - 221
+          - 227
+        - - 130
+          - 134
+        - - 145
+          - 150
+      - - - 222
+          - 227
+        - - 152
+          - 157
+        - - 135
+          - 142
+      - - - 264
+          - 268
+        - - 262
+          - 266
+        - - 138
+          - 145
+      - - - 315
+          - 320
+        - - 167
+          - 170
+        - - 199
+          - 204
+      component_coords:
+      - - 74
+        - 137
+        - 195
+      - - 82
+        - 182
+        - 240
+      - - 98
+        - 118
+        - 264
+      - - 102
+        - 147
+        - 144
+      - - 106
+        - 261
+        - 236
+      - - 110
+        - 120
+        - 203
+      - - 119
+        - 91
+        - 176
+      - - 125
+        - 98
+        - 267
+      - - 133
+        - 293
+        - 203
+      - - 140
+        - 135
+        - 258
+      - - 152
+        - 193
+        - 211
+      - - 161
+        - 272
+        - 288
+      - - 169
+        - 103
+        - 274
+      - - 168
+        - 262
+        - 255
+      - - 171
+        - 296
+        - 223
+      - - 174
+        - 196
+        - 217
+      - - 178
+        - 325
+        - 291
+      - - 178
+        - 134
+        - 212
+      - - 179
+        - 305
+        - 228
+      - - 182
+        - 97
+        - 222
+      - - 212
+        - 100
+        - 239
+      - - 222
+        - 239
+        - 296
+      - - 223
+        - 131
+        - 147
+      - - 224
+        - 154
+        - 139
+      - - 265
+        - 263
+        - 140
+      - - 317
+        - 168
+        - 201
+sub-220:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+sub-223:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999956
+    '1': 44
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 206
+          - 210
+        - - 164
+          - 168
+        - - 94
+          - 100
+      component_coords:
+      - - 207
+        - 165
+        - 97
+sub-224:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+sub-225:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+sub-227:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+sub-228:
+  segmentation/mapped_labels/label_counts:
+    '0': 63998951
+    '1': 1049
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 8
+      component_bboxes:
+      - - - 187
+          - 196
+        - - 183
+          - 191
+        - - 203
+          - 211
+      - - - 203
+          - 208
+        - - 175
+          - 178
+        - - 118
+          - 126
+      - - - 225
+          - 236
+        - - 139
+          - 149
+        - - 116
+          - 129
+      - - - 228
+          - 234
+        - - 193
+          - 198
+        - - 212
+          - 220
+      - - - 242
+          - 248
+        - - 193
+          - 197
+        - - 209
+          - 214
+      - - - 259
+          - 263
+        - - 265
+          - 268
+        - - 187
+          - 192
+      - - - 271
+          - 275
+        - - 289
+          - 293
+        - - 184
+          - 190
+      - - - 284
+          - 291
+        - - 227
+          - 231
+        - - 128
+          - 132
+      component_coords:
+      - - 191
+        - 187
+        - 207
+      - - 205
+        - 176
+        - 122
+      - - 230
+        - 145
+        - 122
+      - - 230
+        - 195
+        - 216
+      - - 244
+        - 195
+        - 211
+      - - 260
+        - 266
+        - 189
+      - - 273
+        - 291
+        - 187
+      - - 287
+        - 229
+        - 129
+sub-230:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+sub-231:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+sub-233:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+sub-234:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999818
+    '1': 182
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 2
+      component_bboxes:
+      - - - 158
+          - 163
+        - - 180
+          - 183
+        - - 175
+          - 182
+      - - - 181
+          - 186
+        - - 229
+          - 235
+        - - 201
+          - 211
+      component_coords:
+      - - 160
+        - 181
+        - 179
+      - - 183
+        - 232
+        - 206
+sub-301:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999924
+    '1': 76
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 167
+          - 171
+        - - 245
+          - 249
+        - - 281
+          - 288
+      component_coords:
+      - - 169
+        - 246
+        - 284
+sub-304:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999773
+    '1': 227
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 139
+          - 145
+        - - 166
+          - 173
+        - - 205
+          - 213
+      component_coords:
+      - - 141
+        - 168
+        - 208
+sub-305:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999544
+    '1': 456
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 2
+      component_bboxes:
+      - - - 158
+          - 165
+        - - 85
+          - 92
+        - - 161
+          - 173
+      - - - 289
+          - 293
+        - - 237
+          - 241
+        - - 99
+          - 105
+      component_coords:
+      - - 161
+        - 88
+        - 166
+      - - 290
+        - 238
+        - 102
+sub-306:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999786
+    '1': 214
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 203
+          - 210
+        - - 229
+          - 236
+        - - 282
+          - 295
+      component_coords:
+      - - 205
+        - 232
+        - 286
+sub-308:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999639
+    '1': 361
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 237
+          - 244
+        - - 72
+          - 81
+        - - 144
+          - 156
+      component_coords:
+      - - 240
+        - 76
+        - 151
+sub-310:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999904
+    '1': 96
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 240
+          - 244
+        - - 289
+          - 293
+        - - 262
+          - 269
+      component_coords:
+      - - 242
+        - 290
+        - 265
+sub-313:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999873
+    '1': 127
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 242
+          - 248
+        - - 96
+          - 101
+        - - 125
+          - 133
+      component_coords:
+      - - 245
+        - 99
+        - 129
+sub-315:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999806
+    '1': 194
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 277
+          - 283
+        - - 181
+          - 185
+        - - 244
+          - 260
+      component_coords:
+      - - 280
+        - 183
+        - 250
+sub-316:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999750
+    '1': 250
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 2
+      component_bboxes:
+      - - - 132
+          - 136
+        - - 110
+          - 117
+        - - 190
+          - 198
+      - - - 153
+          - 157
+        - - 207
+          - 214
+        - - 176
+          - 185
+      component_coords:
+      - - 134
+        - 113
+        - 194
+      - - 155
+        - 210
+        - 180
+sub-317:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999902
+    '1': 98
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 163
+          - 169
+        - - 123
+          - 128
+        - - 262
+          - 269
+      component_coords:
+      - - 166
+        - 125
+        - 265
+sub-318:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999904
+    '1': 96
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 172
+          - 176
+        - - 234
+          - 239
+        - - 176
+          - 182
+      component_coords:
+      - - 174
+        - 236
+        - 178
+sub-319:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999760
+    '1': 240
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 187
+          - 195
+        - - 127
+          - 133
+        - - 104
+          - 110
+      component_coords:
+      - - 190
+        - 129
+        - 106
+sub-320:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999784
+    '1': 216
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 2
+      component_bboxes:
+      - - - 145
+          - 149
+        - - 125
+          - 129
+        - - 195
+          - 201
+      - - - 234
+          - 240
+        - - 230
+          - 236
+        - - 164
+          - 170
+      component_coords:
+      - - 146
+        - 127
+        - 198
+      - - 236
+        - 232
+        - 166
+sub-321:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999742
+    '1': 258
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 2
+      component_bboxes:
+      - - - 230
+          - 234
+        - - 228
+          - 232
+        - - 195
+          - 203
+      - - - 258
+          - 262
+        - - 169
+          - 174
+        - - 188
+          - 196
+      component_coords:
+      - - 232
+        - 230
+        - 198
+      - - 260
+        - 171
+        - 191
+sub-322:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999232
+    '1': 768
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 218
+          - 230
+        - - 240
+          - 250
+        - - 221
+          - 239
+      component_coords:
+      - - 223
+        - 244
+        - 230
+sub-323:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999903
+    '1': 97
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 172
+          - 176
+        - - 70
+          - 75
+        - - 229
+          - 237
+      component_coords:
+      - - 173
+        - 73
+        - 232
+sub-324:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999760
+    '1': 240
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 125
+          - 131
+        - - 79
+          - 85
+        - - 165
+          - 177
+      component_coords:
+      - - 127
+        - 82
+        - 169
+sub-325:
+  segmentation/mapped_labels/label_counts:
+    '0': 63998782
+    '1': 1218
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 3
+      component_bboxes:
+      - - - 102
+          - 106
+        - - 147
+          - 152
+        - - 213
+          - 229
+      - - - 145
+          - 156
+        - - 268
+          - 280
+        - - 239
+          - 258
+      - - - 245
+          - 251
+        - - 290
+          - 295
+        - - 216
+          - 225
+      component_coords:
+      - - 104
+        - 149
+        - 218
+      - - 151
+        - 274
+        - 248
+      - - 248
+        - 292
+        - 220
+sub-326:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999830
+    '1': 170
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 171
+          - 177
+        - - 328
+          - 335
+        - - 244
+          - 257
+      component_coords:
+      - - 174
+        - 331
+        - 248
+sub-327:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999904
+    '1': 96
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 125
+          - 129
+        - - 145
+          - 149
+        - - 204
+          - 210
+      component_coords:
+      - - 126
+        - 146
+        - 206
+sub-104:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+sub-106:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999775
+    '1': 225
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 3
+      component_bboxes:
+      - - - 145
+          - 149
+        - - 92
+          - 97
+        - - 135
+          - 144
+      - - - 154
+          - 158
+        - - 85
+          - 91
+        - - 116
+          - 125
+      - - - 259
+          - 263
+        - - 104
+          - 110
+        - - 152
+          - 161
+      component_coords:
+      - - 146
+        - 94
+        - 139
+      - - 156
+        - 88
+        - 120
+      - - 261
+        - 106
+        - 156
+sub-202:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+sub-204:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+sub-206:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+sub-208:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999894
+    '1': 106
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 237
+          - 243
+        - - 127
+          - 132
+        - - 217
+          - 225
+      component_coords:
+      - - 239
+        - 129
+        - 221
+sub-213:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999973
+    '1': 27
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 281
+          - 286
+        - - 130
+          - 133
+        - - 186
+          - 191
+      component_coords:
+      - - 283
+        - 130
+        - 188
+sub-214:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+sub-217:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999849
+    '1': 151
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 282
+          - 289
+        - - 263
+          - 270
+        - - 177
+          - 184
+      component_coords:
+      - - 285
+        - 266
+        - 180
+sub-219:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+sub-221:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999251
+    '1': 749
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 11
+      component_bboxes:
+      - - - 97
+          - 100
+        - - 107
+          - 111
+        - - 167
+          - 172
+      - - - 101
+          - 106
+        - - 117
+          - 121
+        - - 177
+          - 183
+      - - - 130
+          - 134
+        - - 142
+          - 145
+        - - 249
+          - 255
+      - - - 132
+          - 137
+        - - 267
+          - 271
+        - - 217
+          - 222
+      - - - 134
+          - 138
+        - - 69
+          - 73
+        - - 220
+          - 228
+      - - - 134
+          - 138
+        - - 84
+          - 88
+        - - 199
+          - 206
+      - - - 135
+          - 139
+        - - 76
+          - 80
+        - - 222
+          - 230
+      - - - 141
+          - 144
+        - - 143
+          - 147
+        - - 255
+          - 262
+      - - - 152
+          - 158
+        - - 100
+          - 104
+        - - 263
+          - 270
+      - - - 171
+          - 175
+        - - 103
+          - 108
+        - - 268
+          - 275
+      - - - 178
+          - 182
+        - - 75
+          - 78
+        - - 273
+          - 278
+      component_coords:
+      - - 98
+        - 108
+        - 169
+      - - 103
+        - 118
+        - 180
+      - - 132
+        - 143
+        - 252
+      - - 133
+        - 268
+        - 219
+      - - 136
+        - 70
+        - 224
+      - - 136
+        - 85
+        - 202
+      - - 137
+        - 78
+        - 225
+      - - 142
+        - 145
+        - 258
+      - - 155
+        - 101
+        - 267
+      - - 173
+        - 105
+        - 271
+      - - 180
+        - 76
+        - 275
+sub-222:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999270
+    '1': 730
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 11
+      component_bboxes:
+      - - - 111
+          - 117
+        - - 254
+          - 258
+        - - 150
+          - 156
+      - - - 138
+          - 143
+        - - 318
+          - 323
+        - - 275
+          - 281
+      - - - 141
+          - 146
+        - - 313
+          - 317
+        - - 275
+          - 281
+      - - - 147
+          - 153
+        - - 323
+          - 328
+        - - 260
+          - 268
+      - - - 153
+          - 159
+        - - 314
+          - 318
+        - - 281
+          - 287
+      - - - 154
+          - 157
+        - - 302
+          - 305
+        - - 275
+          - 281
+      - - - 160
+          - 164
+        - - 316
+          - 319
+        - - 291
+          - 297
+      - - - 165
+          - 170
+        - - 269
+          - 274
+        - - 303
+          - 310
+      - - - 168
+          - 173
+        - - 255
+          - 260
+        - - 311
+          - 318
+      - - - 172
+          - 176
+        - - 213
+          - 217
+        - - 292
+          - 297
+      - - - 279
+          - 284
+        - - 312
+          - 317
+        - - 231
+          - 238
+      component_coords:
+      - - 114
+        - 256
+        - 153
+      - - 140
+        - 320
+        - 277
+      - - 143
+        - 315
+        - 277
+      - - 149
+        - 325
+        - 264
+      - - 156
+        - 315
+        - 283
+      - - 155
+        - 303
+        - 277
+      - - 162
+        - 317
+        - 293
+      - - 167
+        - 272
+        - 306
+      - - 170
+        - 257
+        - 314
+      - - 173
+        - 215
+        - 294
+      - - 281
+        - 314
+        - 234
+sub-226:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+sub-229:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999972
+    '1': 28
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 114
+          - 117
+        - - 164
+          - 167
+        - - 236
+          - 241
+      component_coords:
+      - - 115
+        - 165
+        - 238
+sub-232:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999956
+    '1': 44
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 225
+          - 229
+        - - 307
+          - 310
+        - - 216
+          - 222
+      component_coords:
+      - - 226
+        - 308
+        - 218
+sub-302:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999328
+    '1': 672
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 269
+          - 277
+        - - 330
+          - 338
+        - - 217
+          - 235
+      component_coords:
+      - - 272
+        - 333
+        - 226
+sub-303:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999903
+    '1': 97
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 239
+          - 243
+        - - 338
+          - 343
+        - - 189
+          - 195
+      component_coords:
+      - - 241
+        - 340
+        - 192
+sub-307:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999904
+    '1': 96
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 229
+          - 233
+        - - 228
+          - 232
+        - - 194
+          - 200
+      component_coords:
+      - - 230
+        - 230
+        - 196
+sub-309:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999857
+    '1': 143
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 131
+          - 136
+        - - 285
+          - 292
+        - - 170
+          - 177
+      component_coords:
+      - - 133
+        - 288
+        - 173
+sub-311:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999307
+    '1': 693
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 260
+          - 268
+        - - 218
+          - 232
+        - - 161
+          - 174
+      component_coords:
+      - - 264
+        - 224
+        - 167
+sub-312:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999807
+    '1': 193
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 2
+      component_bboxes:
+      - - - 240
+          - 243
+        - - 143
+          - 147
+        - - 248
+          - 256
+      - - - 248
+          - 253
+        - - 177
+          - 181
+        - - 238
+          - 246
+      component_coords:
+      - - 241
+        - 144
+        - 252
+      - - 250
+        - 178
+        - 242
+sub-314:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999903
+    '1': 97
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 228
+          - 232
+        - - 235
+          - 241
+        - - 203
+          - 212
+      component_coords:
+      - - 230
+        - 238
+        - 207
