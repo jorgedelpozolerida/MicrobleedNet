@@ -1,0 +1,9 @@
+splits:
+  train:
+    batch_queue_capacity: 1000
+    mri_loading_cache_capacity: 400
+
+  
+  valid:
+    batch_queue_capacity: 100
+    mri_loading_cache_capacity: 90

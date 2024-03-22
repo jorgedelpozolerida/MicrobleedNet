@@ -2,16 +2,15 @@
 # Path: crbr/config_templates/dataset_configs/base.yaml
 
 # The name of the dataset.
-dataset_name: cmb_test4test
-# dataset_name: VALDO
+dataset_name: cmb_train
 dataset_version: 1 # version 1: pretraining
 auto_download: true  # In ClearML-data so can be downloaded automatically
 study_folder_glob: '*'
 
 # Metadata settings
 metadata_task_id: null  # if the metadata file is to be fetched from a ClearML task.
-metadata_file: null    # must contain split keys like those in 'splits' below
-# study_dir_relative_metadata_path: 'Annotations_metadata'  # relative path to per-study folder metadata files within each study folder
+metadata_file: /home/cerebriu/data/RESEARCH/MicrobleedNet/data-misc/training/metadata_cmb_train.yaml   # must contain split keys like those in 'splits' below
+splits_file: /home/cerebriu/data/RESEARCH/MicrobleedNet/data-misc/training/splits_with_sMOMENI_CRBneg_filtered.json
 study_dir_relative_metadata_path: null  # relative path to per-study folder metadata files within each study folder
 
 
@@ -43,26 +42,26 @@ segmentation_specs:  # Defines a list of segmentation files to load. Each entry 
       1: 1  # CMB
 
 # Split parameters
-splits_file: 'splits.json'
+# splits_file: 'splits.json'
 splits:
   # Parameters for splits defined in the splits_file (see above)
   # Training data
   train:
-    batch_size: 8
+    batch_size: 6
     mri_sampling_strategy:
       name: 'uniform_random' # TODO: use balanced classes!
     patch_sampling_strategy:
       name: 'random_3d'
       kwargs:
-        num_patches: &num_patches 16 # TODO: decide if good number
+        num_patches: &num_patches 30 # TODO: decide if good number
         patch_size: ${model.config.input_shape}
-        patch_overlap_frac: &overlap_frac 0.3 
+        patch_overlap_frac: &overlap_frac 0.4
         class_proportions:
           0: &back_prop 0.1  # Proportion for Background
           1: &cmb_prop 0.9  # Proportion for CMB
   # Validation (same as train for now)
   valid:
-    batch_size: 6
+    batch_size: 14
     mri_sampling_strategy:
       name: 'deterministic_loop'
     patch_sampling_strategy:
