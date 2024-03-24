@@ -422,7 +422,7 @@ All configs used for all experiments found in here: [experiments folder](../expe
 
 #### Where do you need help from Veronika?
 * For the report, should the structure be the same as Research Project, or more/different sections are expected
-* Do you want to set some date for report revision like last time? 
+* Do you want to set some date for report revision like last time? Can we set some sort of pre-revision date?(to agree on structure at least, would be very helpful)
 * Can you recommend me nice papers on transfer learning?
 
 #### Others
