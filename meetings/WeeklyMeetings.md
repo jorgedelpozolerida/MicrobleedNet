@@ -6,6 +6,7 @@
 * [04 March 2024](#date-04-march-2024)
 * [11 March 2024](#date-11-march-2024)
 * [18 March 2024](#date-18-march-2024)
+* [25 March 2024](#date-25-march-2024)
 
 
 <!-- *
@@ -13,7 +14,6 @@
 * [26 February 2024](#date-26-february-2024)
 * [04 March 2024](#date-04-march-2024)
 * [11 March 2024](#date-11-march-2024)
-* [25 March 2024](#date-25-march-2024)
 * [01 April 2024](#date-01-april-2024)
 * [08 April 2024](#date-08-april-2024)
 * [15 April 2024](#date-15-april-2024)
@@ -388,16 +388,42 @@ which makes debugging very complex
 ### Date: 25 March 2024
 
 #### What did you achieve/do?
-* n/a
+* Started training for several experiments using Apollo architecture (the 3D Unet-based
+architecture that they use for the company's software). 
+
+* Pretraining phase experiment:
+    - Pretraining of Apollo from scratch on negative-and-synthetic-enriched dataset
+    - Same as the previous but starting with Apollo pretrained weights
+
+* VALDO experiments:
+    - Apollo from scratch performance on VALDO only
+    - Apollo pre-trained performance on VALDO only
+
+* No-pretraining experiments:
+    - Training of Apollo from scratch on dataset WITHOUT negative-and-synthetic cases
+    - Same as the previous but starting with Apollo pretrained weights
+
+All configs used for all experiments found in here: [experiments folder](../experiments)
+
 
 #### What did you struggle with?
-* n/a
+* I had to deal with a lot of debugging for running the experiments before having something up and running
+* I had to extract manually the relevant pretrained weights from Apollo (bcs it originally works with 3 input channels for different sequence types; and 5 output labels, for several pathologies), to keep only weights for T2S/SWI and for MACROhemorrhages
+
 
 #### What would you like to work on next ?
-* n/a
+* Overleaf report writing of:
+    - Label Refinement
+    - Data Preprocessing
+    - Background
+
+* Literature research on Transfer Learning
+* Research on the possible use of YOLO architecture (and how ot implement) to compare results
 
 #### Where do you need help from Veronika?
-* n/a
+* For the report, should the structure be the same as Research Project, or more/different sections are expected
+* Do you want to set some date for report revision like last time? 
+* Can you recommend me nice papers on transfer learning?
 
 #### Others
 
