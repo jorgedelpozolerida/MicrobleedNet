@@ -89,72 +89,77 @@ def create_stratified_group_tables(df, columns):
     return counts, proportions
 
 def main(args):
-    studies = pd.read_csv(args.studiescsv_path)
-    studies.fillna("Unspecified", inplace=True)
-    studies_filt = studies[studies['Dataset'].isin(TRAIN_DATASETS)]
-    studies_present = [d for d in os.listdir(args.data_dir) if os.path.isdir(os.path.join(args.data_dir, d))]
-    print(studies_present)
-    # print(set(studies_filt['seriesUID'].to_list()) - set(studies_present))
-    # print(set(studies_present) - set(studies_filt['seriesUID'].to_list()))
-    assert set(studies_present) == set(studies_filt['seriesUID'].to_list()), "Mismatch between present studies and filtered studies"
     
-    studies_filt_cmb_real = studies_filt[~studies_filt['Dataset'].isin(['sMOMENI', 'CRBneg'])]
-    print(f"Filtered from {len(studies)} -->  {len(studies_filt)} --> {len(studies_filt_cmb_real)} (no synth, no neg)")
+    with open(os.path.join(args.savedir, 'execution_splits_LOG.txt'), 'a') as f:
+        # Redirect standard output and error to the file
+        sys.stdout = f
+        sys.stderr = f        
     
-    columns_of_interest = ['Dataset', 'healthy_all', 'seq_type', 'res_level', 'field_strength', 'CMB_level', 'TE']
-    studies_filt_cmb_real['stratify_label'] = studies_filt_cmb_real[columns_of_interest].astype(str).agg('-'.join, axis=1)
+        
+        studies = pd.read_csv(args.studiescsv_path)
+        studies.fillna("Unspecified", inplace=True)
+        studies_filt = studies[studies['Dataset'].isin(TRAIN_DATASETS)]
+        studies_present = [d for d in os.listdir(args.data_dir) if os.path.isdir(os.path.join(args.data_dir, d))]
 
-    columns_of_interest.append("stratify_label")
+        assert set(studies_present) == set(studies_filt['seriesUID'].to_list()), "Mismatch between present studies and filtered studies"
+        
+        studies_filt_cmb_real = studies_filt[~studies_filt['Dataset'].isin(['sMOMENI', 'CRBneg'])]
+        print(f"Filtered from {len(studies)} -->  {len(studies_filt)} --> {len(studies_filt_cmb_real)} (no synth, no neg)")
+        
+        columns_of_interest = ['Dataset', 'healthy_all', 'seq_type', 'res_level', 'field_strength', 'CMB_level', 'TE']
+        studies_filt_cmb_real['stratify_label'] = studies_filt_cmb_real[columns_of_interest].astype(str).agg('-'.join, axis=1)
 
-    print("All data strata:")
-    create_stratified_group_tables(studies_filt_cmb_real, columns_of_interest)
+        columns_of_interest.append("stratify_label")
 
-    # Group by patientUID to make sure we don't split a single patient across train and validation
-    grouped = studies_filt_cmb_real.groupby('patientUID')['stratify_label'].agg(lambda x: x.mode()[0])
-    train_patientUIDs, valid_patientUIDs = train_test_split(grouped.index, test_size=args.prop_valid, stratify=grouped.values, random_state=args.seed)
+        print("All data strata:")
+        create_stratified_group_tables(studies_filt_cmb_real, columns_of_interest)
+
+        # Group by patientUID to make sure we don't split a single patient across train and validation
+        grouped = studies_filt_cmb_real.groupby('patientUID')['stratify_label'].agg(lambda x: x.mode()[0])
+        train_patientUIDs, valid_patientUIDs = train_test_split(grouped.index, test_size=args.prop_valid, stratify=grouped.values, random_state=args.seed)
 
 
-    # Filter the DataFrame based on patientUID to get the corresponding train and valid DataFrames
-    train_df = studies_filt_cmb_real[studies_filt_cmb_real['patientUID'].isin(train_patientUIDs)]
-    valid_df = studies_filt_cmb_real[studies_filt_cmb_real['patientUID'].isin(valid_patientUIDs)]
+        # Filter the DataFrame based on patientUID to get the corresponding train and valid DataFrames
+        train_df = studies_filt_cmb_real[studies_filt_cmb_real['patientUID'].isin(train_patientUIDs)]
+        valid_df = studies_filt_cmb_real[studies_filt_cmb_real['patientUID'].isin(valid_patientUIDs)]
 
-    # Ensure no patientID is in both groups
-    assert set(train_df['patientUID']).isdisjoint(set(valid_df['patientUID'])), "Some patientIDs appear in both train and valid splits"
-    
-    log_split_details(train_df, valid_df)
+        # Ensure no patientID is in both groups
+        assert set(train_df['patientUID']).isdisjoint(set(valid_df['patientUID'])), "Some patientIDs appear in both train and valid splits"
+        
+        log_split_details(train_df, valid_df)
 
-    # Then continue with stratification logging for training and validation splits as before
-    print("\nTraining split stratification:")
-    create_stratified_group_tables(train_df, columns_of_interest)
+        # Then continue with stratification logging for training and validation splits as before
+        print("\nTraining split stratification:")
+        create_stratified_group_tables(train_df, columns_of_interest)
 
-    print("\nValidation split stratification:")
-    create_stratified_group_tables(valid_df, columns_of_interest)
+        print("\nValidation split stratification:")
+        create_stratified_group_tables(valid_df, columns_of_interest)
 
-    # Collect seriesUIDs for each split
-    train_series_uids = train_df['seriesUID'].tolist()
-    valid_series_uids = valid_df['seriesUID'].tolist()
-    save_splits_to_json(train_series_uids, valid_series_uids, os.path.join(args.savedir, 'splits_without_sMOMENI_CRBneg.json'))
-    print(f"Initial split without sMOMENI and CRBneg. Train: {len(train_series_uids)}, Valid: {len(valid_series_uids)}")
+        # Collect seriesUIDs for each split 
+        train_series_uids = train_df['seriesUID'].tolist()
+        valid_series_uids = valid_df['seriesUID'].tolist()
+        save_splits_to_json(train_series_uids, valid_series_uids, os.path.join(args.savedir, 'splits_without_sMOMENI_CRBneg.json'))
+        print(f"Initial split without sMOMENI and CRBneg. Train: {len(train_series_uids)}, Valid: {len(valid_series_uids)}")
 
-    # Another with sMOMENI and CRBneg
-    sMOMENI_CRBneg = studies[(studies['Dataset'] == 'sMOMENI') | (studies['Dataset'] == 'CRBneg')]
+        # Another with sMOMENI and CRBneg
+        sMOMENI_CRBneg = studies[(studies['Dataset'] == 'sMOMENI') | (studies['Dataset'] == 'CRBneg')]
 
-    # Filter the validation DataFrame to exclude patients from sMOMENI and CRBneg datasets
-    valid_patient_uids = valid_df['patientUID'].unique()
+        # Filter the validation DataFrame to exclude patients from sMOMENI and CRBneg datasets
+        valid_patient_uids = valid_df['patientUID'].unique()
 
-    # Now filter the sMOMENI and CRBneg DataFrame to exclude these patientUIDs
-    sMOMENI_CRBneg_filtered = sMOMENI_CRBneg[~sMOMENI_CRBneg['patientUID'].isin(valid_patient_uids)]
+        # Now filter the sMOMENI and CRBneg DataFrame to exclude these patientUIDs
+        sMOMENI_CRBneg_filtered = sMOMENI_CRBneg[~sMOMENI_CRBneg['patientUID'].isin(valid_patient_uids)]
 
-    # Prepare seriesUID lists for training (including filtered sMOMENI and CRBneg) and validation
-    train_series_uids_with_sMOMENI_CRBneg_filtered = train_series_uids + sMOMENI_CRBneg_filtered['seriesUID'].tolist()
-    valid_series_uids = valid_df['seriesUID'].tolist()
+        # Prepare seriesUID lists for training (including filtered sMOMENI and CRBneg) and validation
+        train_series_uids_with_sMOMENI_CRBneg_filtered = train_series_uids + sMOMENI_CRBneg_filtered['seriesUID'].tolist()
+        valid_series_uids = valid_df['seriesUID'].tolist()
 
-    # Logging the update
-    print(f"Filtered sMOMENI and CRBneg to exclude validation patientUIDs. Now, Train: {len(train_series_uids_with_sMOMENI_CRBneg_filtered)}, Valid: {len(valid_series_uids)}")
-    print(f"A total of {len(sMOMENI_CRBneg) - len(sMOMENI_CRBneg_filtered)} sMOMENI/CRBneg studies removed to avoid patientID repetition in training.")
+        # Logging the update
+        print(f"Filtered sMOMENI and CRBneg to exclude validation patientUIDs. Now, Train: {len(train_series_uids_with_sMOMENI_CRBneg_filtered)}, Valid: {len(valid_series_uids)}")
+        print(f"A total of {len(sMOMENI_CRBneg) - len(sMOMENI_CRBneg_filtered)} sMOMENI/CRBneg studies removed to avoid patientID repetition in training.")
 
-    # Save the updated splits with filtered sMOMENI and CRBneg from the training set
-    save_splits_to_json(train_series_uids_with_sMOMENI_CRBneg_filtered, valid_series_uids, os.path.join(args.savedir, 'splits_with_sMOMENI_CRBneg_filtered.json'))
+        # Save the updated splits with filtered sMOMENI and CRBneg from the training set
+        save_splits_to_json(train_series_uids_with_sMOMENI_CRBneg_filtered, valid_series_uids, os.path.join(args.savedir, 'splits_with_sMOMENI_CRBneg_filtered.json'))
 
 
 def parse_args():

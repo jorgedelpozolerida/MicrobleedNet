@@ -65,8 +65,10 @@ def copy_and_rename_study(old_series, new_series, old_study_dir, new_study_dir, 
 
     for dir_name in directories:
         old_dir_path = os.path.join(old_study_dir, dir_name)
-        new_dir_path = os.path.join(new_study_dir, dir_name)
-
+        if dir_name == "Annotations_metadata":
+            new_dir_path = os.path.join(new_study_dir, "processing_metadata")
+        else:
+            new_dir_path = os.path.join(new_study_dir, dir_name)
         utils_gen.ensure_directory_exists(new_dir_path, verbose=False)
 
         # For each file in the old directory, copy and rename it to the new directory
