@@ -1,0 +1,846 @@
+DOU-01-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999955
+    '1': 45
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 270
+          - 274
+        - - 247
+          - 251
+        - - 251
+          - 257
+      component_coords:
+      - - 271
+        - 249
+        - 253
+DOU-02-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999793
+    '1': 207
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 200
+          - 208
+        - - 181
+          - 189
+        - - 130
+          - 136
+      component_coords:
+      - - 204
+        - 184
+        - 132
+DOU-03-CMB-4:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999634
+    '1': 366
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 4
+      component_bboxes:
+      - - - 103
+          - 108
+        - - 260
+          - 265
+        - - 193
+          - 199
+      - - - 156
+          - 160
+        - - 111
+          - 115
+        - - 271
+          - 277
+      - - - 164
+          - 170
+        - - 64
+          - 71
+        - - 185
+          - 192
+      - - - 249
+          - 255
+        - - 119
+          - 125
+        - - 205
+          - 211
+      component_coords:
+      - - 105
+        - 262
+        - 195
+      - - 157
+        - 112
+        - 273
+      - - 166
+        - 67
+        - 188
+      - - 251
+        - 121
+        - 208
+DOU-04-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999871
+    '1': 129
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 270
+          - 276
+        - - 194
+          - 201
+        - - 210
+          - 217
+      component_coords:
+      - - 273
+        - 197
+        - 213
+DOU-05-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999948
+    '1': 52
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 245
+          - 249
+        - - 210
+          - 215
+        - - 269
+          - 275
+      component_coords:
+      - - 246
+        - 212
+        - 272
+DOU-06-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999786
+    '1': 214
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 260
+          - 267
+        - - 205
+          - 212
+        - - 198
+          - 205
+      component_coords:
+      - - 263
+        - 208
+        - 201
+DOU-07-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999982
+    '1': 18
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 283
+          - 286
+        - - 190
+          - 193
+        - - 161
+          - 163
+      component_coords:
+      - - 284
+        - 191
+        - 162
+DOU-08-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999950
+    '1': 50
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 238
+          - 242
+        - - 138
+          - 142
+        - - 261
+          - 268
+      component_coords:
+      - - 240
+        - 140
+        - 264
+DOU-09-CMB-11:
+  segmentation/mapped_labels/label_counts:
+    '0': 63998671
+    '1': 1329
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 11
+      component_bboxes:
+      - - - 80
+          - 86
+        - - 143
+          - 150
+        - - 197
+          - 204
+      - - - 106
+          - 112
+        - - 144
+          - 151
+        - - 252
+          - 259
+      - - - 139
+          - 145
+        - - 219
+          - 225
+        - - 195
+          - 202
+      - - - 141
+          - 145
+        - - 224
+          - 229
+        - - 215
+          - 221
+      - - - 148
+          - 154
+        - - 225
+          - 231
+        - - 209
+          - 215
+      - - - 157
+          - 165
+        - - 178
+          - 186
+        - - 206
+          - 213
+      - - - 168
+          - 172
+        - - 81
+          - 85
+        - - 188
+          - 194
+      - - - 168
+          - 172
+        - - 183
+          - 187
+        - - 203
+          - 209
+      - - - 173
+          - 180
+        - - 210
+          - 217
+        - - 208
+          - 215
+      - - - 226
+          - 233
+        - - 183
+          - 190
+        - - 205
+          - 212
+      - - - 238
+          - 242
+        - - 239
+          - 243
+        - - 226
+          - 232
+      component_coords:
+      - - 82
+        - 146
+        - 200
+      - - 108
+        - 147
+        - 255
+      - - 142
+        - 222
+        - 198
+      - - 142
+        - 226
+        - 218
+      - - 151
+        - 227
+        - 212
+      - - 160
+        - 181
+        - 209
+      - - 170
+        - 82
+        - 191
+      - - 170
+        - 185
+        - 205
+      - - 176
+        - 213
+        - 211
+      - - 229
+        - 186
+        - 208
+      - - 240
+        - 240
+        - 229
+DOU-10-CMB-8:
+  segmentation/mapped_labels/label_counts:
+    '0': 63998705
+    '1': 1295
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 8
+      component_bboxes:
+      - - - 119
+          - 123
+        - - 143
+          - 147
+        - - 199
+          - 205
+      - - - 145
+          - 149
+        - - 198
+          - 203
+        - - 215
+          - 220
+      - - - 146
+          - 152
+        - - 169
+          - 175
+        - - 191
+          - 197
+      - - - 153
+          - 163
+        - - 214
+          - 224
+        - - 215
+          - 225
+      - - - 184
+          - 191
+        - - 200
+          - 206
+        - - 191
+          - 197
+      - - - 236
+          - 244
+        - - 192
+          - 200
+        - - 212
+          - 219
+      - - - 240
+          - 245
+        - - 176
+          - 180
+        - - 188
+          - 195
+      - - - 282
+          - 289
+        - - 195
+          - 201
+        - - 250
+          - 256
+      component_coords:
+      - - 120
+        - 145
+        - 201
+      - - 146
+        - 200
+        - 217
+      - - 149
+        - 172
+        - 194
+      - - 157
+        - 219
+        - 220
+      - - 187
+        - 203
+        - 194
+      - - 240
+        - 196
+        - 215
+      - - 242
+        - 178
+        - 191
+      - - 285
+        - 197
+        - 252
+DOU-11-CMB-2:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999886
+    '1': 114
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 2
+      component_bboxes:
+      - - - 163
+          - 168
+        - - 167
+          - 172
+        - - 313
+          - 319
+      - - - 182
+          - 186
+        - - 189
+          - 194
+        - - 262
+          - 268
+      component_coords:
+      - - 165
+        - 169
+        - 315
+      - - 183
+        - 191
+        - 265
+DOU-12-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999922
+    '1': 78
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 263
+          - 269
+        - - 81
+          - 87
+        - - 153
+          - 159
+      component_coords:
+      - - 266
+        - 84
+        - 156
+DOU-13-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999931
+    '1': 69
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 297
+          - 302
+        - - 207
+          - 212
+        - - 239
+          - 245
+      component_coords:
+      - - 299
+        - 209
+        - 241
+DOU-14-CMB-3:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999825
+    '1': 175
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 3
+      component_bboxes:
+      - - - 99
+          - 103
+        - - 119
+          - 124
+        - - 246
+          - 252
+      - - - 109
+          - 114
+        - - 111
+          - 115
+        - - 214
+          - 218
+      - - - 166
+          - 171
+        - - 225
+          - 230
+        - - 199
+          - 205
+      component_coords:
+      - - 100
+        - 121
+        - 249
+      - - 111
+        - 112
+        - 215
+      - - 168
+        - 227
+        - 202
+DOU-15-CMB-13:
+  segmentation/mapped_labels/label_counts:
+    '0': 63998357
+    '1': 1643
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 13
+      component_bboxes:
+      - - - 139
+          - 145
+        - - 201
+          - 208
+        - - 200
+          - 207
+      - - - 183
+          - 190
+        - - 205
+          - 211
+        - - 193
+          - 200
+      - - - 193
+          - 199
+        - - 191
+          - 197
+        - - 125
+          - 132
+      - - - 193
+          - 199
+        - - 198
+          - 204
+        - - 128
+          - 134
+      - - - 212
+          - 220
+        - - 255
+          - 263
+        - - 314
+          - 322
+      - - - 220
+          - 226
+        - - 215
+          - 222
+        - - 309
+          - 316
+      - - - 224
+          - 228
+        - - 164
+          - 169
+        - - 292
+          - 299
+      - - - 253
+          - 259
+        - - 120
+          - 126
+        - - 268
+          - 275
+      - - - 257
+          - 263
+        - - 207
+          - 214
+        - - 191
+          - 198
+      - - - 262
+          - 269
+        - - 108
+          - 114
+        - - 167
+          - 174
+      - - - 301
+          - 305
+        - - 258
+          - 262
+        - - 152
+          - 157
+      - - - 318
+          - 324
+        - - 202
+          - 208
+        - - 160
+          - 167
+      - - - 322
+          - 328
+        - - 198
+          - 206
+        - - 186
+          - 194
+      component_coords:
+      - - 141
+        - 204
+        - 203
+      - - 186
+        - 207
+        - 196
+      - - 195
+        - 194
+        - 128
+      - - 195
+        - 200
+        - 130
+      - - 216
+        - 258
+        - 317
+      - - 223
+        - 218
+        - 312
+      - - 225
+        - 166
+        - 295
+      - - 255
+        - 123
+        - 271
+      - - 260
+        - 210
+        - 195
+      - - 265
+        - 111
+        - 170
+      - - 302
+        - 259
+        - 154
+      - - 321
+        - 204
+        - 163
+      - - 324
+        - 201
+        - 189
+DOU-16-CMB-11:
+  segmentation/mapped_labels/label_counts:
+    '0': 63997419
+    '1': 2581
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 11
+      component_bboxes:
+      - - - 81
+          - 87
+        - - 180
+          - 187
+        - - 183
+          - 189
+      - - - 97
+          - 104
+        - - 225
+          - 231
+        - - 170
+          - 176
+      - - - 131
+          - 139
+        - - 253
+          - 261
+        - - 177
+          - 187
+      - - - 140
+          - 147
+        - - 207
+          - 213
+        - - 172
+          - 179
+      - - - 199
+          - 211
+        - - 190
+          - 202
+        - - 127
+          - 137
+      - - - 221
+          - 229
+        - - 186
+          - 194
+        - - 146
+          - 152
+      - - - 224
+          - 232
+        - - 181
+          - 190
+        - - 180
+          - 190
+      - - - 243
+          - 252
+        - - 225
+          - 233
+        - - 211
+          - 221
+      - - - 264
+          - 271
+        - - 218
+          - 224
+        - - 281
+          - 287
+      - - - 269
+          - 273
+        - - 129
+          - 134
+        - - 258
+          - 264
+      - - - 295
+          - 301
+        - - 184
+          - 191
+        - - 197
+          - 203
+      component_coords:
+      - - 84
+        - 183
+        - 185
+      - - 100
+        - 228
+        - 172
+      - - 134
+        - 257
+        - 181
+      - - 143
+        - 209
+        - 175
+      - - 205
+        - 196
+        - 132
+      - - 225
+        - 190
+        - 148
+      - - 228
+        - 185
+        - 185
+      - - 247
+        - 229
+        - 215
+      - - 267
+        - 220
+        - 283
+      - - 271
+        - 131
+        - 260
+      - - 297
+        - 187
+        - 200
+DOU-17-CMB-7:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999610
+    '1': 390
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 7
+      component_bboxes:
+      - - - 125
+          - 130
+        - - 114
+          - 118
+        - - 286
+          - 292
+      - - - 137
+          - 142
+        - - 218
+          - 222
+        - - 210
+          - 216
+      - - - 238
+          - 245
+        - - 98
+          - 104
+        - - 214
+          - 221
+      - - - 245
+          - 250
+        - - 126
+          - 131
+        - - 257
+          - 259
+      - - - 265
+          - 269
+        - - 197
+          - 200
+        - - 194
+          - 196
+      - - - 266
+          - 271
+        - - 210
+          - 214
+        - - 182
+          - 188
+      - - - 320
+          - 324
+        - - 171
+          - 175
+        - - 196
+          - 200
+      component_coords:
+      - - 127
+        - 116
+        - 289
+      - - 139
+        - 220
+        - 213
+      - - 241
+        - 100
+        - 217
+      - - 247
+        - 128
+        - 258
+      - - 266
+        - 198
+        - 194
+      - - 268
+        - 211
+        - 184
+      - - 321
+        - 172
+        - 198
+DOU-18-CMB-3:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999691
+    '1': 309
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 3
+      component_bboxes:
+      - - - 109
+          - 116
+        - - 123
+          - 130
+        - - 190
+          - 196
+      - - - 112
+          - 118
+        - - 166
+          - 172
+        - - 188
+          - 194
+      - - - 222
+          - 227
+        - - 201
+          - 205
+        - - 258
+          - 262
+      component_coords:
+      - - 112
+        - 126
+        - 193
+      - - 115
+        - 169
+        - 190
+      - - 224
+        - 203
+        - 260
+DOU-19-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999768
+    '1': 232
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 176
+          - 184
+        - - 323
+          - 331
+        - - 211
+          - 217
+      component_coords:
+      - - 180
+        - 326
+        - 213
+DOU-20-CMB-2:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999663
+    '1': 337
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 2
+      component_bboxes:
+      - - - 140
+          - 145
+        - - 168
+          - 173
+        - - 292
+          - 298
+      - - - 198
+          - 207
+        - - 205
+          - 213
+        - - 136
+          - 146
+      component_coords:
+      - - 142
+        - 170
+        - 295
+      - - 202
+        - 208
+        - 141

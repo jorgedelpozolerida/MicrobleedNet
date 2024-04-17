@@ -1,0 +1,1331 @@
+MOMENI-108_T1-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-159_T1-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-159_T2-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-159_T3-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-217_T0-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-217_T1-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-217_T2-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-217_T3-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-217_T4-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-217_T5-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-227_T0-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-230_T0-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-230_T1-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-234_T0-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-234_T1-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-234_T2-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-234_T3-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-234_T4-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-234_T5-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-240_T0-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-241_T0-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-241_T1-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-243_T0-CMB-2:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999359
+    '1': 641
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 2
+      component_bboxes:
+      - - - 173
+          - 178
+        - - 216
+          - 222
+        - - 188
+          - 199
+      - - - 246
+          - 256
+        - - 57
+          - 66
+        - - 156
+          - 167
+      component_coords:
+      - - 175
+        - 218
+        - 193
+      - - 250
+        - 61
+        - 161
+MOMENI-247_T0-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-247_T1-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-247_T2-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-247_T3-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-247_T4-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-247_T5-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-249_T0-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999934
+    '1': 66
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 183
+          - 189
+        - - 194
+          - 200
+        - - 119
+          - 123
+      component_coords:
+      - - 185
+        - 197
+        - 120
+MOMENI-249_T1-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999886
+    '1': 114
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 177
+          - 183
+        - - 193
+          - 199
+        - - 126
+          - 137
+      component_coords:
+      - - 180
+        - 195
+        - 131
+MOMENI-249_T2-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999898
+    '1': 102
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 182
+          - 188
+        - - 197
+          - 203
+        - - 126
+          - 136
+      component_coords:
+      - - 184
+        - 199
+        - 131
+MOMENI-249_T3-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-249_T4-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-249_T5-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-250_T0-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-250_T1-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-250_T2-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-257_T1-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999914
+    '1': 86
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 227
+          - 232
+        - - 141
+          - 147
+        - - 111
+          - 122
+      component_coords:
+      - - 229
+        - 143
+        - 116
+MOMENI-257_T2-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999896
+    '1': 104
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 226
+          - 232
+        - - 147
+          - 153
+        - - 104
+          - 114
+      component_coords:
+      - - 228
+        - 149
+        - 108
+MOMENI-257_T3-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-257_T4-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-257_T5-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-280_T0-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-280_T2-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-282_T0-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-282_T1-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-282_T2-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-282_T3-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-283_T0-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-283_T1-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-283_T2-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+MOMENI-301_T0-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999936
+    '1': 64
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 235
+          - 240
+        - - 71
+          - 77
+        - - 189
+          - 193
+      component_coords:
+      - - 237
+        - 74
+        - 190
+MOMENI-301_T2-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999894
+    '1': 106
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 257
+          - 263
+        - - 71
+          - 77
+        - - 205
+          - 216
+      component_coords:
+      - - 259
+        - 74
+        - 210
+MOMENI-305_T0-CMB-16:
+  segmentation/mapped_labels/label_counts:
+    '0': 63998370
+    '1': 1630
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 16
+      component_bboxes:
+      - - - 107
+          - 113
+        - - 242
+          - 248
+        - - 173
+          - 183
+      - - - 136
+          - 142
+        - - 73
+          - 78
+        - - 215
+          - 226
+      - - - 137
+          - 143
+        - - 146
+          - 152
+        - - 156
+          - 160
+      - - - 139
+          - 145
+        - - 218
+          - 224
+        - - 269
+          - 279
+      - - - 152
+          - 158
+        - - 183
+          - 189
+        - - 256
+          - 260
+      - - - 194
+          - 199
+        - - 217
+          - 223
+        - - 194
+          - 198
+      - - - 209
+          - 214
+        - - 103
+          - 109
+        - - 177
+          - 187
+      - - - 224
+          - 230
+        - - 165
+          - 171
+        - - 110
+          - 121
+      - - - 225
+          - 231
+        - - 95
+          - 101
+        - - 253
+          - 264
+      - - - 227
+          - 233
+        - - 50
+          - 55
+        - - 159
+          - 170
+      - - - 248
+          - 254
+        - - 83
+          - 89
+        - - 199
+          - 203
+      - - - 254
+          - 260
+        - - 92
+          - 98
+        - - 196
+          - 207
+      - - - 258
+          - 264
+        - - 168
+          - 174
+        - - 225
+          - 229
+      - - - 268
+          - 274
+        - - 137
+          - 143
+        - - 143
+          - 153
+      - - - 278
+          - 283
+        - - 181
+          - 187
+        - - 162
+          - 166
+      - - - 302
+          - 308
+        - - 156
+          - 162
+        - - 167
+          - 171
+      component_coords:
+      - - 110
+        - 244
+        - 178
+      - - 139
+        - 75
+        - 220
+      - - 139
+        - 148
+        - 157
+      - - 142
+        - 220
+        - 274
+      - - 154
+        - 186
+        - 258
+      - - 196
+        - 219
+        - 195
+      - - 211
+        - 106
+        - 181
+      - - 227
+        - 167
+        - 115
+      - - 228
+        - 97
+        - 258
+      - - 230
+        - 52
+        - 164
+      - - 251
+        - 85
+        - 201
+      - - 256
+        - 95
+        - 201
+      - - 260
+        - 170
+        - 226
+      - - 270
+        - 139
+        - 147
+      - - 280
+        - 183
+        - 164
+      - - 305
+        - 158
+        - 169
+MOMENI-305_T1-CMB-17:
+  segmentation/mapped_labels/label_counts:
+    '0': 63998462
+    '1': 1538
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 17
+      component_bboxes:
+      - - - 107
+          - 113
+        - - 124
+          - 130
+        - - 195
+          - 199
+      - - - 107
+          - 113
+        - - 235
+          - 241
+        - - 185
+          - 195
+      - - - 128
+          - 134
+        - - 124
+          - 130
+        - - 160
+          - 164
+      - - - 139
+          - 145
+        - - 208
+          - 214
+        - - 279
+          - 284
+      - - - 141
+          - 146
+        - - 144
+          - 150
+        - - 159
+          - 163
+      - - - 144
+          - 150
+        - - 68
+          - 74
+        - - 215
+          - 225
+      - - - 155
+          - 161
+        - - 175
+          - 181
+        - - 260
+          - 271
+      - - - 196
+          - 201
+        - - 216
+          - 222
+        - - 203
+          - 207
+      - - - 218
+          - 224
+        - - 105
+          - 111
+        - - 171
+          - 175
+      - - - 229
+          - 234
+        - - 167
+          - 173
+        - - 114
+          - 124
+      - - - 231
+          - 237
+        - - 91
+          - 97
+        - - 261
+          - 265
+      - - - 236
+          - 242
+        - - 52
+          - 58
+        - - 159
+          - 170
+      - - - 236
+          - 241
+        - - 189
+          - 195
+        - - 198
+          - 202
+      - - - 270
+          - 276
+        - - 119
+          - 125
+        - - 244
+          - 248
+      - - - 271
+          - 276
+        - - 216
+          - 222
+        - - 277
+          - 288
+      - - - 281
+          - 286
+        - - 183
+          - 189
+        - - 169
+          - 173
+      - - - 307
+          - 313
+        - - 162
+          - 168
+        - - 169
+          - 180
+      component_coords:
+      - - 110
+        - 126
+        - 197
+      - - 109
+        - 238
+        - 190
+      - - 130
+        - 127
+        - 161
+      - - 142
+        - 210
+        - 281
+      - - 143
+        - 146
+        - 161
+      - - 146
+        - 70
+        - 220
+      - - 158
+        - 177
+        - 265
+      - - 198
+        - 218
+        - 204
+      - - 220
+        - 108
+        - 173
+      - - 231
+        - 170
+        - 119
+      - - 234
+        - 94
+        - 263
+      - - 238
+        - 54
+        - 164
+      - - 238
+        - 191
+        - 200
+      - - 273
+        - 122
+        - 246
+      - - 273
+        - 219
+        - 282
+      - - 283
+        - 185
+        - 170
+      - - 309
+        - 164
+        - 174
+RODEJA-00001-CMB-2:
+  segmentation/mapped_labels/label_counts:
+    '0': 63994096
+    '1': 5904
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 2
+      component_bboxes:
+      - - - 112
+          - 131
+        - - 233
+          - 252
+        - - 226
+          - 257
+      - - - 264
+          - 265
+        - - 220
+          - 222
+        - - 190
+          - 199
+      component_coords:
+      - - 121
+        - 242
+        - 241
+      - - 264
+        - 221
+        - 195
+RODEJA-00008-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999928
+    '1': 72
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 257
+          - 263
+        - - 241
+          - 245
+        - - 229
+          - 238
+      component_coords:
+      - - 260
+        - 243
+        - 233
+RODEJA-00023-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+RODEJA-00036-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+RODEJA-00046-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+RODEJA-00051-CMB-3:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999710
+    '1': 290
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 3
+      component_bboxes:
+      - - - 157
+          - 160
+        - - 98
+          - 100
+        - - 156
+          - 168
+      - - - 277
+          - 282
+        - - 81
+          - 85
+        - - 161
+          - 173
+      - - - 288
+          - 291
+        - - 147
+          - 150
+        - - 220
+          - 232
+      component_coords:
+      - - 158
+        - 99
+        - 162
+      - - 279
+        - 82
+        - 166
+      - - 289
+        - 148
+        - 225
+RODEJA-00070-CMB-10:
+  segmentation/mapped_labels/label_counts:
+    '0': 63998909
+    '1': 1091
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 10
+      component_bboxes:
+      - - - 139
+          - 142
+        - - 121
+          - 124
+        - - 72
+          - 78
+      - - - 161
+          - 171
+        - - 50
+          - 61
+        - - 133
+          - 151
+      - - - 214
+          - 218
+        - - 252
+          - 256
+        - - 284
+          - 292
+      - - - 221
+          - 223
+        - - 283
+          - 286
+        - - 255
+          - 261
+      - - - 231
+          - 235
+        - - 148
+          - 152
+        - - 61
+          - 69
+      - - - 238
+          - 240
+        - - 138
+          - 141
+        - - 273
+          - 279
+      - - - 244
+          - 245
+        - - 230
+          - 232
+        - - 144
+          - 148
+      - - - 248
+          - 251
+        - - 223
+          - 226
+        - - 137
+          - 143
+      - - - 251
+          - 252
+        - - 214
+          - 215
+        - - 251
+          - 255
+      - - - 272
+          - 274
+        - - 154
+          - 156
+        - - 152
+          - 158
+      component_coords:
+      - - 140
+        - 122
+        - 75
+      - - 165
+        - 55
+        - 142
+      - - 216
+        - 253
+        - 288
+      - - 222
+        - 284
+        - 257
+      - - 233
+        - 150
+        - 64
+      - - 238
+        - 139
+        - 276
+      - - 244
+        - 231
+        - 146
+      - - 249
+        - 224
+        - 140
+      - - 251
+        - 214
+        - 252
+      - - 273
+        - 154
+        - 154
+RODEJA-00095-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+RODEJA-00100-CMB-9:
+  segmentation/mapped_labels/label_counts:
+    '0': 63997785
+    '1': 2215
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 9
+      component_bboxes:
+      - - - 131
+          - 136
+        - - 277
+          - 282
+        - - 257
+          - 265
+      - - - 151
+          - 157
+        - - 179
+          - 184
+        - - 195
+          - 206
+      - - - 160
+          - 165
+        - - 187
+          - 193
+        - - 203
+          - 216
+      - - - 237
+          - 244
+        - - 194
+          - 206
+        - - 201
+          - 220
+      - - - 242
+          - 258
+        - - 192
+          - 210
+        - - 186
+          - 208
+      - - - 245
+          - 248
+        - - 194
+          - 199
+        - - 200
+          - 206
+      - - - 246
+          - 249
+        - - 185
+          - 188
+        - - 193
+          - 202
+      - - - 248
+          - 253
+        - - 191
+          - 197
+        - - 225
+          - 233
+      - - - 255
+          - 261
+        - - 130
+          - 136
+        - - 216
+          - 225
+      component_coords:
+      - - 133
+        - 280
+        - 261
+      - - 153
+        - 181
+        - 200
+      - - 162
+        - 189
+        - 209
+      - - 240
+        - 198
+        - 211
+      - - 251
+        - 201
+        - 196
+      - - 246
+        - 196
+        - 203
+      - - 247
+        - 186
+        - 197
+      - - 250
+        - 193
+        - 229
+      - - 257
+        - 133
+        - 221
+RODEJA-00105-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+RODEJA-00106-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+RODEJA-00112-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+RODEJA-00116-CMB-11:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999336
+    '1': 664
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 11
+      component_bboxes:
+      - - - 129
+          - 133
+        - - 208
+          - 211
+        - - 192
+          - 200
+      - - - 156
+          - 158
+        - - 120
+          - 122
+        - - 121
+          - 123
+      - - - 157
+          - 163
+        - - 187
+          - 192
+        - - 207
+          - 218
+      - - - 167
+          - 170
+        - - 189
+          - 190
+        - - 212
+          - 218
+      - - - 169
+          - 172
+        - - 183
+          - 186
+        - - 199
+          - 207
+      - - - 194
+          - 197
+        - - 182
+          - 185
+        - - 134
+          - 142
+      - - - 230
+          - 234
+        - - 131
+          - 134
+        - - 109
+          - 119
+      - - - 235
+          - 239
+        - - 201
+          - 204
+        - - 189
+          - 199
+      - - - 238
+          - 242
+        - - 193
+          - 197
+        - - 184
+          - 196
+      - - - 240
+          - 245
+        - - 186
+          - 190
+        - - 171
+          - 184
+      - - - 241
+          - 246
+        - - 232
+          - 237
+        - - 124
+          - 128
+      component_coords:
+      - - 130
+        - 209
+        - 195
+      - - 157
+        - 121
+        - 121
+      - - 160
+        - 189
+        - 212
+      - - 168
+        - 189
+        - 215
+      - - 170
+        - 184
+        - 202
+      - - 195
+        - 183
+        - 138
+      - - 232
+        - 132
+        - 114
+      - - 236
+        - 202
+        - 193
+      - - 239
+        - 195
+        - 190
+      - - 242
+        - 187
+        - 175
+      - - 243
+        - 234
+        - 126
+RODEJA-00124-CMB-3:
+  segmentation/mapped_labels/label_counts:
+    '0': 63998783
+    '1': 1217
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 3
+      component_bboxes:
+      - - - 146
+          - 149
+        - - 157
+          - 164
+        - - 228
+          - 254
+      - - - 237
+          - 239
+        - - 152
+          - 157
+        - - 237
+          - 255
+      - - - 240
+          - 249
+        - - 210
+          - 220
+        - - 170
+          - 208
+      component_coords:
+      - - 147
+        - 160
+        - 240
+      - - 238
+        - 154
+        - 245
+      - - 244
+        - 214
+        - 190
+RODEJA-00133-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999854
+    '1': 146
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 122
+          - 125
+        - - 124
+          - 128
+        - - 227
+          - 251
+      component_coords:
+      - - 123
+        - 126
+        - 240
+RODEJA-00134-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999966
+    '1': 34
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 293
+          - 296
+        - - 221
+          - 224
+        - - 237
+          - 243
+      component_coords:
+      - - 294
+        - 222
+        - 240
+VALDO-103-CMB-6:
+  segmentation/mapped_labels/label_counts:
+    '0': 63998441
+    '1': 1559
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 6
+      component_bboxes:
+      - - - 160
+          - 165
+        - - 120
+          - 126
+        - - 100
+          - 108
+      - - - 202
+          - 210
+        - - 198
+          - 207
+        - - 203
+          - 212
+      - - - 214
+          - 221
+        - - 173
+          - 181
+        - - 201
+          - 218
+      - - - 230
+          - 234
+        - - 198
+          - 202
+        - - 235
+          - 244
+      - - - 247
+          - 252
+        - - 204
+          - 209
+        - - 228
+          - 236
+      - - - 248
+          - 257
+        - - 142
+          - 150
+        - - 214
+          - 230
+      component_coords:
+      - - 162
+        - 123
+        - 104
+      - - 205
+        - 202
+        - 207
+      - - 217
+        - 176
+        - 209
+      - - 231
+        - 199
+        - 239
+      - - 249
+        - 205
+        - 231
+      - - 252
+        - 146
+        - 224
+VALDO-104-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+VALDO-205-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+VALDO-206-H:
+  segmentation/mapped_labels/label_counts:
+    '0': 64000000
+  segmentation/mapped_labels/cc_analysis: {}
+VALDO-208-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999883
+    '1': 117
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 236
+          - 242
+        - - 128
+          - 133
+        - - 217
+          - 225
+      component_coords:
+      - - 238
+        - 130
+        - 221
+VALDO-232-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999950
+    '1': 50
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 226
+          - 230
+        - - 307
+          - 310
+        - - 217
+          - 223
+      component_coords:
+      - - 227
+        - 308
+        - 219
+VALDO-302-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999328
+    '1': 672
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 269
+          - 277
+        - - 331
+          - 340
+        - - 217
+          - 235
+      component_coords:
+      - - 272
+        - 335
+        - 226
+VALDO-305-CMB-2:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999544
+    '1': 456
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 2
+      component_bboxes:
+      - - - 157
+          - 163
+        - - 83
+          - 89
+        - - 159
+          - 171
+      - - - 288
+          - 292
+        - - 235
+          - 239
+        - - 97
+          - 103
+      component_coords:
+      - - 159
+        - 86
+        - 164
+      - - 290
+        - 236
+        - 100
+VALDO-320-CMB-2:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999783
+    '1': 217
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 2
+      component_bboxes:
+      - - - 143
+          - 147
+        - - 126
+          - 130
+        - - 200
+          - 206
+      - - - 231
+          - 237
+        - - 231
+          - 238
+        - - 170
+          - 176
+      component_coords:
+      - - 144
+        - 128
+        - 202
+      - - 234
+        - 234
+        - 173
+VALDO-324-CMB-1:
+  segmentation/mapped_labels/label_counts:
+    '0': 63999759
+    '1': 241
+  segmentation/mapped_labels/cc_analysis:
+    '1':
+      n_components: 1
+      component_bboxes:
+      - - - 123
+          - 129
+        - - 80
+          - 87
+        - - 163
+          - 175
+      component_coords:
+      - - 125
+        - 83
+        - 167
