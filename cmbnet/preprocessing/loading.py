@@ -13,12 +13,12 @@ import os
 import argparse
 import traceback
 
-import logging                                                                      
-import numpy as np                                                                  
-import pandas as pd                                                                 
+import logging
+import numpy as np
+import pandas as pd
 from tqdm import tqdm
 import nibabel as nib
-import time 
+import time
 from scipy.io import loadmat
 import glob
 import re
@@ -44,6 +44,7 @@ _logger = logging.getLogger(__name__)
 ###################                 GENERAL                ###################
 ##############################################################################
 
+
 def check_for_duplicates(lst):
     seen = set()
     for element in lst:
@@ -52,45 +53,68 @@ def check_for_duplicates(lst):
             raise ValueError(f"Duplicate element found: {element}")
         seen.add(element)
 
+
 def get_dataset_subjects(dataset_name, input_dir):
-    """ 
+    """
     Returns list of ALL studies from raw dataset directory
-    
+
     Note: performs osme QCs in the process
     """
     if dataset_name == "valdo":
         assert "VALDO" in input_dir
-        subjects = [d for d in os.listdir(input_dir) if os.path.isdir(os.path.join(input_dir, d))]
+        subjects = [
+            d
+            for d in os.listdir(input_dir)
+            if os.path.isdir(os.path.join(input_dir, d))
+        ]
 
     elif dataset_name == "cerebriu":
         assert "CEREBRIU" in input_dir
-        subjects = [d for d in os.listdir(input_dir) if os.path.isdir(os.path.join(input_dir, d))]
+        subjects = [
+            d
+            for d in os.listdir(input_dir)
+            if os.path.isdir(os.path.join(input_dir, d))
+        ]
 
     elif dataset_name == "cerebriu-neg":
         assert "CEREBRIU-neg" in input_dir
         datadir = os.path.join(input_dir, "Data")
-        subjects = [d for d in os.listdir(datadir) if os.path.isdir(os.path.join(datadir, d))]
+        subjects = [
+            d for d in os.listdir(datadir) if os.path.isdir(os.path.join(datadir, d))
+        ]
 
     elif dataset_name == "momeni":
         assert "MOMENI" in input_dir
-        mri_dir = os.path.join(input_dir, "data", "PublicDataShare_2020", "rCMB_DefiniteSubject")
-        mri_dir_healthy = os.path.join(input_dir, "data", "PublicDataShare_2020", "NoCMBSubject")
+        mri_dir = os.path.join(
+            input_dir, "data", "PublicDataShare_2020", "rCMB_DefiniteSubject"
+        )
+        mri_dir_healthy = os.path.join(
+            input_dir, "data", "PublicDataShare_2020", "NoCMBSubject"
+        )
         subjects_cmb = [d.split(".")[0] for d in os.listdir(mri_dir)]
         subjects_h = [d.split(".")[0] for d in os.listdir(mri_dir_healthy)]
         subjects = subjects_cmb + subjects_h
 
     elif dataset_name == "momeni-synth":
         assert "MOMENI" in input_dir
-        mri_dir = os.path.join(input_dir, "data", "PublicDataShare_2020", "sCMB_DefiniteSubject")
-        mri_dir_healthy = os.path.join(input_dir, "data", "PublicDataShare_2020", "sCMB_NoCMBSubject")
+        mri_dir = os.path.join(
+            input_dir, "data", "PublicDataShare_2020", "sCMB_DefiniteSubject"
+        )
+        mri_dir_healthy = os.path.join(
+            input_dir, "data", "PublicDataShare_2020", "sCMB_NoCMBSubject"
+        )
         subjects_cmb = [d.split(".")[0] for d in os.listdir(mri_dir)]
         subjects_h = [d.split(".")[0] for d in os.listdir(mri_dir_healthy)]
         subjects = subjects_cmb + subjects_h
 
     elif dataset_name == "dou":
         assert "DOU" in input_dir
-        subjects_mri = [d.split('.')[0] for d in os.listdir(os.path.join(input_dir, "nii"))]
-        subjects_gt = [d.split('.')[0] for d in os.listdir(os.path.join(input_dir, "ground_truth"))]
+        subjects_mri = [
+            d.split(".")[0] for d in os.listdir(os.path.join(input_dir, "nii"))
+        ]
+        subjects_gt = [
+            d.split(".")[0] for d in os.listdir(os.path.join(input_dir, "ground_truth"))
+        ]
         if set(subjects_mri) == set(subjects_gt):
             subjects = subjects_mri
         else:
@@ -101,11 +125,11 @@ def get_dataset_subjects(dataset_name, input_dir):
         masks = []
         for sub in os.listdir(os.path.join(basedir, "Annotations")):
             masks += os.listdir(os.path.join(basedir, "Annotations", sub))
-        subjects_gt =  [re.search(r'\d+', i.split(".")[0]).group() for i in masks]
+        subjects_gt = [re.search(r"\d+", i.split(".")[0]).group() for i in masks]
         mris = []
-        for sub in  ["cph_annotated", "cph_annotated_mip"]:
+        for sub in ["cph_annotated", "cph_annotated_mip"]:
             mris += os.listdir(os.path.join(basedir, sub, "images"))
-        subjects_mri =  [i.split(".")[0] for i in mris]
+        subjects_mri = [i.split(".")[0] for i in mris]
         if set(subjects_mri) == set(subjects_gt):
             subjects = subjects_mri
         else:
@@ -118,7 +142,9 @@ def get_dataset_subjects(dataset_name, input_dir):
     return subjects
 
 
-def process_coordinates(com_list: List[Tuple[int, int, int]], msg: str = "", log_level: str = "\t\t") -> Tuple[List[Tuple[int, int, int]], str]:
+def process_coordinates(
+    com_list: List[Tuple[int, int, int]], msg: str = "", log_level: str = "\t\t"
+) -> Tuple[List[Tuple[int, int, int]], str]:
     """
     Processes a list of 3D coordinates to ensure uniqueness and checks for coordinates with minimal differences.
     Updates a message whenever the list's length is changed.
@@ -135,7 +161,7 @@ def process_coordinates(com_list: List[Tuple[int, int, int]], msg: str = "", log
     if len(unique_coords) < len(com_list):
         msg += f"{log_level}Removed {len(com_list) - len(unique_coords)} duplicate coordinates.\n"
     processed_coords = list(unique_coords)
-    
+
     i = 0
     while i < len(processed_coords):
         coord1 = processed_coords[i]
@@ -153,6 +179,7 @@ def process_coordinates(com_list: List[Tuple[int, int, int]], msg: str = "", log
         i += 1
 
     return processed_coords, msg
+
 
 def convert_numpy(obj):
     if isinstance(obj, np.integer):
@@ -173,140 +200,159 @@ def convert_numpy(obj):
     elif isinstance(obj, np.datetime64):
         return np.datetime_as_string(obj)
     elif isinstance(obj, np.timedelta64):
-        return np.timedelta64(obj, 'ms').astype('timedelta64[ms]').astype('int64')
+        return np.timedelta64(obj, "ms").astype("timedelta64[ms]").astype("int64")
     return obj
+
 
 def extract_im_specs(img):
     return {
-        'shape': img.shape,
-        'voxel_dim': img.header.get_zooms(),
-        'orientation': nib.aff2axcodes(img.affine),
-        'data_type': img.header.get_data_dtype().name,
+        "shape": img.shape,
+        "voxel_dim": img.header.get_zooms(),
+        "orientation": nib.aff2axcodes(img.affine),
+        "data_type": img.header.get_data_dtype().name,
     }
-    
 
-def load_mris_and_annotations(args, subject, msg='', log_level='\t\t'):
-    '''
-    Loads MRI scans and their corresponding annotations for a given subject 
-    from a specific dataset performing data cleaning and orientation fix.    
-    
+
+def load_mris_and_annotations(args, subject, msg="", log_level="\t\t"):
+    """
+    Loads MRI scans and their corresponding annotations for a given subject
+    from a specific dataset performing data cleaning and orientation fix.
+
     Args:
         args (object): Contains configuration parameters, including input directory and dataset name.
         subject (str): Identifier of the subject whose MRI scans and annotations are to be loaded.
         msg (str, optional): A string for logging purposes. Default is an empty string.
-        
+
     Returns:
-        mris (dict): Dictionary where keys are sequence names (e.g., "T1", "T2") and values are 
+        mris (dict): Dictionary where keys are sequence names (e.g., "T1", "T2") and values are
                         the corresponding MRI scans loaded as nibabel.Nifti1Image objects.
-        annotations (dict): Dictionary where keys are sequence names and values are the corresponding 
+        annotations (dict): Dictionary where keys are sequence names and values are the corresponding
                             annotations loaded as nibabel.Nifti1Image objects.
         labels_metadata (dict): Dictionary containing metadata related to labels (annotations).
         prim_seq (str): Primry sequence used for this subject
         msg (str): Updated log message.
 
-    '''
-    msg += f'{log_level}Loading MRI scans and annotations...\n'
-    
+    """
+    msg += f"{log_level}Loading MRI scans and annotations...\n"
+
     start = time.time()
 
     if args.dataset_name == "valdo":
-        sequences_raw, labels_raw, nifti_paths, labels_metadata, prim_seq, msg = dat_load.load_VALDO_data(args, subject, msg)
+        sequences_raw, labels_raw, nifti_paths, labels_metadata, prim_seq, msg = (
+            dat_load.load_VALDO_data(args, subject, msg)
+        )
     elif args.dataset_name == "cerebriu":
-        sequences_raw, labels_raw, nifti_paths, labels_metadata, prim_seq, msg = dat_load.load_CEREBRIU_data(args, subject, msg)
+        sequences_raw, labels_raw, nifti_paths, labels_metadata, prim_seq, msg = (
+            dat_load.load_CEREBRIU_data(args, subject, msg)
+        )
     elif args.dataset_name == "cerebriu-neg":
-        sequences_raw, labels_raw, nifti_paths, labels_metadata, prim_seq, msg = dat_load.load_CEREBRIUneg_data(args, subject, msg)
+        sequences_raw, labels_raw, nifti_paths, labels_metadata, prim_seq, msg = (
+            dat_load.load_CEREBRIUneg_data(args, subject, msg)
+        )
     elif args.dataset_name == "dou":
-        sequences_raw, labels_raw, nifti_paths, labels_metadata, prim_seq, msg = dat_load.load_DOU_data(args, subject, msg)
+        sequences_raw, labels_raw, nifti_paths, labels_metadata, prim_seq, msg = (
+            dat_load.load_DOU_data(args, subject, msg)
+        )
     elif args.dataset_name == "momeni":
-        sequences_raw, labels_raw, nifti_paths, labels_metadata, prim_seq, msg = dat_load.load_MOMENI_data(args, subject, msg)
+        sequences_raw, labels_raw, nifti_paths, labels_metadata, prim_seq, msg = (
+            dat_load.load_MOMENI_data(args, subject, msg)
+        )
     elif args.dataset_name == "momeni-synth":
-        sequences_raw, labels_raw, nifti_paths, labels_metadata, prim_seq, msg = dat_load.load_MOMENIsynth_data(args, subject, msg)
+        sequences_raw, labels_raw, nifti_paths, labels_metadata, prim_seq, msg = (
+            dat_load.load_MOMENIsynth_data(args, subject, msg)
+        )
     elif args.dataset_name == "rodeja":
-        sequences_raw, labels_raw, nifti_paths, labels_metadata, prim_seq, msg = dat_load.load_RODEJA_data(args, subject, msg)
+        sequences_raw, labels_raw, nifti_paths, labels_metadata, prim_seq, msg = (
+            dat_load.load_RODEJA_data(args, subject, msg)
+        )
     else:
         # Implement here for other datasets
         raise NotImplementedError
-    
+
     im_specs_orig = extract_im_specs(sequences_raw[prim_seq])
 
     end = time.time()
-    msg += f'{log_level}\tLoading of MRIs and annotations took {end - start} seconds!\n\n'
+    msg += (
+        f"{log_level}\tLoading of MRIs and annotations took {end - start} seconds!\n\n"
+    )
 
-    return sequences_raw, labels_raw, nifti_paths, labels_metadata, im_specs_orig, prim_seq, msg
+    return (
+        sequences_raw,
+        labels_raw,
+        nifti_paths,
+        labels_metadata,
+        im_specs_orig,
+        prim_seq,
+        msg,
+    )
 
 
 ###############################################################################
 # Re-processing
 ###############################################################################
 
+
 def get_sphere_df(csv_path, study, dataset):
-    
+
     df = pd.read_csv(csv_path, sep=";", dtype=str)
-    df = df[df['dataset'] == dataset]
-    df['x'] = df['x'].astype(int)
-    df['y'] = df['y'].astype(int)
-    df['z'] = df['z'].astype(int)
-    df['radius'] = df['radius'].astype(float) 
-    
+    df = df[df["dataset"] == dataset]
+    df["x"] = df["x"].astype(int)
+    df["y"] = df["y"].astype(int)
+    df["z"] = df["z"].astype(int)
+    df["radius"] = df["radius"].astype(float)
 
     if "momeni" in dataset:
-        subject = study.split('_')[0] + "_" + study.split('_')[1]
+        subject = study.split("_")[0] + "_" + study.split("_")[1]
     else:
         subject = study
 
-    return df[df['studyUID'] == subject]
-
+    return df[df["studyUID"] == subject]
 
 
 ###############################################################################
-# Old
+# Loading nifties
 ###############################################################################
 
-def get_files_metadata_from_processed(data_dir, subjects_selected=None):
-    """ 
-    Args:
-    
-    data_dir:  .../Data/ dir of processed dataset
-    subjects (optional): list of subjects to get metadata from
-    
-    Retrieves for all or selected subjects in a processed dataset directory all
-    relevant data related to mri and annotations files among others
+
+def get_metadata_from_processed_final(data_dir, sub):
+
+    metadata_dict = utils_general.read_json_to_dict(
+        os.path.join(data_dir, sub, "Annotations_metadata", f"{sub}_metadata.json")
+    )
+    metadata_dict_keys = list(metadata_dict.keys())
+    return         {
+            "id": sub,
+            "anno_path": os.path.join(
+                data_dir, sub, "Annotations", f"{sub}.nii.gz"
+            ),
+            "mri_path": os.path.join(data_dir, sub, "MRIs", f"{sub}.nii.gz"),
+            "seq_type": metadata_dict_keys[0],
+            "raw_metadata_path": os.path.join(
+                data_dir, sub, "Annotations_metadata", f"{sub}_raw.json"
+            ),
+            "processed_metadata_path": os.path.join(
+                data_dir, sub, "Annotations_metadata", f"{sub}_processed.json"
+            ),
+        }
+
+
+
+def get_metadata_from_cmb_format(data_dir, sub_id):
     """
-    all_subjects = os.listdir(data_dir)
-    if subjects_selected is not None:
-        all_subjects = [s for s in all_subjects if s in subjects_selected]
-    
-    all_metadata = []
-    
-    for sub in all_subjects:
-        metadata_dict = utils_general.read_json_to_dict(os.path.join(data_dir, sub, "Annotations_metadata", f"{sub}_raw.json"))
-        metadata_dict_keys = list(metadata_dict.keys())
-        
-        all_metadata.append(
-            {
-                "id": sub,
-                "anno_path": os.path.join(data_dir, sub, "Annotations", f"{sub}.nii.gz"),
-                "mri_path": os.path.join(data_dir, sub, "MRIs", f"{sub}.nii.gz"),
-                "seq_type": metadata_dict_keys[0],
-                "raw_metadata_path": os.path.join(data_dir, sub, "Annotations_metadata", f"{sub}_raw.json"),
-                "processed_metadata_path": os.path.join(data_dir, sub, "Annotations_metadata", f"{sub}_processed.json")
-            }
-        )
+    Get all metadata from study using its subject id
+    """
 
-    return all_metadata
+    fullpath_processing_metadata = os.path.join(
+        data_dir, sub_id, "processing_metadata", f"{sub_id}.json"
+    )
+    processing_metadata_dict = utils_general.read_json_to_dict(
+        fullpath_processing_metadata
+    )
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    return {
+        "id": sub_id,
+        "anno_path": os.path.join(data_dir, sub_id, "Annotations", f"{sub_id}.nii.gz"),
+        "mri_path": os.path.join(data_dir, sub_id, "MRIs", f"{sub_id}.nii.gz"),
+        "processing_metadata_path": fullpath_processing_metadata, 
+        **processing_metadata_dict,
+    }

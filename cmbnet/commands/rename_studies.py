@@ -117,7 +117,7 @@ def main(args):
 
     assert all([os.path.exists(p) for p in [args.in_dir, args.studiescsv_path]]), \
         f"Some of the paths provided do not exists, check input"
-    [utils_gen.ensure_directory_exists(p) for p in [args.train_dir, args.test_dir]]
+    [utils_gen.ensure_directory_exists(p) for p in [args.out_dir]]
 
     datasets = os.listdir(args.in_dir)
     studies_df = pd.read_csv(args.studiescsv_path)
@@ -125,20 +125,22 @@ def main(args):
 
     _logger.info(f"Datasets found in folder: {datasets}")
     
-    if "train" in args.splits:
-        datasets_filt = [d for d in datasets if d in TRAIN_DATASETS]
-        _logger.info(f"Datasets used for TRAIN set:")
-        print(datasets_filt)
-        rename_all_studies(args.in_dir, studies_df, datasets_filt, args.train_dir)
+    if args.datasets:
+        datasets_included = args.datasets
+    elif args.split == "train":
+        datasets_included = TRAIN_DATASETS
+    elif args.split == "test":
+        datasets_included = TEST_DATASETS
+    else:
+        raise NotImplementedError
     
+    datasets_filt = [d for d in datasets if d in datasets_included]
+    _logger.info(f"Datasets used for new dataset:")
+    print(datasets_filt)
 
-    if "test" in args.splits:
-        datasets_filt = [d for d in datasets if d in TEST_DATASETS]
-        _logger.info(f"Datasets used for TEST set:")
-        print(datasets_filt)
-        rename_all_studies(args.in_dir, studies_df, datasets_filt, args.test_dir)
-        
-
+    _logger.info(f"Will create new dataset in the following dir: {args.out_dir}")
+    utils_gen.confirm_action()
+    rename_all_studies(args.in_dir, studies_df, datasets_filt, args.out_dir)
 
 def parse_args():
     '''
@@ -149,12 +151,13 @@ def parse_args():
                         help='Path to the CSV with metadata')
     parser.add_argument('--in_dir', type=str, default=None,
                         help='Path to the input directory with processed studies')
-    parser.add_argument('--train_dir', type=str, default=None,
-                        help='Path to the output directory with renamaed processed studies')
-    parser.add_argument('--test_dir', type=str, default=None,
-                        help='Path to the output directory with renamaed processed studies')
-    parser.add_argument('--splits',  nargs='+', type=str, choices=['train', 'test'],
-                        help='Specific splits to generate')
+    parser.add_argument('--out_dir', type=str, default=None,
+                        help='Path to the output directory with renamed processed studies')
+    parser.add_argument('--datasets',  nargs='+', type=str,
+                        help='Specific datasets to include in new dataset, overwirtes --splits')
+    parser.add_argument('--splits',  type=str, choices=['train', 'test'],
+                        help='Specific splits to generate. Provide this or datasets directly.')
+
     return parser.parse_args()
 
 

@@ -37,19 +37,13 @@ from tqdm import tqdm
 import nibabel as nib
 import multiprocessing
 import time 
-from nilearn.image import resample_to_img, resample_img
-from scipy.ndimage import generate_binary_structure, binary_closing, binary_dilation
-from scipy.ndimage import label as nd_label
 import json
-from skimage.measure import label
-from skimage.filters import threshold_otsu
 from datetime import datetime
 from functools import partial
 import sys
 
 # Utils
-import cmbnet.utils.utils_datasets.utils_datasets as utils_datasets
-import cmbnet.preprocessing.process_masks as process_masks
+import cmbnet.preprocessing.loading as utils_loading
 import utils.utils_general as utils_general
 import utils.utils_evaluation as utils_eval
 
@@ -109,16 +103,24 @@ def add_groundtruth_metadata(args, metadata):
     Adds ground truth metadata to dict for subjects present. 
     This function should be adapted to varying folder structures.
     """
-    if args.gt_dir_struct == "processed":
-        gt_metadata = utils_datasets.get_files_metadata_from_processed(args.groundtruth_dir, [s_item['id'] for s_item in metadata])
-        for meta_item in metadata:
-            matching_item = [i for i in gt_metadata if i['id'] == meta_item['id']][0]
-            meta_item.update({"gt_path": matching_item['anno_path'], "sequence": matching_item['seq_type']})
-            
-    elif args.gt_dir_struct == "post-processed":
-        raise NotImplementedError
+    subjects_selected = [s_item['id'] for s_item in metadata]
+
+    if args.gt_dir_struct == "processed_final":
+        load_func = utils_loading.get_metadata_from_processed_final
+
+    elif args.gt_dir_struct == "cmb_format":
+        load_func = utils_loading.get_metadata_from_cmb_format
     else:
         raise NotImplementedError
+
+    gt_metadata = {}
+
+    for sub in subjects_selected:
+        sub_meta = load_func(args.groundtruth_dir, sub)
+        gt_metadata[sub] = sub_meta
+    for meta_item in metadata:
+        matching_item = gt_metadata[meta_item['id']]
+        meta_item.update({"gt_path": matching_item['anno_path'], "sequence": matching_item['seq_type']})
 
     return metadata
 
@@ -205,7 +207,12 @@ def main(args):
     # Get subject list
     subjects_metadata = get_subjects_metadata(args)
 
-    msg = f"Succesfully found predictions and ground truth for a total of {len(subjects_metadata)} studies\n\n"
+    msg = f"Found predictions and ground truth for a total of {len(subjects_metadata)} studies\n\n"
+    
+    if args.studies is not None:
+        subjects_metadata = [s for s in subjects_metadata if s['id'] in args.studies]
+        msg += f"Selected {len(subjects_metadata)} studies to evaluate\n\n"
+    
     _logger.info(msg)
     utils_general.write_to_log_file(msg, args.log_file_path)
 
@@ -216,11 +223,13 @@ def main(args):
     available_cpu_count = multiprocessing.cpu_count()
     num_workers = min(args.num_workers, available_cpu_count)
 
-    # for sub_meta in tqdm(subjects_metadata):
-    #     process_study(args, sub_meta, msg="")
-    # Parallelizing using multiprocessing
-    with multiprocessing.Pool(processes=num_workers) as pool:
-        list(tqdm(pool.imap(partial(process_study, args), subjects_metadata), total=len(subjects_metadata)))
+    if num_workers == 1:
+        for sub_meta in tqdm(subjects_metadata):
+            process_study(args, sub_meta, msg="")
+    else:
+        # Parallelizing using multiprocessing
+        with multiprocessing.Pool(processes=num_workers) as pool:
+            list(tqdm(pool.imap(partial(process_study, args), subjects_metadata), total=len(subjects_metadata)))
 
     msg = f"Succesfully evaluated on all cases\n\n"
     utils_general.write_to_log_file(msg, args.log_file_path)
@@ -231,27 +240,52 @@ def main(args):
     combined_df.to_csv(combined_df_file, index=False)
 
 
-    # Calculate metrics for each type
-    detection_metrics = utils_eval.combine_evaluate_detection(combined_df)
-    print(detection_metrics)
-    utils_general.write_to_log_file(detection_metrics, args.log_file_path)
+    if "segmentation" in args.evaluations:
+        macro_metrics, micro_metrics = utils_eval.combine_evaluate_segmentation(combined_df)
+        
+        # Print macroaveraged and microaveraged metrics
+        print("\nSegmentation Metrics - MACRO:")
+        print(macro_metrics)
+        print("\nSegmentation Metrics - micro:")
+        print(micro_metrics)
 
-    classification_metrics = utils_eval.combine_evaluate_classification(combined_df)
-    print(classification_metrics)
-    utils_general.write_to_log_file(classification_metrics, args.log_file_path)
+        # Write metrics to log file and save to CSV
+        utils_general.write_to_log_file(macro_metrics, args.log_file_path)
+        utils_general.write_to_log_file(micro_metrics, args.log_file_path)
 
-    # Calculate segmentation metrics
-    segmentation_metrics = utils_eval.combine_evaluate_segmentation(combined_df)
-    print(segmentation_metrics)
-    utils_general.write_to_log_file(segmentation_metrics, args.log_file_path)
+        # Save these metrics to CSV files
+        macro_metrics.to_csv(os.path.join(args.output_dir, 'macro_segmentation_metrics.csv'), index=False)
+        micro_metrics.to_csv(os.path.join(args.output_dir, 'micro_segmentation_metrics.csv'), index=False)
+    
+    if "classification" in args.evaluations:
+        classification_metrics = utils_eval.combine_evaluate_classification(combined_df)
+        print("\nClassification metrics:")
+        print(classification_metrics)
+        utils_general.write_to_log_file(classification_metrics, args.log_file_path)
+        # save these metrics to CSV files
+        classification_metrics.to_csv(os.path.join(args.output_dir, 'classification_metrics.csv'), index=False)
+        
+    if "detection" in args.evaluations:
+        detection_macro_metrics, detection_micro_metrics, detection_totals_metrics =  \
+            utils_eval.combine_evaluate_detection(combined_df)
 
-    # save these metrics to CSV files
-    detection_metrics.to_csv(os.path.join(args.output_dir, 'detection_metrics.csv'), index=False)
-    classification_metrics.to_csv(os.path.join(args.output_dir, 'classification_metrics.csv'), index=False)
-    segmentation_metrics.to_csv(os.path.join(args.output_dir, 'segmentation_metrics.csv'), index=False)
+        print("\nDetection metrics - MACRO:")
+        print(detection_macro_metrics)
+        print("\nDetection metrics - micro:")
+        print(detection_micro_metrics)
+        print("\nDetection metrics - TOTALS:")
+        print(detection_totals_metrics)
+        
+        utils_general.write_to_log_file(detection_macro_metrics, args.log_file_path)
+        utils_general.write_to_log_file(detection_micro_metrics, args.log_file_path)
+        utils_general.write_to_log_file(detection_totals_metrics, args.log_file_path)
 
-
-
+        # save these metrics to CSV files
+        detection_macro_metrics.to_csv(os.path.join(args.output_dir, 'detection_macro_metrics.csv'), index=False)
+        detection_micro_metrics.to_csv(os.path.join(args.output_dir, 'detection_micro_metrics.csv'), index=False)
+        detection_totals_metrics.to_csv(os.path.join(args.output_dir, 'detection_totals_metrics.csv'), index=False)
+        
+    print("Finished evaluation, find results in ", args.output_dir)
 
 def parse_args():
     '''
@@ -263,7 +297,7 @@ def parse_args():
                         help='Full path to the directory where results and logs will be saved')
     parser.add_argument('--groundtruth_dir', type=str, default=None,
                         help='Path to the directory with GT masks saved')
-    parser.add_argument('--gt_dir_struct', type=str, default=None, choices= ['processed', 'post-processed'],
+    parser.add_argument('--gt_dir_struct', type=str, default='cmb_format', choices= ['processed_final', 'cmb_format'],
                         help='Type of structure for saved ground truth masks')
     parser.add_argument('--predictions_dir', type=str, default=None,
                         help='Path to the directory with predictions')
@@ -272,6 +306,8 @@ def parse_args():
     parser.add_argument('--evaluations', nargs='+', type=str,
                         default=['segmentation', 'classification', 'detection'],
                         help='Evaluation types to run.')
+    parser.add_argument('--studies', nargs='+', type=str, default=None,
+                        help='Specific studies to evaluate')
     parser.add_argument('--num_workers', type=int, default=5,
                             help='Number of workers running in parallel')
     return parser.parse_args()
