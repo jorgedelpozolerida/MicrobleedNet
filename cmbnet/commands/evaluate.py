@@ -6,6 +6,15 @@ NOTE:
     - All studies in prediction dir must be in ground truth dir but not the other way around
 
 
+Three evaluations are made:
+- classification (has some CMB or not)
+- segmentation (pixel-wise evaluation)
+- detection (connected components evaluation)
+
+
+TODO:
+- Distance based evaluation
+
 @author: jorgedelpozolerida
 @date: 31/01/2024
 """
@@ -310,6 +319,9 @@ def parse_args():
                         help='Specific studies to evaluate')
     parser.add_argument('--num_workers', type=int, default=5,
                             help='Number of workers running in parallel')
+    # FLAGS
+    parser.add_argument('--create_plots',  default=False, action='store_true',
+                        help='Add this flag if you want to create plots for CMBs')
     return parser.parse_args()
 
 

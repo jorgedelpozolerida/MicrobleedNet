@@ -27,7 +27,7 @@ from scipy.ndimage import center_of_mass
 
 import cmbnet.preprocessing.process_masks as process_masks
 import cmbnet.utils.utils_general as utils_general
-import cmbnet.visualization.utils_plotting as utils_plt
+import cmbnet.utils.utils_plotting as utils_plt
 import cmbnet.preprocessing.loading as loading
 
 

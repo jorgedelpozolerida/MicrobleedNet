@@ -24,7 +24,7 @@ from typing import Tuple, Dict, List, Any
 
 import cmbnet.preprocessing.process_masks as process_masks
 import cmbnet.utils.utils_general as utils_general
-import cmbnet.visualization.utils_plotting as utils_plt
+import cmbnet.utils.utils_plotting as utils_plt
 
 
 logging.basicConfig(level=logging.INFO)

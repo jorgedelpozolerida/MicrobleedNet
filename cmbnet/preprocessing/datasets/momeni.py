@@ -25,7 +25,7 @@ import cmbnet.preprocessing.process_masks as process_masks
 import cmbnet.preprocessing.loading as loading
 
 import cmbnet.utils.utils_general as utils_general
-import cmbnet.visualization.utils_plotting as utils_plt
+import cmbnet.utils.utils_plotting as utils_plt
 
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)

@@ -3,12 +3,6 @@
 """ Script containing evaluation related functions
 
 
-Three evaluaions are made:
-- classification (has some CMB or not)
-- segmentation (pixel-wise evaluation)
-- detection (connected components evaluation)
-
-
 @author: jorgedelpozolerida
 @date: 31/01/2024
 """
