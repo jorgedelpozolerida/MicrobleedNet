@@ -1,0 +1,2998 @@
+studyUID;status;message
+"sub-104";"completed";"Started processing sub-104... (worker 1)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [9175040]
+		Loading of MRIs and annotations took 4.503726482391357 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 21.39535355567932 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 35)
+		Annotations shape before cropping: (512, 512, 35)
+		MRIs shape after cropping: (307, 364, 34)
+		Annotations shape after cropping: (307, 364, 34)
+	Cropping completed in 0.26 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (307, 364, 34) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (307, 364, 34) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0070459842681884766 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (307, 364, 34)
+			Shape after resampling: (323, 366, 349)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (307, 364, 34)
+			Shape after resampling: (323, 366, 349)
+	Resampling of MRIs and annotations took 12.025156259536743 seconds!
+
+	Pruned from 0 CMBs to 0.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [41258082]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-104 in 62.71 seconds (worker 1)!
+
+"
+"sub-307";"completed";"Started processing sub-307... (worker 3)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [2555900       4]
+		Loading of MRIs and annotations took 7.036376714706421 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 23.098822593688965 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 39)
+		Annotations shape before cropping: (256, 256, 39)
+		MRIs shape after cropping: (138, 167, 39)
+		Annotations shape after cropping: (138, 167, 39)
+	Cropping completed in 0.06 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (138, 167, 39) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (138, 167, 39) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0073010921478271484 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (138, 167, 39)
+			Shape after resampling: (296, 366, 276)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (138, 167, 39)
+			Shape after resampling: (296, 366, 276)
+	Resampling of MRIs and annotations took 7.0364134311676025 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [29900640       96]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-307 in 63.94 seconds (worker 3)!
+
+"
+"sub-301";"completed";"Started processing sub-301... (worker 0)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [2555901       3]
+		Loading of MRIs and annotations took 7.117413282394409 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 24.243401050567627 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 39)
+		Annotations shape before cropping: (256, 256, 39)
+		MRIs shape after cropping: (146, 172, 39)
+		Annotations shape after cropping: (146, 172, 39)
+	Cropping completed in 0.07 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (146, 172, 39) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (146, 172, 39) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.007599353790283203 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (146, 172, 39)
+			Shape after resampling: (293, 375, 278)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (146, 172, 39)
+			Shape after resampling: (293, 375, 278)
+	Resampling of MRIs and annotations took 7.308227300643921 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [30545176       74]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-301 in 68.79 seconds (worker 0)!
+
+"
+"sub-209";"completed";"Started processing sub-209... (worker 2)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [50331648]
+		Loading of MRIs and annotations took 27.849117279052734 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 46.970967531204224 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (273, 335, 175)
+		Annotations shape after cropping: (273, 335, 175)
+	Cropping completed in 2.30 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (273, 335, 175) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (273, 335, 175) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.007399082183837891 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (273, 335, 175)
+			Shape after resampling: (267, 328, 280)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (273, 335, 175)
+			Shape after resampling: (267, 328, 280)
+	Resampling of MRIs and annotations took 6.803648233413696 seconds!
+
+	Pruned from 0 CMBs to 0.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [24521280]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-209 in 95.67 seconds (worker 2)!
+
+"
+"sub-231";"completed";"Started processing sub-231... (worker 4)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [50331648]
+		Loading of MRIs and annotations took 27.620973348617554 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 49.811508893966675 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (315, 334, 178)
+		Annotations shape after cropping: (315, 334, 178)
+	Cropping completed in 1.96 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (315, 334, 178) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (315, 334, 178) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.007135868072509766 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (315, 334, 178)
+			Shape after resampling: (308, 327, 285)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (315, 334, 178)
+			Shape after resampling: (308, 327, 285)
+	Resampling of MRIs and annotations took 5.860434532165527 seconds!
+
+	Pruned from 0 CMBs to 0.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [28704060]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-231 in 99.66 seconds (worker 4)!
+
+"
+"sub-214";"completed";"Started processing sub-214... (worker 5)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [50331648]
+		Loading of MRIs and annotations took 28.34397554397583 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 49.38550662994385 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (275, 352, 180)
+		Annotations shape after cropping: (275, 352, 180)
+	Cropping completed in 1.68 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (275, 352, 180) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (275, 352, 180) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.003743886947631836 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (275, 352, 180)
+			Shape after resampling: (269, 344, 288)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (275, 352, 180)
+			Shape after resampling: (269, 344, 288)
+	Resampling of MRIs and annotations took 8.494863986968994 seconds!
+
+	Pruned from 0 CMBs to 0.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [26650368]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-214 in 101.28 seconds (worker 5)!
+
+"
+"sub-109";"completed";"Started processing sub-109... (worker 0)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [9175040]
+		Loading of MRIs and annotations took 4.094076871871948 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 14.576592683792114 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 35)
+		Annotations shape before cropping: (512, 512, 35)
+		MRIs shape after cropping: (275, 349, 33)
+		Annotations shape after cropping: (275, 349, 33)
+	Cropping completed in 0.12 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (275, 349, 33) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (275, 349, 33) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.003337860107421875 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (275, 349, 33)
+			Shape after resampling: (285, 339, 266)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (275, 349, 33)
+			Shape after resampling: (285, 339, 266)
+	Resampling of MRIs and annotations took 6.897308111190796 seconds!
+
+	Pruned from 0 CMBs to 0.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [25699590]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-109 in 39.40 seconds (worker 0)!
+
+"
+"sub-324";"completed";"Started processing sub-324... (worker 5)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [2555894      10]
+		Loading of MRIs and annotations took 6.8973023891448975 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 27.880581378936768 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 39)
+		Annotations shape before cropping: (256, 256, 39)
+		MRIs shape after cropping: (138, 178, 39)
+		Annotations shape after cropping: (138, 178, 39)
+	Cropping completed in 0.06 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (138, 178, 39) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (138, 178, 39) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0038585662841796875 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (138, 178, 39)
+			Shape after resampling: (283, 366, 239)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (138, 178, 39)
+			Shape after resampling: (283, 366, 239)
+	Resampling of MRIs and annotations took 10.363033056259155 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [24754901      241]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-324 in 68.44 seconds (worker 5)!
+
+"
+"sub-102";"completed";"Started processing sub-102... (worker 4)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [9174974      66]
+		Loading of MRIs and annotations took 10.157591104507446 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 31.65437936782837 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 35)
+		Annotations shape before cropping: (512, 512, 35)
+		MRIs shape after cropping: (303, 375, 35)
+		Annotations shape after cropping: (303, 375, 35)
+	Cropping completed in 0.25 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (303, 375, 35) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (303, 375, 35) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.004322528839111328 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (303, 375, 35)
+			Shape after resampling: (326, 372, 308)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (303, 375, 35)
+			Shape after resampling: (326, 372, 308)
+	Resampling of MRIs and annotations took 12.515254974365234 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [37351347      429]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-102 in 87.60 seconds (worker 4)!
+
+"
+"sub-304";"completed";"Started processing sub-304... (worker 0)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [2555897       7]
+		Loading of MRIs and annotations took 7.848116636276245 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 27.659048080444336 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 39)
+		Annotations shape before cropping: (256, 256, 39)
+		MRIs shape after cropping: (143, 177, 36)
+		Annotations shape after cropping: (143, 177, 36)
+	Cropping completed in 0.05 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (143, 177, 36) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (143, 177, 36) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.005291938781738281 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (143, 177, 36)
+			Shape after resampling: (287, 392, 330)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (143, 177, 36)
+			Shape after resampling: (287, 392, 330)
+	Resampling of MRIs and annotations took 10.27626895904541 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [37126096      224]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-304 in 80.49 seconds (worker 0)!
+
+"
+"sub-223";"completed";"Started processing sub-223... (worker 1)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [50331620       28]
+		Loading of MRIs and annotations took 32.56654977798462 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 56.484068155288696 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (281, 392, 180)
+		Annotations shape after cropping: (281, 392, 180)
+	Cropping completed in 1.77 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (281, 392, 180) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (281, 392, 180) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.004832744598388672 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (281, 392, 180)
+			Shape after resampling: (275, 383, 288)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (281, 392, 180)
+			Shape after resampling: (275, 383, 288)
+	Resampling of MRIs and annotations took 10.088276147842407 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [30333566       34]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-223 in 130.86 seconds (worker 1)!
+
+"
+"sub-225";"completed";"Started processing sub-225... (worker 2)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [50331648]
+		Loading of MRIs and annotations took 23.912770986557007 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 51.12873673439026 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (275, 351, 176)
+		Annotations shape after cropping: (275, 351, 176)
+	Cropping completed in 2.21 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (275, 351, 176) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (275, 351, 176) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0035343170166015625 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (275, 351, 176)
+			Shape after resampling: (269, 343, 282)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (275, 351, 176)
+			Shape after resampling: (269, 343, 282)
+	Resampling of MRIs and annotations took 9.11787462234497 seconds!
+
+	Pruned from 0 CMBs to 0.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [26019294]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-225 in 99.94 seconds (worker 2)!
+
+"
+"sub-213";"completed";"Started processing sub-213... (worker 3)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [50331631       17]
+		Loading of MRIs and annotations took 33.12950015068054 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 62.923184871673584 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (294, 354, 179)
+		Annotations shape after cropping: (294, 354, 179)
+	Cropping completed in 2.55 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (294, 354, 179) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (294, 354, 179) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.005532979965209961 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (294, 354, 179)
+			Shape after resampling: (288, 346, 286)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (294, 354, 179)
+			Shape after resampling: (288, 346, 286)
+	Resampling of MRIs and annotations took 11.695478677749634 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [28499317       11]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-213 in 139.58 seconds (worker 3)!
+
+"
+"sub-309";"completed";"Started processing sub-309... (worker 2)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [2555898       6]
+		Loading of MRIs and annotations took 6.996566534042358 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 13.389531135559082 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 39)
+		Annotations shape before cropping: (256, 256, 39)
+		MRIs shape after cropping: (133, 167, 39)
+		Annotations shape after cropping: (133, 167, 39)
+	Cropping completed in 0.08 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (133, 167, 39) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (133, 167, 39) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.00519251823425293 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (133, 167, 39)
+			Shape after resampling: (284, 370, 287)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (133, 167, 39)
+			Shape after resampling: (284, 370, 287)
+	Resampling of MRIs and annotations took 13.688789367675781 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [30157815      145]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-309 in 57.64 seconds (worker 2)!
+
+"
+"sub-311";"completed";"Started processing sub-311... (worker 1)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [2555875      29]
+		Loading of MRIs and annotations took 6.284448623657227 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 14.361738204956055 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 39)
+		Annotations shape before cropping: (256, 256, 39)
+		MRIs shape after cropping: (145, 182, 39)
+		Annotations shape after cropping: (145, 182, 39)
+	Cropping completed in 0.05 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (145, 182, 39) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (145, 182, 39) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.003579854965209961 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (145, 182, 39)
+			Shape after resampling: (291, 396, 284)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (145, 182, 39)
+			Shape after resampling: (291, 396, 284)
+	Resampling of MRIs and annotations took 15.427330732345581 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [32726329      695]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-311 in 62.92 seconds (worker 1)!
+
+"
+"sub-211";"completed";"Started processing sub-211... (worker 5)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [50331648]
+		Loading of MRIs and annotations took 22.709470748901367 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 52.420716524124146 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (282, 348, 179)
+		Annotations shape after cropping: (282, 348, 179)
+	Cropping completed in 1.57 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (282, 348, 179) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (282, 348, 179) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.003870725631713867 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (282, 348, 179)
+			Shape after resampling: (276, 340, 286)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (282, 348, 179)
+			Shape after resampling: (276, 340, 286)
+	Resampling of MRIs and annotations took 6.649950265884399 seconds!
+
+	Pruned from 0 CMBs to 0.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [26838240]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-211 in 100.16 seconds (worker 5)!
+
+"
+"sub-325";"completed";"Started processing sub-325... (worker 0)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 3, Unique labels: [0. 1.], Counts: [2359258      38]
+		Loading of MRIs and annotations took 15.662407875061035 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 17.52064037322998 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 36)
+		Annotations shape before cropping: (256, 256, 36)
+		MRIs shape after cropping: (138, 179, 35)
+		Annotations shape after cropping: (138, 179, 35)
+	Cropping completed in 0.07 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (138, 179, 35) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (138, 179, 35) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.00748443603515625 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (138, 179, 35)
+			Shape after resampling: (287, 410, 356)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (138, 179, 35)
+			Shape after resampling: (287, 410, 356)
+	Resampling of MRIs and annotations took 17.614609956741333 seconds!
+
+	Pruned from 3 CMBs to 3.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 3, Unique labels: [0. 1.], Counts: [41889310     1210]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-325 in 96.10 seconds (worker 0)!
+
+"
+"sub-302";"completed";"Started processing sub-302... (worker 2)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [2555876      28]
+		Loading of MRIs and annotations took 6.257649183273315 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 20.394973039627075 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 39)
+		Annotations shape before cropping: (256, 256, 39)
+		MRIs shape after cropping: (143, 173, 39)
+		Annotations shape after cropping: (143, 173, 39)
+	Cropping completed in 0.06 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (143, 173, 39) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (143, 173, 39) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.008093833923339844 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (143, 173, 39)
+			Shape after resampling: (287, 351, 237)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (143, 173, 39)
+			Shape after resampling: (287, 351, 237)
+	Resampling of MRIs and annotations took 8.812603950500488 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [23873997      672]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-302 in 55.79 seconds (worker 2)!
+
+"
+"sub-318";"completed";"Started processing sub-318... (worker 1)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [2555900       4]
+		Loading of MRIs and annotations took 6.208841800689697 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 21.302202463150024 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 39)
+		Annotations shape before cropping: (256, 256, 39)
+		MRIs shape after cropping: (133, 163, 39)
+		Annotations shape after cropping: (133, 163, 39)
+	Cropping completed in 0.05 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (133, 163, 39) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (133, 163, 39) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.004296064376831055 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (133, 163, 39)
+			Shape after resampling: (267, 361, 282)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (133, 163, 39)
+			Shape after resampling: (267, 361, 282)
+	Resampling of MRIs and annotations took 7.736804485321045 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [27181038       96]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-318 in 58.96 seconds (worker 1)!
+
+"
+"sub-327";"completed";"Started processing sub-327... (worker 2)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [2555900       4]
+		Loading of MRIs and annotations took 6.7259509563446045 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 13.719327926635742 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 39)
+		Annotations shape before cropping: (256, 256, 39)
+		MRIs shape after cropping: (138, 170, 39)
+		Annotations shape after cropping: (138, 170, 39)
+	Cropping completed in 0.07 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (138, 170, 39) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (138, 170, 39) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.004487276077270508 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (138, 170, 39)
+			Shape after resampling: (277, 342, 232)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (138, 170, 39)
+			Shape after resampling: (277, 342, 232)
+	Resampling of MRIs and annotations took 11.324711322784424 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [21978192       96]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-327 in 55.53 seconds (worker 2)!
+
+"
+"sub-226";"completed";"Started processing sub-226... (worker 5)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [50331648]
+		Loading of MRIs and annotations took 24.75936532020569 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 46.80408954620361 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (273, 306, 171)
+		Annotations shape after cropping: (273, 306, 171)
+	Cropping completed in 2.43 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (273, 306, 171) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (273, 306, 171) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.003893613815307617 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (273, 306, 171)
+			Shape after resampling: (267, 299, 274)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (273, 306, 171)
+			Shape after resampling: (267, 299, 274)
+	Resampling of MRIs and annotations took 9.1642165184021 seconds!
+
+	Pruned from 0 CMBs to 0.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [21874242]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-226 in 97.27 seconds (worker 5)!
+
+"
+"sub-303";"completed";"Started processing sub-303... (worker 1)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [3211260       4]
+		Loading of MRIs and annotations took 6.783506631851196 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 23.501389265060425 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 49)
+		Annotations shape before cropping: (256, 256, 49)
+		MRIs shape after cropping: (136, 168, 48)
+		Annotations shape after cropping: (136, 168, 48)
+	Cropping completed in 0.08 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (136, 168, 48) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (136, 168, 48) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0049436092376708984 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (136, 168, 48)
+			Shape after resampling: (275, 360, 313)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (136, 168, 48)
+			Shape after resampling: (275, 360, 313)
+	Resampling of MRIs and annotations took 14.60227108001709 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [30986904       96]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-303 in 73.03 seconds (worker 1)!
+
+"
+"sub-317";"completed";"Started processing sub-317... (worker 5)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [3145724       4]
+		Loading of MRIs and annotations took 10.931129932403564 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 14.245115518569946 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 48)
+		Annotations shape before cropping: (256, 256, 48)
+		MRIs shape after cropping: (138, 174, 46)
+		Annotations shape after cropping: (138, 174, 46)
+	Cropping completed in 0.04 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (138, 174, 46) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (138, 174, 46) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0033652782440185547 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (138, 174, 46)
+			Shape after resampling: (277, 399, 341)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (138, 174, 46)
+			Shape after resampling: (277, 399, 341)
+	Resampling of MRIs and annotations took 14.191240787506104 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [37688243      100]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-317 in 69.81 seconds (worker 5)!
+
+"
+"sub-224";"completed";"Started processing sub-224... (worker 2)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [50331648]
+		Loading of MRIs and annotations took 25.396604299545288 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 50.23088026046753 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (260, 344, 182)
+		Annotations shape after cropping: (260, 344, 182)
+	Cropping completed in 2.55 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (260, 344, 182) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (260, 344, 182) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.004660367965698242 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (260, 344, 182)
+			Shape after resampling: (254, 336, 291)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (260, 344, 182)
+			Shape after resampling: (254, 336, 291)
+	Resampling of MRIs and annotations took 10.943502426147461 seconds!
+
+	Pruned from 0 CMBs to 0.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [24835104]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-224 in 106.13 seconds (worker 2)!
+
+"
+"sub-230";"completed";"Started processing sub-230... (worker 1)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [50331648]
+		Loading of MRIs and annotations took 26.107561111450195 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 54.81226706504822 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (278, 356, 174)
+		Annotations shape after cropping: (278, 356, 174)
+	Cropping completed in 2.37 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (278, 356, 174) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (278, 356, 174) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0040738582611083984 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (278, 356, 174)
+			Shape after resampling: (272, 348, 278)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (278, 356, 174)
+			Shape after resampling: (272, 348, 278)
+	Resampling of MRIs and annotations took 10.516722679138184 seconds!
+
+	Pruned from 0 CMBs to 0.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [26314368]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-230 in 108.94 seconds (worker 1)!
+
+"
+"sub-222";"completed";"Started processing sub-222... (worker 0)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 11, Unique labels: [0. 1.], Counts: [50331181      467]
+		Loading of MRIs and annotations took 83.92300128936768 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 46.61949157714844 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (292, 343, 178)
+		Annotations shape after cropping: (292, 343, 178)
+	Cropping completed in 1.85 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (292, 343, 178) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (292, 343, 178) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0032541751861572266 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (292, 343, 178)
+			Shape after resampling: (286, 335, 285)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (292, 343, 178)
+			Shape after resampling: (286, 335, 285)
+	Resampling of MRIs and annotations took 6.440557479858398 seconds!
+
+	Pruned from 12 CMBs to 11.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 11, Unique labels: [0. 1.], Counts: [27305121      729]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-222 in 214.44 seconds (worker 0)!
+
+"
+"sub-313";"completed";"Started processing sub-313... (worker 5)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [2555900       4]
+		Loading of MRIs and annotations took 5.504693269729614 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 20.672776222229004 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 39)
+		Annotations shape before cropping: (256, 256, 39)
+		MRIs shape after cropping: (140, 166, 35)
+		Annotations shape after cropping: (140, 166, 35)
+	Cropping completed in 0.05 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (140, 166, 35) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (140, 166, 35) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.004277229309082031 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (140, 166, 35)
+			Shape after resampling: (300, 372, 304)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (140, 166, 35)
+			Shape after resampling: (300, 372, 304)
+	Resampling of MRIs and annotations took 15.640743494033813 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [33926273      127]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-313 in 69.32 seconds (worker 5)!
+
+"
+"sub-305";"completed";"Started processing sub-305... (worker 2)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 2, Unique labels: [0. 1.], Counts: [2555885      19]
+		Loading of MRIs and annotations took 13.318556070327759 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 12.937519550323486 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 39)
+		Annotations shape before cropping: (256, 256, 39)
+		MRIs shape after cropping: (141, 179, 39)
+		Annotations shape after cropping: (141, 179, 39)
+	Cropping completed in 0.05 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (141, 179, 39) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (141, 179, 39) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.005694866180419922 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (141, 179, 39)
+			Shape after resampling: (292, 368, 247)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (141, 179, 39)
+			Shape after resampling: (292, 368, 247)
+	Resampling of MRIs and annotations took 11.612003564834595 seconds!
+
+	Pruned from 2 CMBs to 2.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 2, Unique labels: [0. 1.], Counts: [26541176      456]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-305 in 66.69 seconds (worker 2)!
+
+"
+"sub-308";"completed";"Started processing sub-308... (worker 5)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [2555889      15]
+		Loading of MRIs and annotations took 4.738474369049072 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 11.627699851989746 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 39)
+		Annotations shape before cropping: (256, 256, 39)
+		MRIs shape after cropping: (142, 175, 39)
+		Annotations shape after cropping: (142, 175, 39)
+	Cropping completed in 0.07 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (142, 175, 39) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (142, 175, 39) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0069293975830078125 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (142, 175, 39)
+			Shape after resampling: (306, 374, 251)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (142, 175, 39)
+			Shape after resampling: (306, 374, 251)
+	Resampling of MRIs and annotations took 13.28406310081482 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [28725083      361]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-308 in 56.23 seconds (worker 5)!
+
+"
+"sub-218";"completed";"Started processing sub-218... (worker 3)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 26, Unique labels: [0. 1.], Counts: [50330737      911]
+		Loading of MRIs and annotations took 162.26127195358276 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 48.024277448654175 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (289, 357, 187)
+		Annotations shape after cropping: (289, 357, 187)
+	Cropping completed in 2.21 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (289, 357, 187) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (289, 357, 187) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0042781829833984375 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (289, 357, 187)
+			Shape after resampling: (283, 349, 299)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (289, 357, 187)
+			Shape after resampling: (283, 349, 299)
+	Resampling of MRIs and annotations took 11.85220217704773 seconds!
+
+	Pruned from 26 CMBs to 26.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 26, Unique labels: [0. 1.], Counts: [29529913     1420]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-218 in 384.39 seconds (worker 3)!
+
+"
+"sub-322";"completed";"Started processing sub-322... (worker 5)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [2555872      32]
+		Loading of MRIs and annotations took 5.349438905715942 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 18.72508406639099 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 39)
+		Annotations shape before cropping: (256, 256, 39)
+		MRIs shape after cropping: (131, 181, 39)
+		Annotations shape after cropping: (131, 181, 39)
+	Cropping completed in 0.06 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (131, 181, 39) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (131, 181, 39) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.006499290466308594 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (131, 181, 39)
+			Shape after resampling: (266, 370, 244)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (131, 181, 39)
+			Shape after resampling: (266, 370, 244)
+	Resampling of MRIs and annotations took 10.746803045272827 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [24013709      771]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-322 in 56.12 seconds (worker 5)!
+
+"
+"sub-234";"completed";"Started processing sub-234... (worker 1)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 2, Unique labels: [0. 1.], Counts: [50331523      125]
+		Loading of MRIs and annotations took 41.66054391860962 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 49.233238220214844 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (279, 348, 173)
+		Annotations shape after cropping: (279, 348, 173)
+	Cropping completed in 2.41 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (279, 348, 173) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (279, 348, 173) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0050013065338134766 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (279, 348, 173)
+			Shape after resampling: (273, 340, 277)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (279, 348, 173)
+			Shape after resampling: (273, 340, 277)
+	Resampling of MRIs and annotations took 10.267638444900513 seconds!
+
+	Pruned from 2 CMBs to 2.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 2, Unique labels: [0. 1.], Counts: [25710936      204]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-234 in 132.26 seconds (worker 1)!
+
+"
+"sub-207";"completed";"Started processing sub-207... (worker 0)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 9, Unique labels: [0. 1.], Counts: [50331280      368]
+		Loading of MRIs and annotations took 72.64281463623047 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 49.64285659790039 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (281, 344, 181)
+		Annotations shape after cropping: (281, 344, 181)
+	Cropping completed in 2.59 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (281, 344, 181) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (281, 344, 181) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.004744768142700195 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (281, 344, 181)
+			Shape after resampling: (275, 336, 290)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (281, 344, 181)
+			Shape after resampling: (275, 336, 290)
+	Resampling of MRIs and annotations took 7.091144561767578 seconds!
+
+	Pruned from 10 CMBs to 10.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 10, Unique labels: [0. 1.], Counts: [26795482      518]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	ISSUE: number of original CMBs differ before (9) and after (10) preprocessing
+	Removed temporary cache for study folder
+Finished processing of sub-207 in 200.79 seconds (worker 0)!
+
+"
+"sub-210";"completed";"Started processing sub-210... (worker 3)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [50331648]
+		Loading of MRIs and annotations took 26.482414484024048 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 63.87040066719055 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (278, 320, 184)
+		Annotations shape after cropping: (278, 320, 184)
+	Cropping completed in 2.10 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (278, 320, 184) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (278, 320, 184) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0038423538208007812 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (278, 320, 184)
+			Shape after resampling: (272, 313, 294)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (278, 320, 184)
+			Shape after resampling: (272, 313, 294)
+	Resampling of MRIs and annotations took 9.827114343643188 seconds!
+
+	Pruned from 0 CMBs to 0.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [25029984]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-210 in 119.64 seconds (worker 3)!
+
+"
+"sub-111";"completed";"Started processing sub-111... (worker 1)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 3, Unique labels: [0. 1.], Counts: [9174837     203]
+		Loading of MRIs and annotations took 18.55412459373474 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 27.150866508483887 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 35)
+		Annotations shape before cropping: (512, 512, 35)
+		MRIs shape after cropping: (287, 373, 33)
+		Annotations shape after cropping: (287, 373, 33)
+	Cropping completed in 0.50 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (287, 373, 33) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (287, 373, 33) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.005397319793701172 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (287, 373, 33)
+			Shape after resampling: (278, 398, 346)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (287, 373, 33)
+			Shape after resampling: (278, 398, 346)
+	Resampling of MRIs and annotations took 10.343029022216797 seconds!
+
+	Pruned from 3 CMBs to 3.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 3, Unique labels: [0. 1.], Counts: [38281510     1314]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-111 in 103.23 seconds (worker 1)!
+
+"
+"sub-103";"completed";"Started processing sub-103... (worker 5)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 6, Unique labels: [0. 1.], Counts: [9174799     241]
+		Loading of MRIs and annotations took 32.400737047195435 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 24.27731156349182 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 35)
+		Annotations shape before cropping: (512, 512, 35)
+		MRIs shape after cropping: (277, 360, 33)
+		Annotations shape after cropping: (277, 360, 33)
+	Cropping completed in 0.13 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (277, 360, 33) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (277, 360, 33) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.003560304641723633 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (277, 360, 33)
+			Shape after resampling: (298, 381, 291)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (277, 360, 33)
+			Shape after resampling: (298, 381, 291)
+	Resampling of MRIs and annotations took 6.95093560218811 seconds!
+
+	Pruned from 6 CMBs to 6.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 6, Unique labels: [0. 1.], Counts: [33037999     1559]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-103 in 119.98 seconds (worker 5)!
+
+"
+"sub-228";"completed";"Started processing sub-228... (worker 2)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 8, Unique labels: [0. 1.], Counts: [50330950      698]
+		Loading of MRIs and annotations took 69.2238085269928 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 60.70541429519653 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (264, 346, 177)
+		Annotations shape after cropping: (264, 346, 177)
+	Cropping completed in 2.53 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (264, 346, 177) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (264, 346, 177) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.005403041839599609 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (264, 346, 177)
+			Shape after resampling: (258, 338, 283)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (264, 346, 177)
+			Shape after resampling: (258, 338, 283)
+	Resampling of MRIs and annotations took 8.936820030212402 seconds!
+
+	Pruned from 8 CMBs to 8.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 8, Unique labels: [0. 1.], Counts: [24677617     1115]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-228 in 203.41 seconds (worker 2)!
+
+"
+"sub-314";"completed";"Started processing sub-314... (worker 3)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [2555901       3]
+		Loading of MRIs and annotations took 8.41591739654541 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 10.29021167755127 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 39)
+		Annotations shape before cropping: (256, 256, 39)
+		MRIs shape after cropping: (135, 167, 37)
+		Annotations shape after cropping: (135, 167, 37)
+	Cropping completed in 0.03 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (135, 167, 37) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (135, 167, 37) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.003310680389404297 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (135, 167, 37)
+			Shape after resampling: (302, 415, 383)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (135, 167, 37)
+			Shape after resampling: (302, 415, 383)
+	Resampling of MRIs and annotations took 20.416539669036865 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [48001293       97]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-314 in 81.42 seconds (worker 3)!
+
+"
+"sub-220";"completed";"Started processing sub-220... (worker 0)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [50331648]
+		Loading of MRIs and annotations took 25.343903303146362 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 59.83512759208679 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (267, 342, 173)
+		Annotations shape after cropping: (267, 342, 173)
+	Cropping completed in 1.65 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (267, 342, 173) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (267, 342, 173) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0034132003784179688 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (267, 342, 173)
+			Shape after resampling: (261, 335, 277)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (267, 342, 173)
+			Shape after resampling: (261, 335, 277)
+	Resampling of MRIs and annotations took 6.2871081829071045 seconds!
+
+	Pruned from 0 CMBs to 0.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [24219495]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-220 in 108.31 seconds (worker 0)!
+
+"
+"sub-310";"completed";"Started processing sub-310... (worker 2)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [3014652       4]
+		Loading of MRIs and annotations took 6.290035724639893 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 31.212522268295288 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 46)
+		Annotations shape before cropping: (256, 256, 46)
+		MRIs shape after cropping: (143, 179, 46)
+		Annotations shape after cropping: (143, 179, 46)
+	Cropping completed in 0.06 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (143, 179, 46) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (143, 179, 46) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.00525355339050293 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (143, 179, 46)
+			Shape after resampling: (287, 384, 306)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (143, 179, 46)
+			Shape after resampling: (287, 384, 306)
+	Resampling of MRIs and annotations took 11.36755633354187 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [33723552       96]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-310 in 78.58 seconds (worker 2)!
+
+"
+"sub-107";"completed";"Started processing sub-107... (worker 5)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 2, Unique labels: [0. 1.], Counts: [9175007      33]
+		Loading of MRIs and annotations took 13.451828956604004 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 28.417224407196045 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 35)
+		Annotations shape before cropping: (512, 512, 35)
+		MRIs shape after cropping: (290, 368, 33)
+		Annotations shape after cropping: (290, 368, 33)
+	Cropping completed in 0.24 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (290, 368, 33) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (290, 368, 33) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0035996437072753906 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (290, 368, 33)
+			Shape after resampling: (265, 396, 346)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (290, 368, 33)
+			Shape after resampling: (265, 396, 346)
+	Resampling of MRIs and annotations took 10.857278823852539 seconds!
+
+	Pruned from 2 CMBs to 2.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 2, Unique labels: [0. 1.], Counts: [36309033      207]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-107 in 88.34 seconds (worker 5)!
+
+"
+"sub-202";"completed";"Started processing sub-202... (worker 1)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [50331648]
+		Loading of MRIs and annotations took 26.92072820663452 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 49.60796570777893 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (284, 339, 179)
+		Annotations shape after cropping: (284, 339, 179)
+	Cropping completed in 2.05 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (284, 339, 179) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (284, 339, 179) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.004786252975463867 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (284, 339, 179)
+			Shape after resampling: (278, 332, 286)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (284, 339, 179)
+			Shape after resampling: (278, 332, 286)
+	Resampling of MRIs and annotations took 7.633942127227783 seconds!
+
+	Pruned from 0 CMBs to 0.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [26396656]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-202 in 101.88 seconds (worker 1)!
+
+"
+"sub-105";"completed";"Started processing sub-105... (worker 3)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [9175040]
+		Loading of MRIs and annotations took 3.0811595916748047 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 18.06295371055603 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 35)
+		Annotations shape before cropping: (512, 512, 35)
+		MRIs shape after cropping: (287, 351, 33)
+		Annotations shape after cropping: (287, 351, 33)
+	Cropping completed in 0.16 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (287, 351, 33) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (287, 351, 33) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0037283897399902344 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (287, 351, 33)
+			Shape after resampling: (280, 353, 307)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (287, 351, 33)
+			Shape after resampling: (280, 353, 307)
+	Resampling of MRIs and annotations took 13.791492462158203 seconds!
+
+	Pruned from 0 CMBs to 0.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [30343880]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-105 in 52.36 seconds (worker 3)!
+
+"
+"sub-312";"completed";"Started processing sub-312... (worker 2)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 2, Unique labels: [0. 1.], Counts: [2359290       6]
+		Loading of MRIs and annotations took 9.321265459060669 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 12.225567817687988 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 36)
+		Annotations shape before cropping: (256, 256, 36)
+		MRIs shape after cropping: (129, 169, 36)
+		Annotations shape after cropping: (129, 169, 36)
+	Cropping completed in 0.05 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (129, 169, 36) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (129, 169, 36) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0041959285736083984 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (129, 169, 36)
+			Shape after resampling: (293, 355, 318)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (129, 169, 36)
+			Shape after resampling: (293, 355, 318)
+	Resampling of MRIs and annotations took 11.402234077453613 seconds!
+
+	Pruned from 2 CMBs to 2.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 2, Unique labels: [0. 1.], Counts: [33076578      192]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-312 in 66.41 seconds (worker 2)!
+
+"
+"sub-321";"completed";"Started processing sub-321... (worker 5)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 2, Unique labels: [0. 1.], Counts: [2555896       8]
+		Loading of MRIs and annotations took 8.522669553756714 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 13.406670093536377 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 39)
+		Annotations shape before cropping: (256, 256, 39)
+		MRIs shape after cropping: (130, 163, 35)
+		Annotations shape after cropping: (130, 163, 35)
+	Cropping completed in 0.03 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (130, 163, 35) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (130, 163, 35) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.003310680389404297 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (130, 163, 35)
+			Shape after resampling: (282, 350, 282)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (130, 163, 35)
+			Shape after resampling: (282, 350, 282)
+	Resampling of MRIs and annotations took 9.336029291152954 seconds!
+
+	Pruned from 2 CMBs to 2.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 2, Unique labels: [0. 1.], Counts: [27833140      260]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-321 in 60.59 seconds (worker 5)!
+
+"
+"sub-233";"completed";"Started processing sub-233... (worker 0)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [50331648]
+		Loading of MRIs and annotations took 25.16450023651123 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 45.45710563659668 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (266, 339, 165)
+		Annotations shape after cropping: (266, 339, 165)
+	Cropping completed in 2.08 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (266, 339, 165) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (266, 339, 165) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0068128108978271484 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (266, 339, 165)
+			Shape after resampling: (260, 332, 264)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (266, 339, 165)
+			Shape after resampling: (260, 332, 264)
+	Resampling of MRIs and annotations took 5.860539197921753 seconds!
+
+	Pruned from 0 CMBs to 0.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [22788480]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-233 in 92.15 seconds (worker 0)!
+
+"
+"sub-326";"completed";"Started processing sub-326... (worker 5)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [2555897       7]
+		Loading of MRIs and annotations took 4.8331122398376465 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 13.153246402740479 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 39)
+		Annotations shape before cropping: (256, 256, 39)
+		MRIs shape after cropping: (141, 176, 39)
+		Annotations shape after cropping: (141, 176, 39)
+	Cropping completed in 0.06 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (141, 176, 39) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (141, 176, 39) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.004382610321044922 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (141, 176, 39)
+			Shape after resampling: (289, 374, 272)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (141, 176, 39)
+			Shape after resampling: (289, 374, 272)
+	Resampling of MRIs and annotations took 9.323534488677979 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [29399224      168]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-326 in 53.22 seconds (worker 5)!
+
+"
+"sub-212";"completed";"Started processing sub-212... (worker 1)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [50331612       36]
+		Loading of MRIs and annotations took 34.938584089279175 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 46.30227494239807 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (276, 339, 171)
+		Annotations shape after cropping: (276, 339, 171)
+	Cropping completed in 1.95 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (276, 339, 171) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (276, 339, 171) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.004050493240356445 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (276, 339, 171)
+			Shape after resampling: (270, 332, 274)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (276, 339, 171)
+			Shape after resampling: (270, 332, 274)
+	Resampling of MRIs and annotations took 7.494775772094727 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [24561312       48]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-212 in 110.79 seconds (worker 1)!
+
+"
+"sub-232";"completed";"Started processing sub-232... (worker 3)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [50331619       29]
+		Loading of MRIs and annotations took 37.240225315093994 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 45.62382745742798 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (276, 322, 169)
+		Annotations shape after cropping: (276, 322, 169)
+	Cropping completed in 2.37 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (276, 322, 169) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (276, 322, 169) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.00638580322265625 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (276, 322, 169)
+			Shape after resampling: (270, 315, 270)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (276, 322, 169)
+			Shape after resampling: (270, 315, 270)
+	Resampling of MRIs and annotations took 5.2634992599487305 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [22963450       50]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-232 in 108.69 seconds (worker 3)!
+
+"
+"sub-208";"completed";"Started processing sub-208... (worker 2)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [50331577       71]
+		Loading of MRIs and annotations took 32.077770471572876 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 43.874290227890015 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (271, 341, 172)
+		Annotations shape after cropping: (271, 341, 172)
+	Cropping completed in 2.40 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (271, 341, 172) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (271, 341, 172) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0072629451751708984 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (271, 341, 172)
+			Shape after resampling: (265, 334, 275)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (271, 341, 172)
+			Shape after resampling: (265, 334, 275)
+	Resampling of MRIs and annotations took 6.738654375076294 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [24340133      117]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-208 in 104.64 seconds (worker 2)!
+
+"
+"sub-323";"completed";"Started processing sub-323... (worker 3)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [2555901       3]
+		Loading of MRIs and annotations took 4.225986957550049 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 12.687528133392334 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 39)
+		Annotations shape before cropping: (256, 256, 39)
+		MRIs shape after cropping: (139, 174, 37)
+		Annotations shape after cropping: (139, 174, 37)
+	Cropping completed in 0.04 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (139, 174, 37) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (139, 174, 37) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.003950834274291992 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (139, 174, 37)
+			Shape after resampling: (298, 401, 339)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (139, 174, 37)
+			Shape after resampling: (298, 401, 339)
+	Resampling of MRIs and annotations took 15.60083794593811 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [40509725       97]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-323 in 62.06 seconds (worker 3)!
+
+"
+"sub-229";"completed";"Started processing sub-229... (worker 0)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [50331631       17]
+		Loading of MRIs and annotations took 35.57254362106323 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 45.1608190536499 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (313, 350, 175)
+		Annotations shape after cropping: (313, 350, 175)
+	Cropping completed in 2.37 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (313, 350, 175) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (313, 350, 175) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.005642414093017578 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (313, 350, 175)
+			Shape after resampling: (306, 342, 280)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (313, 350, 175)
+			Shape after resampling: (306, 342, 280)
+	Resampling of MRIs and annotations took 6.792260646820068 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [29302532       28]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-229 in 113.12 seconds (worker 0)!
+
+"
+"sub-206";"completed";"Started processing sub-206... (worker 5)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [50331648]
+		Loading of MRIs and annotations took 22.57305383682251 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 42.87882590293884 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (265, 319, 175)
+		Annotations shape after cropping: (265, 319, 175)
+	Cropping completed in 1.67 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (265, 319, 175) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (265, 319, 175) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0035085678100585938 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (265, 319, 175)
+			Shape after resampling: (259, 312, 280)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (265, 319, 175)
+			Shape after resampling: (259, 312, 280)
+	Resampling of MRIs and annotations took 7.6994287967681885 seconds!
+
+	Pruned from 0 CMBs to 0.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [22626240]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-206 in 88.78 seconds (worker 5)!
+
+"
+"sub-110";"completed";"Started processing sub-110... (worker 4)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 83, Unique labels: [0. 1.], Counts: [9173317    1723]
+		Loading of MRIs and annotations took 398.42561054229736 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 23.475404500961304 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 35)
+		Annotations shape before cropping: (512, 512, 35)
+		MRIs shape after cropping: (307, 380, 35)
+		Annotations shape after cropping: (307, 380, 35)
+	Cropping completed in 0.21 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (307, 380, 35) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (307, 380, 35) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.00425267219543457 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (307, 380, 35)
+			Shape after resampling: (291, 379, 323)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (307, 380, 35)
+			Shape after resampling: (291, 379, 323)
+	Resampling of MRIs and annotations took 11.96826982498169 seconds!
+
+	Pruned from 83 CMBs to 83.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 83, Unique labels: [0. 1.], Counts: [35612172    11175]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-110 in 865.60 seconds (worker 4)!
+
+"
+"sub-106";"completed";"Started processing sub-106... (worker 2)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 3, Unique labels: [0. 1.], Counts: [9175005      35]
+		Loading of MRIs and annotations took 16.34696650505066 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 14.457892417907715 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 35)
+		Annotations shape before cropping: (512, 512, 35)
+		MRIs shape after cropping: (300, 357, 33)
+		Annotations shape after cropping: (300, 357, 33)
+	Cropping completed in 0.27 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (300, 357, 33) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (300, 357, 33) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0068280696868896484 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (300, 357, 33)
+			Shape after resampling: (279, 393, 362)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (300, 357, 33)
+			Shape after resampling: (279, 393, 362)
+	Resampling of MRIs and annotations took 14.555453538894653 seconds!
+
+	Pruned from 3 CMBs to 3.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 3, Unique labels: [0. 1.], Counts: [39691975      239]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-106 in 85.83 seconds (worker 2)!
+
+"
+"sub-316";"completed";"Started processing sub-316... (worker 3)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 2, Unique labels: [0. 1.], Counts: [2555896       8]
+		Loading of MRIs and annotations took 9.02164363861084 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 12.966081380844116 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 39)
+		Annotations shape before cropping: (256, 256, 39)
+		MRIs shape after cropping: (133, 170, 37)
+		Annotations shape after cropping: (133, 170, 37)
+	Cropping completed in 0.03 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (133, 170, 37) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (133, 170, 37) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.006801605224609375 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (133, 170, 37)
+			Shape after resampling: (277, 396, 350)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (133, 170, 37)
+			Shape after resampling: (277, 396, 350)
+	Resampling of MRIs and annotations took 13.111761331558228 seconds!
+
+	Pruned from 2 CMBs to 2.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 2, Unique labels: [0. 1.], Counts: [38391939      261]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-316 in 71.68 seconds (worker 3)!
+
+"
+"sub-319";"completed";"Started processing sub-319... (worker 4)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [2555894      10]
+		Loading of MRIs and annotations took 5.219940423965454 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 17.777132987976074 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 39)
+		Annotations shape before cropping: (256, 256, 39)
+		MRIs shape after cropping: (130, 178, 39)
+		Annotations shape after cropping: (130, 178, 39)
+	Cropping completed in 0.03 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (130, 178, 39) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (130, 178, 39) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.003548860549926758 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (130, 178, 39)
+			Shape after resampling: (276, 382, 268)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (130, 178, 39)
+			Shape after resampling: (276, 382, 268)
+	Resampling of MRIs and annotations took 11.228588342666626 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [28255537      239]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-319 in 55.49 seconds (worker 4)!
+
+"
+"sub-215";"completed";"Started processing sub-215... (worker 0)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [50331616       32]
+		Loading of MRIs and annotations took 33.91323161125183 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 50.4856379032135 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (287, 352, 178)
+		Annotations shape after cropping: (287, 352, 178)
+	Cropping completed in 1.91 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (287, 352, 178) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (287, 352, 178) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0036978721618652344 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (287, 352, 178)
+			Shape after resampling: (281, 344, 285)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (287, 352, 178)
+			Shape after resampling: (281, 344, 285)
+	Resampling of MRIs and annotations took 5.995154142379761 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [27549187       53]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-215 in 117.75 seconds (worker 0)!
+
+"
+"sub-221";"completed";"Started processing sub-221... (worker 1)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 11, Unique labels: [0. 1.], Counts: [50331159      489]
+		Loading of MRIs and annotations took 70.47034668922424 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 44.7069308757782 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (288, 358, 180)
+		Annotations shape after cropping: (288, 358, 180)
+	Cropping completed in 2.37 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (288, 358, 180) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (288, 358, 180) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.006656646728515625 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (288, 358, 180)
+			Shape after resampling: (282, 350, 288)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (288, 358, 180)
+			Shape after resampling: (282, 350, 288)
+	Resampling of MRIs and annotations took 11.937160015106201 seconds!
+
+	Pruned from 11 CMBs to 11.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 11, Unique labels: [0. 1.], Counts: [28424824      776]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-221 in 202.34 seconds (worker 1)!
+
+"
+"sub-320";"completed";"Started processing sub-320... (worker 4)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 2, Unique labels: [0. 1.], Counts: [2555895       9]
+		Loading of MRIs and annotations took 9.826205253601074 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 15.217218160629272 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 39)
+		Annotations shape before cropping: (256, 256, 39)
+		MRIs shape after cropping: (136, 162, 36)
+		Annotations shape after cropping: (136, 162, 36)
+	Cropping completed in 0.04 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (136, 162, 36) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (136, 162, 36) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.003216981887817383 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (136, 162, 36)
+			Shape after resampling: (273, 326, 214)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (136, 162, 36)
+			Shape after resampling: (273, 326, 214)
+	Resampling of MRIs and annotations took 5.97795844078064 seconds!
+
+	Pruned from 2 CMBs to 2.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 2, Unique labels: [0. 1.], Counts: [19045355      217]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-320 in 53.98 seconds (worker 4)!
+
+"
+"sub-217";"completed";"Started processing sub-217... (worker 2)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [50331561       87]
+		Loading of MRIs and annotations took 30.714003562927246 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 49.048760652542114 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (271, 324, 176)
+		Annotations shape after cropping: (271, 324, 176)
+	Cropping completed in 1.76 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (271, 324, 176) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (271, 324, 176) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0037086009979248047 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (271, 324, 176)
+			Shape after resampling: (265, 317, 282)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (271, 324, 176)
+			Shape after resampling: (265, 317, 282)
+	Resampling of MRIs and annotations took 9.282933235168457 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [23689284      126]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-217 in 111.79 seconds (worker 2)!
+
+"
+"sub-108";"completed";"Started processing sub-108... (worker 5)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 11, Unique labels: [0. 1.], Counts: [9174455     585]
+		Loading of MRIs and annotations took 55.291747093200684 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 13.315720558166504 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 35)
+		Annotations shape before cropping: (512, 512, 35)
+		MRIs shape after cropping: (309, 379, 34)
+		Annotations shape after cropping: (309, 379, 34)
+	Cropping completed in 0.15 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (309, 379, 34) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (309, 379, 34) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.00407719612121582 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (309, 379, 34)
+			Shape after resampling: (335, 395, 305)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (309, 379, 34)
+			Shape after resampling: (335, 395, 305)
+	Resampling of MRIs and annotations took 10.504090070724487 seconds!
+
+	Pruned from 11 CMBs to 11.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 11, Unique labels: [0. 1.], Counts: [40355419     3706]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-108 in 163.14 seconds (worker 5)!
+
+"
+"sub-315";"completed";"Started processing sub-315... (worker 1)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [2555898       6]
+		Loading of MRIs and annotations took 4.940494060516357 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 13.90378713607788 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 39)
+		Annotations shape before cropping: (256, 256, 39)
+		MRIs shape after cropping: (138, 164, 37)
+		Annotations shape after cropping: (138, 164, 37)
+	Cropping completed in 0.05 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (138, 164, 37) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (138, 164, 37) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.005237102508544922 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (138, 164, 37)
+			Shape after resampling: (296, 345, 291)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (138, 164, 37)
+			Shape after resampling: (296, 345, 291)
+	Resampling of MRIs and annotations took 11.364895343780518 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [29716726      194]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-315 in 56.11 seconds (worker 1)!
+
+"
+"sub-203";"completed";"Started processing sub-203... (worker 0)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [50331648]
+		Loading of MRIs and annotations took 23.333373546600342 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 42.9442925453186 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (287, 355, 186)
+		Annotations shape after cropping: (287, 355, 186)
+	Cropping completed in 2.27 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (287, 355, 186) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (287, 355, 186) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.007654428482055664 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (287, 355, 186)
+			Shape after resampling: (281, 347, 298)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (287, 355, 186)
+			Shape after resampling: (281, 347, 298)
+	Resampling of MRIs and annotations took 12.982752799987793 seconds!
+
+	Pruned from 0 CMBs to 0.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [29057086]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-203 in 99.45 seconds (worker 0)!
+
+"
+"sub-227";"completed";"Started processing sub-227... (worker 4)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [50331648]
+		Loading of MRIs and annotations took 23.98739719390869 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 48.2975652217865 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (271, 339, 166)
+		Annotations shape after cropping: (271, 339, 166)
+	Cropping completed in 2.23 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (271, 339, 166) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (271, 339, 166) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.00566554069519043 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (271, 339, 166)
+			Shape after resampling: (265, 332, 266)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (271, 339, 166)
+			Shape after resampling: (265, 332, 266)
+	Resampling of MRIs and annotations took 5.016861915588379 seconds!
+
+	Pruned from 0 CMBs to 0.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [23402680]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-227 in 92.29 seconds (worker 4)!
+
+"
+"sub-101";"completed";"Started processing sub-101... (worker 3)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 14, Unique labels: [0. 1.], Counts: [9174781     259]
+		Loading of MRIs and annotations took 62.75464391708374 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 15.448208093643188 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 35)
+		Annotations shape before cropping: (512, 512, 35)
+		MRIs shape after cropping: (318, 391, 34)
+		Annotations shape after cropping: (318, 391, 34)
+	Cropping completed in 0.28 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (318, 391, 34) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (318, 391, 34) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.004528522491455078 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (318, 391, 34)
+			Shape after resampling: (323, 386, 315)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (318, 391, 34)
+			Shape after resampling: (323, 386, 315)
+	Resampling of MRIs and annotations took 15.096639633178711 seconds!
+
+	Pruned from 14 CMBs to 14.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 14, Unique labels: [0. 1.], Counts: [39271916     1654]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-101 in 190.09 seconds (worker 3)!
+
+"
+"sub-219";"completed";"Started processing sub-219... (worker 5)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [50331648]
+		Loading of MRIs and annotations took 26.652376413345337 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 44.032573223114014 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (296, 349, 173)
+		Annotations shape after cropping: (296, 349, 173)
+	Cropping completed in 2.42 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (296, 349, 173) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (296, 349, 173) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0033173561096191406 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (296, 349, 173)
+			Shape after resampling: (290, 341, 277)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (296, 349, 173)
+			Shape after resampling: (290, 341, 277)
+	Resampling of MRIs and annotations took 8.064864873886108 seconds!
+
+	Pruned from 0 CMBs to 0.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [27392530]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-219 in 95.76 seconds (worker 5)!
+
+"
+"sub-201";"completed";"Started processing sub-201... (worker 2)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [50331648]
+		Loading of MRIs and annotations took 23.959182500839233 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 45.06252980232239 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (286, 352, 185)
+		Annotations shape after cropping: (286, 352, 185)
+	Cropping completed in 2.41 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (286, 352, 185) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (286, 352, 185) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.004422664642333984 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (286, 352, 185)
+			Shape after resampling: (280, 344, 296)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (286, 352, 185)
+			Shape after resampling: (280, 344, 296)
+	Resampling of MRIs and annotations took 12.878392219543457 seconds!
+
+	Pruned from 0 CMBs to 0.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [28510720]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-201 in 100.89 seconds (worker 2)!
+
+"
+"sub-204";"completed";"Started processing sub-204... (worker 1)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [50331648]
+		Loading of MRIs and annotations took 25.997199535369873 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 48.78900933265686 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (276, 336, 168)
+		Annotations shape after cropping: (276, 336, 168)
+	Cropping completed in 2.02 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (276, 336, 168) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (276, 336, 168) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0035109519958496094 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (276, 336, 168)
+			Shape after resampling: (270, 329, 269)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (276, 336, 168)
+			Shape after resampling: (270, 329, 269)
+	Resampling of MRIs and annotations took 5.670521259307861 seconds!
+
+	Pruned from 0 CMBs to 0.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [23895270]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-204 in 93.78 seconds (worker 1)!
+
+"
+"sub-306";"completed";"Started processing sub-306... (worker 4)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [2555895       9]
+		Loading of MRIs and annotations took 7.107436656951904 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 19.29956555366516 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (256, 256, 39)
+		Annotations shape before cropping: (256, 256, 39)
+		MRIs shape after cropping: (129, 164, 39)
+		Annotations shape after cropping: (129, 164, 39)
+	Cropping completed in 0.07 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (129, 164, 39) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (129, 164, 39) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.004801034927368164 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (129, 164, 39)
+			Shape after resampling: (291, 389, 295)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (129, 164, 39)
+			Shape after resampling: (291, 389, 295)
+	Resampling of MRIs and annotations took 8.456044912338257 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [33393487      218]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-306 in 58.94 seconds (worker 4)!
+
+"
+"sub-205";"completed";"Started processing sub-205... (worker 3)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [50331648]
+		Loading of MRIs and annotations took 22.321733951568604 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 50.70636034011841 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (293, 338, 177)
+		Annotations shape after cropping: (293, 338, 177)
+	Cropping completed in 2.16 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (293, 338, 177) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (293, 338, 177) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.005179166793823242 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (293, 338, 177)
+			Shape after resampling: (287, 331, 283)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (293, 338, 177)
+			Shape after resampling: (287, 331, 283)
+	Resampling of MRIs and annotations took 7.08606219291687 seconds!
+
+	Pruned from 0 CMBs to 0.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [26884151]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-205 in 100.28 seconds (worker 3)!
+
+"
+"sub-216";"completed";"Started processing sub-216... (worker 0)
+	Loading MRI scans and annotations...
+		Number of processed CMBs: 21, Unique labels: [0. 1.], Counts: [50330091     1557]
+		Loading of MRIs and annotations took 119.53225564956665 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 45.79476046562195 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (272, 343, 167)
+		Annotations shape after cropping: (272, 343, 167)
+	Cropping completed in 1.72 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (272, 343, 167) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (272, 343, 167) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0068094730377197266 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (272, 343, 167)
+			Shape after resampling: (266, 335, 267)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (272, 343, 167)
+			Shape after resampling: (266, 335, 267)
+	Resampling of MRIs and annotations took 6.568140745162964 seconds!
+
+	Pruned from 21 CMBs to 21.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 21, Unique labels: [0. 1.], Counts: [23790001     2369]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-216 in 280.29 seconds (worker 0)!
+
+"

@@ -1,0 +1,67 @@
+# This file contains the default configuration for a U-Net model.
+
+# The name of the model class to use.
+module_name: unet
+class_name: UNet
+
+# Hyperparameters for the model.
+config:
+  input_shape: [40, 40, 40]
+  # input_shape: [20, 20, 20] # maybe different size, see literature
+  # n_channels: 3
+  n_channels: 1 # T2s only
+  # filters_per_depth: [16, 32, 64, 128, 256]
+  filters_per_depth: [32, 64, 128, 256]
+  # filters_per_depth: [16, 32, 64]
+  kernel_size: [3, 3, 3]
+  pool_size: [2, 2, 2]
+  n_classes: 2
+  # n_conv_per_depth: [2, 2, 2, 2, 2]
+  n_conv_per_depth: 2
+  # n_conv_per_depth: [2, 2, 2]
+  conv_kwargs:
+    padding: 'same'
+    strides: [1, 1, 1]
+  hidden_activation: "elu"
+  output_activation: "softmax"
+  up_sampling_interpol: "nearest"
+  merge_layer: 'Concatenate'
+  normalization: "BatchNormalization"
+  normalization_kwargs:
+  kernel_regularizer: 'L2'
+  kernel_regularizer_kwargs:
+    l2: 0.0001
+
+
+
+
+
+
+
+# # This file contains the default configuration for a U-Net model.
+
+# # The name of the model class to use.
+# module_name: unet
+# class_name: UNet
+
+# # Hyperparameters for the model.
+# config:
+#   input_shape: [64, 64, 64]
+#   n_channels: 1
+#   filters_per_depth: [16, 32, 64, 128]
+#   kernel_size: [3, 3, 3]
+#   pool_size: [2, 2, 2]
+#   n_classes: 2
+#   n_conv_per_depth: [2, 2, 2, 2]
+#   conv_kwargs:
+#     padding: 'same'
+#     strides: [1, 1, 1]
+#   hidden_activation: "elu"
+#   output_activation: "softmax"
+#   up_sampling_interpol: "nearest"
+#   merge_layer: 'Concatenate'
+#   normalization: "BatchNormalization"
+#   normalization_kwargs:
+#   kernel_regularizer: 'L2'
+#   kernel_regularizer_kwargs:
+#     l2: 0.0001

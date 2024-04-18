@@ -1,0 +1,31 @@
+# Epoch settings
+epochs: 5000
+train_steps_per_epoch: 100
+val_steps_per_epoch: 50
+
+# Optimizer and optional kwargs
+optimizer:
+  # name: 'SGD' # consder changing to 'Adam'
+  name: 'Adam'
+  kwargs:
+    # learning_rate: 0.0001
+    learning_rate: 0.00005
+# Loss
+# loss:
+#   name: 'CategoricalCrossentropy'
+loss:
+  name: 'WeightedMeanMultiLoss'
+  kwargs:
+    loss_funcs: ['focal_tversky_loss', 'ClassWeightedLoss']
+    weights: [1.0, 1]
+    per_loss_kwargs:
+      - gamma: 3
+        alpha: 0.3
+        beta: 0.7
+        smooth: 1.0
+      - loss_func: CategoricalCrossentropy
+        class_weights: [0.1, 5]
+
+# Optional list of metrics
+metrics:
+  #- 'CategoricalAccuracy'

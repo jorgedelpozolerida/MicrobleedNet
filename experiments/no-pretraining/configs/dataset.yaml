@@ -10,7 +10,7 @@ study_folder_glob: '*'
 # Metadata settings
 metadata_task_id: null  # if the metadata file is to be fetched from a ClearML task.
 metadata_file: /home/cerebriu/data/RESEARCH/MicrobleedNet/data-misc/training/metadata_cmb_train.yaml   # must contain split keys like those in 'splits' below
-splits_file: /home/cerebriu/data/RESEARCH/MicrobleedNet/data-misc/training/splits_with_sMOMENI_CRBneg_filtered.json
+splits_file: /home/cerebriu/data/RESEARCH/MicrobleedNet/data-misc/training/splits_without_sMOMENI_CRBneg.json
 study_dir_relative_metadata_path: null  # relative path to per-study folder metadata files within each study folder
 
 
@@ -42,11 +42,12 @@ segmentation_specs:  # Defines a list of segmentation files to load. Each entry 
       1: 1  # CMB
 
 # Split parameters
+# splits_file: 'splits.json'
 splits:
   # Parameters for splits defined in the splits_file (see above)
   # Training data
   train:
-    batch_size: 3
+    batch_size: 4
     mri_sampling_strategy:
       name: 'uniform_random' # TODO: use balanced classes!
     patch_sampling_strategy:
@@ -60,11 +61,16 @@ splits:
           1: &cmb_prop 0.9  # Proportion for CMB
   # Validation (same as train for now)
   valid:
-    batch_size: 8
+    batch_size: 10
     mri_sampling_strategy:
-      name: 'deterministic_loop'
+      # name: 'deterministic_loop'
+      name: 'balanced_classes'
+      kwargs:
+        alpha: 0.8
+        label_counts_key: 'segmentation/mapped_labels/label_counts'  # OBS: Pre-label-map counts here
+        fg_class_sample_prob:  # normalizes internatlly
+          "1": 1
     patch_sampling_strategy:
-
       name: 'random_3d'
       kwargs:
         # NOTE: only patch_overlap fraction matters for eval 

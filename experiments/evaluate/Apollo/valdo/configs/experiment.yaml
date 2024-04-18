@@ -1,0 +1,6 @@
+# Base config file for experiment settings
+# Path: crbr/config_templates/experiment.yaml
+
+project_name: CMB/evaluations                  # Top-level ClearML organizational/dir name (can also be set with --project-name)
+task_name: null                    # Optional name for the run (usually set from cmd with -t / --task-name)
+task_description: Only VALDO datasets used        # Optional text description of the experiment (can also be set with --task-description)

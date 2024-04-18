@@ -1,6 +1,0 @@
-# Base config file for experiment settings
-# Path: crbr/config_templates/experiment.yaml
-
-project_name: CMB/valdo                  # Top-level ClearML organizational/dir name (can also be set with --project-name)
-task_name: valdo_apollo_scratch                     # Optional name for the run (usually set from cmd with -t / --task-name)
-task_description: Train Apollo from scratch on VALDO         # Optional text description of the experiment (can also be set with --task-description)

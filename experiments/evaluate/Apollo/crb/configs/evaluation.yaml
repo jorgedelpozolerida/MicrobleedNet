@@ -1,0 +1,23 @@
+# An optional integer to integer label map to apply to segmentations (ground truth and predictions)
+# before computation evaluations. Can for instance be used to merge predicted classes. For instnace:
+# evaluation_label_map:
+#   0: 0  # background
+#   1: 1  # tumour core  --> tumour
+#   2: 1  # tumour edema --> tumour
+evaluation_label_map: null  # not used, keep all classes as defined in the dataset label map
+
+# Optional label mapping (integer to readable) to use when logging results in ClearML.
+# Should be defined with respect to the output of the evaluation_label_map above if set.
+label_names_mapping: null  # not used, keep all classes as defined in the dataset label map
+
+# The name of the SegmentationToClassificationConverter class to use to convert segmentations to
+# classifications. If null, the defualt is used (usually 'pixel_count')
+segmentation_to_classification_converter: 'pixel_count'
+segmentation_to_classification_converter_kwargs:
+  # The class index to use as the positive class. If null or not specified, class 0 is used.
+  negative_class_index: 0
+
+  # A integer to integer mapping of how many pixels of that class integer should be present in a
+  # segmentation map to be considered a positive classification. If null, the threshold is 1 for all
+  # classes.
+  num_pixels_thresholds: null

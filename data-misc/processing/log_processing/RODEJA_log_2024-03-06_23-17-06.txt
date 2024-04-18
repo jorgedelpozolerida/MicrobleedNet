@@ -1,0 +1,12 @@
+
+2024-03-06 23:17:22.877021
+***********************************************
+STARTING PROCESSING OF DATASET rodeja
+***********************************************
+CSV log: /datadrive_m2/jorge/datasets/processed_final/pRODEJA/log_2024-03-06_23-17-06.csv
+TXT log: /datadrive_m2/jorge/datasets/processed_final/pRODEJA/log_2024-03-06_23-17-06.txt
+Collected a total of 2 subjects (Failed: 0, Unprocessed: 2) out of 103 from log file /datadrive_m2/jorge/datasets/processed_final/pRODEJA/log_2024-03-06_16-55-59.csv
+Succesfully deleted the following study: 00300
+Succesfully deleted the following study: 00126
+Processing 2 studies
+

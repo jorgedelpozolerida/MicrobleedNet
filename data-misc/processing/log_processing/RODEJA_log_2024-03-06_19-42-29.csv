@@ -1,0 +1,166 @@
+studyUID;status;message
+"00300";"completed";"Started processing 00300... (worker 0)
+	Loading MRI scans and annotations...
+		Combining labels from original masks
+		---- Study found in manual fixes mapping CSV ----
+			CMB-0
+				Will use original radius of 2.3005262278302294, reduced to 1.3803157366981376
+				Sphere created with radius 3.244012179295627mm, size=143
+			CMB-1
+				Will use original radius of 4.077649665102033, reduced to 2.4465897990612198
+				Sphere created with radius 5.521200295585232mm, size=705
+			CMB-2
+				Will use original radius of 3.051308489600857, reduced to 1.8307850937605141
+				Sphere created with radius 4.148211199396802mm, size=299
+				CAUTION: Overlap detected at (330, 180, 33)
+				         Previously visited CMBs: [(338, 189, 18), (329, 193, 33)]
+			CMB-3
+				Will use original radius of 2.415022237656582, reduced to 1.449013342593949
+				Sphere created with radius 3.244012179295627mm, size=143
+			CMB-4
+				Will use original radius of 2.695101222399913, reduced to 1.6170607334399476
+				Sphere created with radius 3.739255735818739mm, size=219
+			CMB-5
+				Will use original radius of 2.0856030939994468, reduced to 1.251361856399668
+				Sphere created with radius 2.8697816993790513mm, size=99
+			CMB-6
+				Will use original radius of 1.789400457879299, reduced to 1.0736402747275793
+				Sphere created with radius 2.2387370303845966mm, size=47
+			CMB-7
+				Will use original radius of 1.8377858903240547, reduced to 1.1026715341944329
+				Sphere created with radius 2.4684100922353225mm, size=63
+			CMB-8
+				Will use original radius of 1.711499967172251, reduced to 1.0268999803033505
+				Sphere created with radius 2.103739683417501mm, size=39
+			CMB-9
+				Will use original radius of 2.103739683417501, reduced to 1.2622438100505005
+				Sphere created with radius 2.8697816993790513mm, size=99
+			CMB-10
+				Will use original radius of 2.285390748670416, reduced to 1.3712344492022495
+				Sphere created with radius 3.118207682606165mm, size=127
+			CMB-11
+				Will use original radius of 2.8889781342892826, reduced to 1.7333868805735695
+				Sphere created with radius 3.8497845968977753mm, size=239
+			CMB-12
+				Will use original radius of 6.293186897548184, reduced to 3.77591213852891
+				Sphere created with radius 8.431781966643493mm, size=2511
+			CMB-13
+				Will use original radius of 1.4951329367184953, reduced to 0.8970797620310972
+				Sphere created with radius 1.8139158392989048mm, size=25
+			CMB-14
+				Will use original radius of 2.4942591981125846, reduced to 1.4965555188675508
+				Sphere created with radius 3.360749724264337mm, size=159
+			CMB-15
+				Will use original radius of 2.139103257799201, reduced to 1.2834619546795205
+				Sphere created with radius 2.9079227945114825mm, size=103
+			CMB-16
+				Will use original radius of 1.7641942770035128, reduced to 1.0585165662021077
+				Sphere created with radius 2.2387370303845966mm, size=47
+			CMB-17
+				Will use original radius of 2.7275754455243746, reduced to 1.6365452673146248
+				Sphere created with radius 3.739255735818739mm, size=219
+			CMB-18
+				Will use original radius of 2.981339653545337, reduced to 1.7888037921272022
+				Sphere created with radius 3.8922684085227535mm, size=247
+			CMB-19
+				Will use original radius of 2.2700520935637276, reduced to 1.3620312561382366
+				Sphere created with radius 3.118207682606165mm, size=127
+			CMB-20
+				Will use original radius of 0.6203504908994001, reduced to 0.37221029453964005
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-21
+				Will use original radius of 3.733555642018398, reduced to 2.2401333852110388
+				Sphere created with radius 5.0044562629624mm, size=525
+			CMB-22
+				Will use original radius of 1.8377858903240547, reduced to 1.1026715341944329
+				Sphere created with radius 2.4684100922353225mm, size=63
+			CMB-23
+				Will use original radius of 1.5299158709729348, reduced to 0.9179495225837608
+				Sphere created with radius 1.9059132510127017mm, size=29
+			CMB-24
+				Will use original radius of 2.139103257799201, reduced to 1.2834619546795205
+				Sphere created with radius 2.9079227945114825mm, size=103
+			CMB-25
+				Will use original radius of 2.048352189765887, reduced to 1.2290113138595322
+				Sphere created with radius 2.7903001836133603mm, size=91
+			CMB-26
+				Will use original radius of 3.0079601661525035, reduced to 1.804776099691502
+				Sphere created with radius 4.034112712569094mm, size=275
+			CMB-27
+				Will use original radius of 3.5725769016050326, reduced to 2.1435461409630197
+				Sphere created with radius 4.792227629009852mm, size=461
+			CMB-28
+				Will use original radius of 1.8377858903240547, reduced to 1.1026715341944329
+				Sphere created with radius 2.4684100922353225mm, size=63
+			CMB-29
+				Will use original radius of 2.738230145283347, reduced to 1.642938087170008
+				Sphere created with radius 3.739255735818739mm, size=219
+			CMB-30
+				Will use original radius of 4.014457771229203, reduced to 2.4086746627375217
+				Sphere created with radius 5.479112329862842mm, size=689
+			CMB-31
+				Will use original radius of 1.8139158392989048, reduced to 1.088349503579343
+				Sphere created with radius 2.4684100922353225mm, size=63
+			CMB-32
+				Will use original radius of 2.71683684833277, reduced to 1.630102108999662
+				Sphere created with radius 3.739255735818739mm, size=219
+			CMB-33
+				Will use original radius of 3.15060696517646, reduced to 1.8903641791058758
+				Sphere created with radius 4.148211199396802mm, size=299
+			CMB-34
+				Will use original radius of 1.789400457879299, reduced to 1.0736402747275793
+				Sphere created with radius 2.2387370303845966mm, size=47
+			CMB-35
+				Will use original radius of 1.4202480846149885, reduced to 0.852148850768993
+				Sphere created with radius 1.8139158392989048mm, size=25
+			CMB-36
+				Will use original radius of 2.1215688358941103, reduced to 1.2729413015364661
+				Sphere created with radius 2.9079227945114825mm, size=103
+			CMB-37
+				Will use original radius of 1.2407009817988, reduced to 0.74442058907928
+				Sphere created with radius 1.711499967172251mm, size=21
+			CMB-38
+				Will use original radius of 2.2065205075171996, reduced to 1.3239123045103198
+				Sphere created with radius 2.981339653545337mm, size=111
+			CMB-39
+				Will use original radius of 1.5299158709729348, reduced to 0.9179495225837608
+				Sphere created with radius 1.9059132510127017mm, size=29
+		Loading of MRIs and annotations took 9645.543092727661 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 46.011444091796875 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (768, 768, 150)
+		Annotations shape before cropping: (768, 768, 150)
+		MRIs shape after cropping: (440, 554, 143)
+		Annotations shape after cropping: (440, 554, 143)
+	Cropping completed in 2.05 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (440, 554, 143) and orientation ('R', 'A', 'S')
+		Found SWI annotation, shape (440, 554, 143) and orientation ('R', 'A', 'S')
+	Orientation and data type adjustment took 0.002046346664428711 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (440, 554, 143)
+			Shape after resampling: (320, 380, 301)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (440, 554, 143)
+			Shape after resampling: (320, 380, 301)
+	Resampling of MRIs and annotations took 8.868513345718384 seconds!
+
+	Pruned from 39 CMBs to 39.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 39, Unique labels: [0. 1.], Counts: [36595090     6510]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	ISSUE: number of original CMBs differ before (40) and after (39) preprocessing
+	Removed temporary cache for study folder
+Finished processing of 00300 in 9753.10 seconds (worker 0)!
+
+"

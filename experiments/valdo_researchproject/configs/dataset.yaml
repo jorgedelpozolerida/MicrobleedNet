@@ -1,0 +1,82 @@
+# Base config file for dataset settings
+# Path: crbr/config_templates/dataset_configs/base.yaml
+
+# The name of the dataset.
+dataset_name: VALDO
+dataset_version: 2
+auto_download: true  # In ClearML-data so can be downloaded automatically
+study_folder_glob: '*'
+
+# Metadata settings
+metadata_task_id: null  # if the metadata file is to be fetched from a ClearML task.
+metadata_file: /home/cerebriu/data/RESEARCH/MicrobleedNet/data-misc/training/metadata_valdo.yaml    # must contain split keys like those in 'splits' below
+# study_dir_relative_metadata_path: 'Annotations_metadata'  # relative path to per-study folder metadata files within each study folder
+study_dir_relative_metadata_path: null  # relative path to per-study folder metadata files within each study folder
+
+
+# Image/MRI settings
+# In image_specs, multiple entries can be defined, each with a glob statement and a sequence_spec
+# if sequences are, for instance, stored 1 per file. See 'load_sequence_spec' below for the
+# sequences that are actually used for training and their input order.
+images_subdir: MRIs
+image_specs:  # A list of image files to load. Each entry must have 'fname_glob' and 'sequence_spec' keys
+  - fname_glob: '*.nii.gz'
+    name: 'mri'     # Optional
+    dtype: float32
+    sequence_spec:  # Order should match actual sequence order in file.
+      - 'T2S'
+
+# Sequence types input to model (order matters)
+load_sequence_spec:
+  - 'T2S'
+
+# Segmentation settings
+segmentations_subdir: Annotations
+segmentation_specs:  # Defines a list of segmentation files to load. Each entry must have 'fname_glob'. An optional 'label_map' keys can be added.
+  - name: 'segmentation'  # Main segmentation mask
+    fname_glob: '*.nii.gz'
+    sequence_space: 'T2S'
+    dtype: uint8
+    label_map:  # Mapping of in-data segmentation labels to integer labels used internally
+      0: 0  # Background
+      1: 1  # CMB
+
+# Split parameters
+splits_file: 'splits.json'
+splits:
+  # Parameters for splits defined in the splits_file (see above)
+  # Training data
+  train:
+    batch_size: 2
+    mri_sampling_strategy:
+      name: 'uniform_random' # TODO: use balanced classes!
+    patch_sampling_strategy:
+      name: 'random_3d'
+      kwargs:
+        num_patches: &num_patches 16 # TODO: decide if good number
+        patch_size: ${model.config.input_shape}
+        patch_overlap_frac: &overlap_frac 0.2
+        class_proportions:
+          0: &back_prop 0.1  # Proportion for Background
+          1: &cmb_prop 0.9  # Proportion for CMB
+  # Validation (same as train for now)
+  valid:
+    batch_size: 5
+    mri_sampling_strategy:
+      # name: 'deterministic_loop'
+      name: 'balanced_classes'
+      kwargs:
+        alpha: 0.5 # more ill than healthy
+        label_counts_key: 'segmentation/mapped_labels/label_counts'  # OBS: Pre-label-map counts here
+        fg_class_sample_prob:  # normalizes internatlly
+          "1": 1
+    patch_sampling_strategy:
+      name: 'random_3d'
+      kwargs:
+        # NOTE: only patch_overlap fraction matters for eval 
+        num_patches: *num_patches
+        patch_size: ${model.config.input_shape}
+        patch_overlap_frac: *overlap_frac
+        class_proportions:
+          0: *back_prop # Proportion for Background
+          1: *cmb_prop  # Proportion for CMB

@@ -1,0 +1,650 @@
+studyUID;status;message
+"1.3.12.2.1107.5.2.6.24111.30000019082703511493700000040";"completed";"Started processing 1.3.12.2.1107.5.2.6.24111.30000019082703511493700000040... (worker 3)
+	Loading MRI scans and annotations...
+		Generating spheres...
+
+			CMB-0
+				Will use RG radius of 0.89
+				Mask expanded by one layer, new size=7 voxels.
+				Sphere created with radius 0.6203504908994001mm, size=7
+			CMB-1
+				Will use RG radius of 1.06
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-2
+				Will use RG radius of 1.06
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-3
+				Will use RG radius of 1.24
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-4
+				Will use RG radius of 1.06
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-5
+				Will use RG radius of 0.98
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-6
+				Will use RG radius of 0.78
+				Mask expanded by one layer, new size=7 voxels.
+				Sphere created with radius 0.6203504908994001mm, size=7
+			CMB-7
+				Will use RG radius of 1.19
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-8
+				Will use RG radius of 1.06
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-9
+				Will use RG radius of 1.24
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-10
+				Will use RG radius of 0.98
+				Sphere created with radius 1.0607844179470554mm, size=5
+		Loading of MRIs and annotations took 212.24804592132568 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 9.125603437423706 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (208, 256, 52)
+		Annotations shape before cropping: (208, 256, 52)
+		MRIs shape after cropping: (146, 189, 50)
+		Annotations shape after cropping: (146, 189, 50)
+	Cropping completed in 0.04 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (146, 189, 50) and orientation ('L', 'A', 'S')
+		Found SWI annotation, shape (146, 189, 50) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.003205537796020508 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (146, 189, 50)
+			Shape after resampling: (318, 384, 300)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (146, 189, 50)
+			Shape after resampling: (318, 384, 300)
+	Resampling of MRIs and annotations took 5.864492654800415 seconds!
+
+	Pruned from 11 CMBs to 11.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 11, Unique labels: [0. 1.], Counts: [36632642      958]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 1.3.12.2.1107.5.2.6.24111.30000019082703511493700000040 in 394.31 seconds (worker 3)!
+
+"
+"1.2.826.1.3680043.9.5282.150415.14832.16014832222376";"completed";"Started processing 1.2.826.1.3680043.9.5282.150415.14832.16014832222376... (worker 2)
+	Loading MRI scans and annotations...
+		Generating spheres...
+
+			CMB-0
+				Will use RG radius of 1.76
+				Sphere created with radius 1.711499967172251mm, size=21
+			CMB-1
+				Will use RG radius of 0.62
+				Mask expanded by one layer, new size=7 voxels.
+				Sphere created with radius 0.6203504908994001mm, size=7
+			CMB-2
+				Will use RG radius of 0.98
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-3
+				Will use RG radius of 0.98
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-4
+				Will use RG radius of 1.42
+				Sphere created with radius 1.2903810207421493mm, size=9
+			CMB-5
+				Will use RG radius of 0.98
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-6
+				Will use RG radius of 0.98
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-7
+				Will use RG radius of 1.19
+				Sphere created with radius 1.2903810207421493mm, size=9
+			CMB-8
+				Will use RG radius of 1.13
+				Sphere created with radius 1.2903810207421493mm, size=9
+			CMB-9
+				Will use RG radius of 0.62
+				Mask expanded by one layer, new size=7 voxels.
+				Sphere created with radius 0.6203504908994001mm, size=7
+			CMB-10
+				Will use RG radius of 1.56
+				Sphere created with radius 1.4586516277963593mm, size=13
+			CMB-11
+				Will use RG radius of 1.6
+				Sphere created with radius 1.4586516277963593mm, size=13
+		Loading of MRIs and annotations took 226.27159357070923 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 9.564531087875366 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (270, 320, 29)
+		Annotations shape before cropping: (270, 320, 29)
+		MRIs shape after cropping: (178, 223, 27)
+		Annotations shape after cropping: (178, 223, 27)
+	Cropping completed in 0.03 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (178, 223, 27) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (178, 223, 27) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.003412961959838867 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (178, 223, 27)
+			Shape after resampling: (256, 324, 276)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (178, 223, 27)
+			Shape after resampling: (256, 324, 276)
+	Resampling of MRIs and annotations took 5.43093204498291 seconds!
+
+	Pruned from 12 CMBs to 12.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 12, Unique labels: [0. 1.], Counts: [22890216     2328]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 1.2.826.1.3680043.9.5282.150415.14832.16014832222376 in 406.35 seconds (worker 2)!
+
+"
+"42a2a5865709f9ddc47da60a1556f09552586685";"completed";"Started processing 42a2a5865709f9ddc47da60a1556f09552586685... (worker 1)
+	Loading MRI scans and annotations...
+		Generating spheres...
+
+			CMB-0
+				Will use RG radius of 2.8
+				Sphere created with radius 3.5219849309417994mm, size=183
+			CMB-1
+				Will use RG radius of 1.19
+				Sphere created with radius 1.711499967172251mm, size=21
+			CMB-2
+				Will use RG radius of 2.21
+				Sphere created with radius 2.544408437947105mm, size=69
+			CMB-3
+				Will use RG radius of 2.22
+				Sphere created with radius 2.544408437947105mm, size=69
+			CMB-4
+				Will use RG radius of 1.93
+				Sphere created with radius 2.2700520935637276mm, size=49
+			CMB-5
+				Will use RG radius of 1.97
+				Sphere created with radius 2.3874195660144624mm, size=57
+		Loading of MRIs and annotations took 345.74194145202637 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 13.625805139541626 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 60)
+		Annotations shape before cropping: (512, 512, 60)
+		MRIs shape after cropping: (272, 333, 60)
+		Annotations shape after cropping: (272, 333, 60)
+	Cropping completed in 0.27 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (272, 333, 60) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (272, 333, 60) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0034394264221191406 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (272, 333, 60)
+			Shape after resampling: (310, 353, 309)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (272, 333, 60)
+			Shape after resampling: (310, 353, 309)
+	Resampling of MRIs and annotations took 6.907162427902222 seconds!
+
+	Pruned from 6 CMBs to 6.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 6, Unique labels: [0. 1.], Counts: [33812065     1805]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 42a2a5865709f9ddc47da60a1556f09552586685 in 462.86 seconds (worker 1)!
+
+"
+"1.3.12.2.1107.5.2.6.24111.30000019082104124198400000043";"completed";"Started processing 1.3.12.2.1107.5.2.6.24111.30000019082104124198400000043... (worker 3)
+	Loading MRI scans and annotations...
+		Generating spheres...
+
+			CMB-0
+				Will use RG radius of 0.78
+				Mask expanded by one layer, new size=7 voxels.
+				Sphere created with radius 0.6203504908994001mm, size=7
+			CMB-1
+				Will use RG radius of 2.01
+				Sphere created with radius 1.711499967172251mm, size=21
+			CMB-2
+				Will use RG radius of 1.24
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-3
+				Will use RG radius of 0.89
+				Mask expanded by one layer, new size=7 voxels.
+				Sphere created with radius 0.6203504908994001mm, size=7
+		Loading of MRIs and annotations took 81.95456981658936 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 8.028679847717285 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (192, 256, 56)
+		Annotations shape before cropping: (192, 256, 56)
+		MRIs shape after cropping: (138, 184, 52)
+		Annotations shape after cropping: (138, 184, 52)
+	Cropping completed in 0.05 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (138, 184, 52) and orientation ('L', 'A', 'S')
+		Found SWI annotation, shape (138, 184, 52) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.003327608108520508 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (138, 184, 52)
+			Shape after resampling: (271, 392, 332)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (138, 184, 52)
+			Shape after resampling: (271, 392, 332)
+	Resampling of MRIs and annotations took 8.640165090560913 seconds!
+
+	Pruned from 4 CMBs to 4.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 4, Unique labels: [0. 1.], Counts: [35268378      646]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 1.3.12.2.1107.5.2.6.24111.30000019082104124198400000043 in 162.89 seconds (worker 3)!
+
+"
+"1.2.840.113845.13.14537.872975378.3343495815236";"completed";"Started processing 1.2.840.113845.13.14537.872975378.3343495815236... (worker 1)
+	Loading MRI scans and annotations...
+		Generating spheres...
+
+			CMB-0
+				Will use RG radius of 1.56
+				Sphere created with radius 1.2903810207421493mm, size=9
+			CMB-1
+				Will use RG radius of 0.62
+				Mask expanded by one layer, new size=7 voxels.
+				Sphere created with radius 0.6203504908994001mm, size=7
+			CMB-2
+				Will use RG radius of 2.3
+				Sphere created with radius 2.103739683417501mm, size=39
+		Loading of MRIs and annotations took 73.05524969100952 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 10.766960382461548 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (208, 256, 80)
+		Annotations shape before cropping: (208, 256, 80)
+		MRIs shape after cropping: (157, 197, 73)
+		Annotations shape after cropping: (157, 197, 73)
+	Cropping completed in 0.06 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (157, 197, 73) and orientation ('L', 'A', 'S')
+		Found SWI annotation, shape (157, 197, 73) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0075397491455078125 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (157, 197, 73)
+			Shape after resampling: (306, 385, 330)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (157, 197, 73)
+			Shape after resampling: (306, 385, 330)
+	Resampling of MRIs and annotations took 7.283987760543823 seconds!
+
+	Pruned from 3 CMBs to 3.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 3, Unique labels: [0. 1.], Counts: [38876678      622]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 1.2.840.113845.13.14537.872975378.3343495815236 in 157.15 seconds (worker 1)!
+
+"
+"1.2.826.1.3680043.9.5282.150415.34194.3419422232714";"completed";"Started processing 1.2.826.1.3680043.9.5282.150415.34194.3419422232714... (worker 0)
+	Loading MRI scans and annotations...
+		Generating spheres...
+
+			CMB-0
+				Will use RG radius of 1.19
+				Sphere created with radius 1.711499967172251mm, size=21
+			CMB-1
+				Will use RG radius of 1.24
+				Sphere created with radius 1.711499967172251mm, size=21
+			CMB-2
+				Will use RG radius of 1.29
+				Sphere created with radius 1.8139158392989048mm, size=25
+			CMB-3
+				Will use RG radius of 1.53
+				Sphere created with radius 2.067145461454275mm, size=37
+			CMB-4
+				Will use RG radius of 1.38
+				Sphere created with radius 1.9059132510127017mm, size=29
+			CMB-5
+				Will use RG radius of 1.06
+				Sphere created with radius 1.711499967172251mm, size=21
+			CMB-6
+				Will use RG radius of 1.19
+				Sphere created with radius 1.711499967172251mm, size=21
+			CMB-7
+				Will use RG radius of 1.6
+				Sphere created with radius 2.067145461454275mm, size=37
+			CMB-8
+				Will use RG radius of 1.34
+				Sphere created with radius 1.8139158392989048mm, size=25
+			CMB-9
+				Will use RG radius of 1.56
+				Sphere created with radius 2.067145461454275mm, size=37
+			CMB-10
+				Will use RG radius of 2.29
+				Sphere created with radius 2.6841006868189483mm, size=81
+			CMB-11
+				Will use RG radius of 1.79
+				Sphere created with radius 2.2065205075171996mm, size=45
+			CMB-12
+				Will use RG radius of 2.1
+				Sphere created with radius 2.544408437947105mm, size=69
+			CMB-13
+				Will use RG radius of 1.84
+				Sphere created with radius 2.2700520935637276mm, size=49
+			CMB-14
+				Will use RG radius of 1.42
+				Sphere created with radius 1.9059132510127017mm, size=29
+			CMB-15
+				Will use RG radius of 1.13
+				Sphere created with radius 1.711499967172251mm, size=21
+			CMB-16
+				Will use RG radius of 0.89
+				Sphere created with radius 1.2903810207421493mm, size=9
+			CMB-17
+				Will use RG radius of 0.89
+				Sphere created with radius 1.2903810207421493mm, size=9
+		Loading of MRIs and annotations took 484.0806176662445 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 10.596892356872559 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (416, 512, 26)
+		Annotations shape before cropping: (416, 512, 26)
+		MRIs shape after cropping: (276, 355, 22)
+		Annotations shape after cropping: (276, 355, 22)
+	Cropping completed in 0.07 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (276, 355, 22) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (276, 355, 22) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.003439188003540039 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (276, 355, 22)
+			Shape after resampling: (269, 360, 300)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (276, 355, 22)
+			Shape after resampling: (269, 360, 300)
+	Resampling of MRIs and annotations took 6.0404136180877686 seconds!
+
+	Pruned from 18 CMBs to 18.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 18, Unique labels: [0. 1.], Counts: [29046113     5887]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 1.2.826.1.3680043.9.5282.150415.34194.3419422232714 in 758.94 seconds (worker 0)!
+
+"
+"1.2.826.1.3680043.9.5282.150415.650.650232327158";"completed";"Started processing 1.2.826.1.3680043.9.5282.150415.650.650232327158... (worker 2)
+	Loading MRI scans and annotations...
+		Generating spheres...
+
+			CMB-0
+				Will use RG radius of 1.34
+				Sphere created with radius 1.8139158392989048mm, size=25
+			CMB-1
+				Will use RG radius of 1.19
+				Sphere created with radius 1.711499967172251mm, size=21
+			CMB-2
+				Will use RG radius of 1.13
+				Sphere created with radius 1.711499967172251mm, size=21
+			CMB-3
+				Will use RG radius of 1.13
+				Sphere created with radius 1.711499967172251mm, size=21
+			CMB-4
+				Will use RG radius of 1.29
+				Sphere created with radius 1.8139158392989048mm, size=25
+			CMB-5
+				Will use RG radius of 1.81
+				Sphere created with radius 2.2700520935637276mm, size=49
+			CMB-6
+				Will use RG radius of 1.38
+				Sphere created with radius 1.9059132510127017mm, size=29
+			CMB-7
+				Will use RG radius of 1.19
+				Sphere created with radius 1.711499967172251mm, size=21
+			CMB-8
+				Will use RG radius of 0.89
+				Sphere created with radius 1.2903810207421493mm, size=9
+			CMB-9
+				Will use RG radius of 1.38
+				Sphere created with radius 1.9059132510127017mm, size=29
+			CMB-10
+				Will use RG radius of 1.13
+				Sphere created with radius 1.711499967172251mm, size=21
+			CMB-11
+				Will use RG radius of 1.19
+				Sphere created with radius 1.711499967172251mm, size=21
+			CMB-12
+				Will use RG radius of 1.24
+				Sphere created with radius 1.711499967172251mm, size=21
+		Loading of MRIs and annotations took 383.15987157821655 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 10.13345980644226 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (400, 512, 26)
+		Annotations shape before cropping: (400, 512, 26)
+		MRIs shape after cropping: (280, 371, 24)
+		Annotations shape after cropping: (280, 371, 24)
+	Cropping completed in 0.07 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (280, 371, 24) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (280, 371, 24) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0034563541412353516 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (280, 371, 24)
+			Shape after resampling: (266, 336, 291)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (280, 371, 24)
+			Shape after resampling: (266, 336, 291)
+	Resampling of MRIs and annotations took 4.8421409130096436 seconds!
+
+	Pruned from 13 CMBs to 13.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 13, Unique labels: [0. 1.], Counts: [26005542     2874]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 1.2.826.1.3680043.9.5282.150415.650.650232327158 in 588.71 seconds (worker 2)!
+
+"
+"1.2.840.113845.13.13849.872975378.634767293118";"completed";"Started processing 1.2.840.113845.13.13849.872975378.634767293118... (worker 3)
+	Loading MRI scans and annotations...
+		Generating spheres...
+
+			CMB-0
+				Will use RG radius of 1.19
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-1
+				Will use RG radius of 1.63
+				Sphere created with radius 1.2903810207421493mm, size=9
+			CMB-2
+				Will use RG radius of 0.89
+				Mask expanded by one layer, new size=7 voxels.
+				Sphere created with radius 0.6203504908994001mm, size=7
+			CMB-3
+				Will use RG radius of 0.98
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-4
+				Will use RG radius of 0.62
+				Mask expanded by one layer, new size=7 voxels.
+				Sphere created with radius 0.6203504908994001mm, size=7
+			CMB-5
+				Will use RG radius of 0.98
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-6
+				Will use RG radius of 1.19
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-7
+				Will use RG radius of 0.98
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-8
+				Will use RG radius of 0.89
+				Mask expanded by one layer, new size=7 voxels.
+				Sphere created with radius 0.6203504908994001mm, size=7
+			CMB-9
+				Will use RG radius of 1.24
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-10
+				Will use RG radius of 0.78
+				Mask expanded by one layer, new size=7 voxels.
+				Sphere created with radius 0.6203504908994001mm, size=7
+			CMB-11
+				Will use RG radius of 0.89
+				Mask expanded by one layer, new size=7 voxels.
+				Sphere created with radius 0.6203504908994001mm, size=7
+			CMB-12
+				Will use RG radius of 0.78
+				Mask expanded by one layer, new size=7 voxels.
+				Sphere created with radius 0.6203504908994001mm, size=7
+			CMB-13
+				Will use RG radius of 1.06
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-14
+				Will use RG radius of 1.29
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-15
+				Will use RG radius of 0.62
+				Mask expanded by one layer, new size=7 voxels.
+				Sphere created with radius 0.6203504908994001mm, size=7
+			CMB-16
+				Will use RG radius of 0.62
+				Mask expanded by one layer, new size=7 voxels.
+				Sphere created with radius 0.6203504908994001mm, size=7
+			CMB-17
+				Will use RG radius of 1.42
+				Sphere created with radius 1.2903810207421493mm, size=9
+			CMB-18
+				Will use RG radius of 1.71
+				Sphere created with radius 1.2903810207421493mm, size=9
+			CMB-19
+				Will use RG radius of 1.19
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-20
+				Will use RG radius of 0.62
+				Mask expanded by one layer, new size=7 voxels.
+				Sphere created with radius 0.6203504908994001mm, size=7
+			CMB-21
+				Will use RG radius of 1.13
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-22
+				Will use RG radius of 0.78
+				Mask expanded by one layer, new size=7 voxels.
+				Sphere created with radius 0.6203504908994001mm, size=7
+			CMB-23
+				Will use RG radius of 1.06
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-24
+				Will use RG radius of 1.06
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-25
+				Will use RG radius of 1.13
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-26
+				Will use RG radius of 1.13
+				Sphere created with radius 1.0607844179470554mm, size=5
+			CMB-27
+				Will use RG radius of 1.6
+				Sphere created with radius 1.2903810207421493mm, size=9
+			CMB-28
+				Will use RG radius of 1.24
+				Sphere created with radius 1.0607844179470554mm, size=5
+		Loading of MRIs and annotations took 758.7403049468994 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 10.916810274124146 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (208, 256, 88)
+		Annotations shape before cropping: (208, 256, 88)
+		MRIs shape after cropping: (141, 174, 75)
+		Annotations shape after cropping: (141, 174, 75)
+	Cropping completed in 0.06 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (141, 174, 75) and orientation ('L', 'A', 'S')
+		Found SWI annotation, shape (141, 174, 75) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0032198429107666016 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (141, 174, 75)
+			Shape after resampling: (363, 462, 391)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (141, 174, 75)
+			Shape after resampling: (363, 462, 391)
+	Resampling of MRIs and annotations took 11.513319492340088 seconds!
+
+	Pruned from 29 CMBs to 29.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 29, Unique labels: [0. 1.], Counts: [65570441     2605]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 1.2.840.113845.13.13849.872975378.634767293118 in 1218.89 seconds (worker 3)!
+
+"

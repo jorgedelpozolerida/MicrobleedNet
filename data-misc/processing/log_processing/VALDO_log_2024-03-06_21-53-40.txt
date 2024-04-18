@@ -1,0 +1,86 @@
+
+2024-03-06 21:53:41.804419
+***********************************************
+STARTING PROCESSING OF DATASET valdo
+***********************************************
+CSV log: /datadrive_m2/jorge/datasets/processed_final/pVALDO/log_2024-03-06_21-53-40.csv
+TXT log: /datadrive_m2/jorge/datasets/processed_final/pVALDO/log_2024-03-06_21-53-40.txt
+Filtered studies from 72 subjects to 1
+Processing 1 studies
+
+
+2024-03-06 22:15:22.200251
+Started processing sub-207... (worker 0)
+	Loading MRI scans and annotations...
+		Generating spheres...
+
+			CMB-0
+				Will use RG radius of 2.42
+				Sphere created with radius 4.148211199396802mm, size=299
+			CMB-1
+				Will use RG radius of 1.95
+				Sphere created with radius 3.483064784543041mm, size=177
+			CMB-2
+				Will use RG radius of 1.5
+				Sphere created with radius 2.5687583235794156mm, size=71
+			CMB-3
+				Will use RG radius of 1.95
+				Sphere created with radius 3.483064784543041mm, size=177
+			CMB-4
+				Will use RG radius of 1.63
+				Sphere created with radius 2.7697068117865564mm, size=89
+			CMB-5
+				Will use RG radius of 1.71
+				Sphere created with radius 2.9266237766025056mm, size=105
+			CMB-6
+				Will use RG radius of 2.09
+				Sphere created with radius 3.58500335609807mm, size=193
+			CMB-7
+				Will use RG radius of 2.47
+				Sphere created with radius 4.2387131246044865mm, size=319
+			CMB-8
+				Will use RG radius of 2.81
+				Sphere created with radius 4.867278242658203mm, size=483
+		Loading of MRIs and annotations took 1247.7045409679413 seconds!
+
+	Using T2S as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on T2S...
+	Skull-stripping of MRIs took 30.1776282787323 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 192)
+		Annotations shape before cropping: (512, 512, 192)
+		MRIs shape after cropping: (281, 344, 181)
+		Annotations shape after cropping: (281, 344, 181)
+	Cropping completed in 1.36 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found T2S MRI sequence, shape (281, 344, 181) and orientation ('L', 'A', 'S')
+		Found T2S annotation, shape (281, 344, 181) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.003242969512939453 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling T2S MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (281, 344, 181)
+			Shape after resampling: (275, 336, 290)
+		Resampling T2S annotation to T2S using nearest interpolation...
+			Shape before resampling: (281, 344, 181)
+			Shape after resampling: (275, 336, 290)
+	Resampling of MRIs and annotations took 4.022249698638916 seconds!
+
+	Pruned from 9 CMBs to 9.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Number of processed CMBs: 9, Unique labels: [0. 1.], Counts: [26793141     2859]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of sub-207 in 1300.39 seconds (worker 0)!
+
+
+2024-03-06 22:15:22.261920
+***********************************************
+FINISHED PROCESSING OF DATASET valdo
+Succesful studies: 1, Failed studies: 0
+***********************************************

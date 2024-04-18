@@ -1,0 +1,1093 @@
+studyUID;status;message
+"01";"completed";"Started processing 01... (worker 0)
+	Loading MRI scans and annotations...
+		Applying Region Growing with max_distance=22, max_size=2594
+
+			CMB-0
+				Will use RG radius of 1.11
+				Sphere created with radius 1.948757029812878mm, size=31
+		Loading of MRIs and annotations took 122.02584147453308 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 27.390668630599976 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 150)
+		Annotations shape before cropping: (512, 512, 150)
+		MRIs shape after cropping: (297, 367, 140)
+		Annotations shape after cropping: (297, 367, 140)
+	Cropping completed in 1.05 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (297, 367, 140) and orientation ('L', 'P', 'S')
+		Found SWI annotation, shape (297, 367, 140) and orientation ('L', 'P', 'S')
+	Orientation and data type adjustment took 0.003536701202392578 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (297, 367, 140)
+			Shape after resampling: (300, 362, 334)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (297, 367, 140)
+			Shape after resampling: (300, 362, 334)
+	Resampling of MRIs and annotations took 8.516528606414795 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [36272358       42]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 01 in 183.45 seconds (worker 0)!
+
+"
+"02";"completed";"Started processing 02... (worker 3)
+	Loading MRI scans and annotations...
+		Applying Region Growing with max_distance=22, max_size=2594
+
+			CMB-0
+				Will use RG radius of 1.815
+				Sphere created with radius 3.085120754404075mm, size=123
+		Loading of MRIs and annotations took 125.28491759300232 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 27.74973464012146 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 150)
+		Annotations shape before cropping: (512, 512, 150)
+		MRIs shape after cropping: (300, 358, 140)
+		Annotations shape after cropping: (300, 358, 140)
+	Cropping completed in 1.02 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (300, 358, 140) and orientation ('L', 'P', 'S')
+		Found SWI annotation, shape (300, 358, 140) and orientation ('L', 'P', 'S')
+	Orientation and data type adjustment took 0.003798961639404297 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (300, 358, 140)
+			Shape after resampling: (299, 343, 292)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (300, 358, 140)
+			Shape after resampling: (299, 343, 292)
+	Resampling of MRIs and annotations took 7.520064353942871 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [29946437      207]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 02 in 184.20 seconds (worker 3)!
+
+"
+"13";"completed";"Started processing 13... (worker 3)
+	Loading MRI scans and annotations...
+		Applying Region Growing with max_distance=22, max_size=2594
+
+			CMB-0
+				Will use RG radius of 1.255
+				Sphere created with radius 2.103739683417501mm, size=39
+		Loading of MRIs and annotations took 121.39011979103088 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 26.640733003616333 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 150)
+		Annotations shape before cropping: (512, 512, 150)
+		MRIs shape after cropping: (301, 370, 146)
+		Annotations shape after cropping: (301, 370, 146)
+	Cropping completed in 1.07 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (301, 370, 146) and orientation ('L', 'P', 'S')
+		Found SWI annotation, shape (301, 370, 146) and orientation ('L', 'P', 'S')
+	Orientation and data type adjustment took 0.003415822982788086 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (301, 370, 146)
+			Shape after resampling: (281, 362, 323)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (301, 370, 146)
+			Shape after resampling: (281, 362, 323)
+	Resampling of MRIs and annotations took 7.786845684051514 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [32856137       69]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 13 in 178.89 seconds (worker 3)!
+
+"
+"08";"completed";"Started processing 08... (worker 3)
+	Loading MRI scans and annotations...
+		Applying Region Growing with max_distance=22, max_size=2594
+
+			CMB-0
+				Will use RG radius of 1.215
+				Sphere created with radius 2.103739683417501mm, size=39
+		Loading of MRIs and annotations took 122.92255449295044 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 27.625531911849976 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 150)
+		Annotations shape before cropping: (512, 512, 150)
+		MRIs shape after cropping: (321, 387, 143)
+		Annotations shape after cropping: (321, 387, 143)
+	Cropping completed in 1.12 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (321, 387, 143) and orientation ('L', 'P', 'S')
+		Found SWI annotation, shape (321, 387, 143) and orientation ('L', 'P', 'S')
+	Orientation and data type adjustment took 0.0038666725158691406 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (321, 387, 143)
+			Shape after resampling: (298, 357, 305)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (321, 387, 143)
+			Shape after resampling: (298, 357, 305)
+	Resampling of MRIs and annotations took 6.985863208770752 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [32447680       50]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 08 in 182.03 seconds (worker 3)!
+
+"
+"03";"completed";"Started processing 03... (worker 1)
+	Loading MRI scans and annotations...
+		Applying Region Growing with max_distance=22, max_size=2594
+
+			CMB-0
+				Will use RG radius of 1.545
+				Sphere created with radius 2.6618249652766988mm, size=79
+			CMB-1
+				Will use RG radius of 1.665
+				Sphere created with radius 2.8305988897884706mm, size=95
+			CMB-2
+				Will use RG radius of 1.22
+				Sphere created with radius 2.103739683417501mm, size=39
+			CMB-3
+				Will use RG radius of 1.18
+				Sphere created with radius 1.948757029812878mm, size=31
+		Loading of MRIs and annotations took 486.56170082092285 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 26.496238708496094 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 150)
+		Annotations shape before cropping: (512, 512, 150)
+		MRIs shape after cropping: (283, 366, 141)
+		Annotations shape after cropping: (283, 366, 141)
+	Cropping completed in 1.05 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (283, 366, 141) and orientation ('L', 'P', 'S')
+		Found SWI annotation, shape (283, 366, 141) and orientation ('L', 'P', 'S')
+	Orientation and data type adjustment took 0.0037326812744140625 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (283, 366, 141)
+			Shape after resampling: (280, 345, 313)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (283, 366, 141)
+			Shape after resampling: (280, 345, 313)
+	Resampling of MRIs and annotations took 7.055883884429932 seconds!
+
+	Pruned from 4 CMBs to 4.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 4, Unique labels: [0. 1.], Counts: [30235437      363]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 03 in 575.51 seconds (worker 1)!
+
+"
+"18";"completed";"Started processing 18... (worker 0)
+	Loading MRI scans and annotations...
+		---- Study found in manual fixes mapping CSV ----
+		Applying Region Growing with max_distance=22, max_size=2594
+
+			CMB-0
+				Will use pre-set radius of 1.5
+				Sphere created with radius 2.6618249652766988mm, size=79
+			CMB-1
+				Will use RG radius of 1.605
+				Sphere created with radius 2.6618249652766988mm, size=79
+			CMB-2
+				Will use RG radius of 1.045
+				Sphere created with radius 1.7641942770035128mm, size=23
+		Loading of MRIs and annotations took 371.75103855133057 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 27.323380708694458 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 150)
+		Annotations shape before cropping: (512, 512, 150)
+		MRIs shape after cropping: (298, 356, 144)
+		Annotations shape after cropping: (298, 356, 144)
+	Cropping completed in 1.06 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (298, 356, 144) and orientation ('L', 'A', 'S')
+		Found SWI annotation, shape (298, 356, 144) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0036995410919189453 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (298, 356, 144)
+			Shape after resampling: (299, 344, 323)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (298, 356, 144)
+			Shape after resampling: (299, 344, 323)
+	Resampling of MRIs and annotations took 7.515129566192627 seconds!
+
+	Pruned from 4 CMBs to 3.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 3, Unique labels: [0. 1.], Counts: [33222182      306]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 18 in 449.66 seconds (worker 0)!
+
+"
+"20";"completed";"Started processing 20... (worker 3)
+	Loading MRI scans and annotations...
+		---- Study found in manual fixes mapping CSV ----
+		Applying Region Growing with max_distance=22, max_size=2594
+
+			CMB-0
+				Will use pre-set radius of 2.0
+				Sphere created with radius 3.317932963569071mm, size=153
+			CMB-1
+				Will use RG radius of 1.2
+				Sphere created with radius 2.103739683417501mm, size=39
+		Loading of MRIs and annotations took 133.7335603237152 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 16.716811180114746 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (343, 409, 147)
+		Annotations shape before cropping: (343, 409, 147)
+		MRIs shape after cropping: (291, 366, 144)
+		Annotations shape after cropping: (291, 366, 144)
+	Cropping completed in 0.38 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (291, 366, 144) and orientation ('R', 'A', 'S')
+		Found SWI annotation, shape (291, 366, 144) and orientation ('R', 'A', 'S')
+	Orientation and data type adjustment took 0.002082347869873047 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (291, 366, 144)
+			Shape after resampling: (294, 358, 316)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (291, 366, 144)
+			Shape after resampling: (294, 358, 316)
+	Resampling of MRIs and annotations took 6.429931879043579 seconds!
+
+	Pruned from 2 CMBs to 2.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 2, Unique labels: [0. 1.], Counts: [33259306      326]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 20 in 192.61 seconds (worker 3)!
+
+"
+"07";"completed";"Started processing 07... (worker 1)
+	Loading MRI scans and annotations...
+		Applying Region Growing with max_distance=22, max_size=2594
+
+			CMB-0
+				Will use RG radius of 0.895
+				Sphere created with radius 1.2903810207421493mm, size=9
+		Loading of MRIs and annotations took 124.21623110771179 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 27.146549940109253 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 150)
+		Annotations shape before cropping: (512, 512, 150)
+		MRIs shape after cropping: (330, 384, 144)
+		Annotations shape after cropping: (330, 384, 144)
+	Cropping completed in 1.09 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (330, 384, 144) and orientation ('L', 'P', 'S')
+		Found SWI annotation, shape (330, 384, 144) and orientation ('L', 'P', 'S')
+	Orientation and data type adjustment took 0.003376483917236328 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (330, 384, 144)
+			Shape after resampling: (313, 359, 287)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (330, 384, 144)
+			Shape after resampling: (313, 359, 287)
+	Resampling of MRIs and annotations took 8.134645938873291 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [32249311       18]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 07 in 185.61 seconds (worker 1)!
+
+"
+"19";"completed";"Started processing 19... (worker 1)
+	Loading MRI scans and annotations...
+		Applying Region Growing with max_distance=22, max_size=2594
+
+			CMB-0
+				Will use RG radius of 1.97
+				Sphere created with radius 3.303412283384499mm, size=151
+		Loading of MRIs and annotations took 68.5485348701477 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 16.710458278656006 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (357, 407, 141)
+		Annotations shape before cropping: (357, 407, 141)
+		MRIs shape after cropping: (309, 365, 141)
+		Annotations shape after cropping: (309, 365, 141)
+	Cropping completed in 0.41 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (309, 365, 141) and orientation ('R', 'A', 'S')
+		Found SWI annotation, shape (309, 365, 141) and orientation ('R', 'A', 'S')
+	Orientation and data type adjustment took 0.002243518829345703 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (309, 365, 141)
+			Shape after resampling: (278, 361, 320)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (309, 365, 141)
+			Shape after resampling: (278, 361, 320)
+	Resampling of MRIs and annotations took 6.891003131866455 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [32114328      232]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 19 in 115.95 seconds (worker 1)!
+
+"
+"16";"completed";"Started processing 16... (worker 4)
+	Loading MRI scans and annotations...
+		---- Study found in manual fixes mapping CSV ----
+		Applying Region Growing with max_distance=22, max_size=2594
+
+			CMB-0
+				Will use RG radius of 2.71
+				Sphere created with radius 4.589747612918804mm, size=405
+			CMB-1
+				Will use RG radius of 1.875
+				Sphere created with radius 3.15060696517646mm, size=131
+			CMB-2
+				Will use pre-set radius of 1.5
+				Sphere created with radius 2.6618249652766988mm, size=79
+			CMB-3
+				Will use pre-set radius of 1.75
+				Sphere created with radius 3.051308489600857mm, size=119
+			CMB-4
+				Will use RG radius of 2.085
+				Sphere created with radius 3.483064784543041mm, size=177
+			CMB-5
+				Will use pre-set radius of 2.0
+				Sphere created with radius 3.317932963569071mm, size=153
+			CMB-6
+				Will use RG radius of 1.695
+				Sphere created with radius 2.9079227945114825mm, size=103
+			CMB-7
+				Will use pre-set radius of 1.5
+				Sphere created with radius 2.6618249652766988mm, size=79
+			CMB-8
+				Will use RG radius of 2.12
+				Sphere created with radius 3.633868015318148mm, size=201
+			CMB-9
+				Will use RG radius of 1.28
+				Sphere created with radius 2.17333470657691mm, size=43
+			CMB-10
+				Will use RG radius of 1.385
+				Sphere created with radius 2.3591634259004106mm, size=55
+		Loading of MRIs and annotations took 804.8165218830109 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 17.311052322387695 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (368, 416, 147)
+		Annotations shape before cropping: (368, 416, 147)
+		MRIs shape after cropping: (303, 361, 144)
+		Annotations shape after cropping: (303, 361, 144)
+	Cropping completed in 0.39 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (303, 361, 144) and orientation ('R', 'A', 'S')
+		Found SWI annotation, shape (303, 361, 144) and orientation ('R', 'A', 'S')
+	Orientation and data type adjustment took 0.002184152603149414 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (303, 361, 144)
+			Shape after resampling: (304, 351, 297)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (303, 361, 144)
+			Shape after resampling: (304, 351, 297)
+	Resampling of MRIs and annotations took 7.4642181396484375 seconds!
+
+	Pruned from 11 CMBs to 11.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 11, Unique labels: [0. 1.], Counts: [31688584     2504]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 16 in 958.92 seconds (worker 4)!
+
+"
+"15";"completed";"Started processing 15... (worker 2)
+	Loading MRI scans and annotations...
+		---- Study found in manual fixes mapping CSV ----
+		Applying Region Growing with max_distance=22, max_size=2594
+
+			CMB-0
+				Will use RG radius of 1.665
+				Sphere created with radius 2.8305988897884706mm, size=95
+			CMB-1
+				Will use RG radius of 1.4
+				Sphere created with radius 2.3591634259004106mm, size=55
+			CMB-2
+				Will use RG radius of 1.07
+				Sphere created with radius 1.7641942770035128mm, size=23
+			CMB-3
+				Will use RG radius of 1.48
+				Sphere created with radius 2.6618249652766988mm, size=79
+			CMB-4
+				Will use RG radius of 1.605
+				Sphere created with radius 2.6618249652766988mm, size=79
+			CMB-5
+				Will use pre-set radius of 1.75
+				Sphere created with radius 3.051308489600857mm, size=119
+			CMB-6
+				Will use pre-set radius of 1.5
+				Sphere created with radius 2.6618249652766988mm, size=79
+			CMB-7
+				Will use RG radius of 1.6
+				Sphere created with radius 2.6618249652766988mm, size=79
+			CMB-8
+				Will use RG radius of 1.43
+				Sphere created with radius 2.6618249652766988mm, size=79
+			CMB-9
+				Will use pre-set radius of 2.0
+				Sphere created with radius 3.317932963569071mm, size=153
+			CMB-10
+				Will use RG radius of 1.51
+				Sphere created with radius 2.6618249652766988mm, size=79
+			CMB-11
+				Will use RG radius of 1.315
+				Sphere created with radius 2.17333470657691mm, size=43
+			CMB-12
+				Will use RG radius of 1.6
+				Sphere created with radius 2.6618249652766988mm, size=79
+		Loading of MRIs and annotations took 895.6968288421631 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 16.757951974868774 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (342, 410, 150)
+		Annotations shape before cropping: (342, 410, 150)
+		MRIs shape after cropping: (309, 377, 139)
+		Annotations shape after cropping: (309, 377, 139)
+	Cropping completed in 0.40 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (309, 377, 139) and orientation ('R', 'A', 'S')
+		Found SWI annotation, shape (309, 377, 139) and orientation ('R', 'A', 'S')
+	Orientation and data type adjustment took 0.0021321773529052734 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (309, 377, 139)
+			Shape after resampling: (291, 408, 378)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (309, 377, 139)
+			Shape after resampling: (291, 408, 378)
+	Resampling of MRIs and annotations took 7.889167547225952 seconds!
+
+	Pruned from 13 CMBs to 13.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 13, Unique labels: [0. 1.], Counts: [44877561     1623]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 15 in 1078.24 seconds (worker 2)!
+
+"
+"14";"completed";"Started processing 14... (worker 3)
+	Loading MRI scans and annotations...
+		Applying Region Growing with max_distance=22, max_size=2594
+
+			CMB-0
+				Will use RG radius of 1.33
+				Sphere created with radius 2.17333470657691mm, size=43
+			CMB-1
+				Will use RG radius of 1.085
+				Sphere created with radius 1.7641942770035128mm, size=23
+			CMB-2
+				Will use RG radius of 1.21
+				Sphere created with radius 2.103739683417501mm, size=39
+		Loading of MRIs and annotations took 382.2993450164795 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 26.713902711868286 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 150)
+		Annotations shape before cropping: (512, 512, 150)
+		MRIs shape after cropping: (296, 365, 137)
+		Annotations shape after cropping: (296, 365, 137)
+	Cropping completed in 1.13 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (296, 365, 137) and orientation ('L', 'P', 'S')
+		Found SWI annotation, shape (296, 365, 137) and orientation ('L', 'P', 'S')
+	Orientation and data type adjustment took 0.0036017894744873047 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (296, 365, 137)
+			Shape after resampling: (276, 343, 289)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (296, 365, 137)
+			Shape after resampling: (276, 343, 289)
+	Resampling of MRIs and annotations took 6.7932047843933105 seconds!
+
+	Pruned from 3 CMBs to 3.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 3, Unique labels: [0. 1.], Counts: [27358879      173]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 14 in 461.27 seconds (worker 3)!
+
+"
+"06";"completed";"Started processing 06... (worker 2)
+	Loading MRI scans and annotations...
+		---- Study found in manual fixes mapping CSV ----
+		Applying Region Growing with max_distance=22, max_size=2594
+
+			CMB-0
+				Will use pre-set radius of 1.75
+				Sphere created with radius 3.051308489600857mm, size=119
+		Loading of MRIs and annotations took 126.07933521270752 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 27.262418746948242 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 150)
+		Annotations shape before cropping: (512, 512, 150)
+		MRIs shape after cropping: (304, 353, 141)
+		Annotations shape after cropping: (304, 353, 141)
+	Cropping completed in 1.05 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (304, 353, 141) and orientation ('L', 'P', 'S')
+		Found SWI annotation, shape (304, 353, 141) and orientation ('L', 'P', 'S')
+	Orientation and data type adjustment took 0.0034515857696533203 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (304, 353, 141)
+			Shape after resampling: (291, 343, 312)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (304, 353, 141)
+			Shape after resampling: (291, 343, 312)
+	Resampling of MRIs and annotations took 7.700829744338989 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [31141442      214]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 06 in 183.52 seconds (worker 2)!
+
+"
+"11";"completed";"Started processing 11... (worker 4)
+	Loading MRI scans and annotations...
+		Applying Region Growing with max_distance=22, max_size=2594
+
+			CMB-0
+				Will use RG radius of 1.265
+				Sphere created with radius 2.103739683417501mm, size=39
+			CMB-1
+				Will use RG radius of 1.135
+				Sphere created with radius 1.948757029812878mm, size=31
+		Loading of MRIs and annotations took 248.17388916015625 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 26.747483253479004 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 150)
+		Annotations shape before cropping: (512, 512, 150)
+		MRIs shape after cropping: (276, 359, 137)
+		Annotations shape after cropping: (276, 359, 137)
+	Cropping completed in 1.10 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (276, 359, 137) and orientation ('L', 'P', 'S')
+		Found SWI annotation, shape (276, 359, 137) and orientation ('L', 'P', 'S')
+	Orientation and data type adjustment took 0.0034885406494140625 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (276, 359, 137)
+			Shape after resampling: (305, 381, 328)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (276, 359, 137)
+			Shape after resampling: (305, 381, 328)
+	Resampling of MRIs and annotations took 7.31067967414856 seconds!
+
+	Pruned from 2 CMBs to 2.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 2, Unique labels: [0. 1.], Counts: [38115131      109]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 11 in 317.54 seconds (worker 4)!
+
+"
+"12";"completed";"Started processing 12... (worker 2)
+	Loading MRI scans and annotations...
+		Applying Region Growing with max_distance=22, max_size=2594
+
+			CMB-0
+				Will use RG radius of 1.395
+				Sphere created with radius 2.3591634259004106mm, size=55
+		Loading of MRIs and annotations took 125.44351530075073 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 26.744765996932983 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 150)
+		Annotations shape before cropping: (512, 512, 150)
+		MRIs shape after cropping: (292, 381, 147)
+		Annotations shape after cropping: (292, 381, 147)
+	Cropping completed in 1.11 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (292, 381, 147) and orientation ('L', 'P', 'S')
+		Found SWI annotation, shape (292, 381, 147) and orientation ('L', 'P', 'S')
+	Orientation and data type adjustment took 0.0036973953247070312 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (292, 381, 147)
+			Shape after resampling: (291, 345, 316)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (292, 381, 147)
+			Shape after resampling: (291, 345, 316)
+	Resampling of MRIs and annotations took 6.857446193695068 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [31724742       78]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 12 in 182.40 seconds (worker 2)!
+
+"
+"05";"completed";"Started processing 05... (worker 4)
+	Loading MRI scans and annotations...
+		Applying Region Growing with max_distance=22, max_size=2594
+
+			CMB-0
+				Will use RG radius of 1.16
+				Sphere created with radius 1.948757029812878mm, size=31
+		Loading of MRIs and annotations took 126.01636815071106 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 27.822261571884155 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 150)
+		Annotations shape before cropping: (512, 512, 150)
+		MRIs shape after cropping: (305, 368, 143)
+		Annotations shape after cropping: (305, 368, 143)
+	Cropping completed in 1.15 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (305, 368, 143) and orientation ('L', 'P', 'S')
+		Found SWI annotation, shape (305, 368, 143) and orientation ('L', 'P', 'S')
+	Orientation and data type adjustment took 0.003416776657104492 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (305, 368, 143)
+			Shape after resampling: (298, 372, 321)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (305, 368, 143)
+			Shape after resampling: (298, 372, 321)
+	Resampling of MRIs and annotations took 8.131721496582031 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [35584729       47]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 05 in 186.03 seconds (worker 4)!
+
+"
+"04";"completed";"Started processing 04... (worker 2)
+	Loading MRI scans and annotations...
+		---- Study found in manual fixes mapping CSV ----
+		Applying Region Growing with max_distance=22, max_size=2594
+
+			CMB-0
+				Will use pre-set radius of 1.5
+				Sphere created with radius 2.6618249652766988mm, size=79
+		Loading of MRIs and annotations took 121.63734412193298 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 26.543220043182373 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 150)
+		Annotations shape before cropping: (512, 512, 150)
+		MRIs shape after cropping: (299, 366, 140)
+		Annotations shape after cropping: (299, 366, 140)
+	Cropping completed in 1.08 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (299, 366, 140) and orientation ('L', 'P', 'S')
+		Found SWI annotation, shape (299, 366, 140) and orientation ('L', 'P', 'S')
+	Orientation and data type adjustment took 0.003419637680053711 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (299, 366, 140)
+			Shape after resampling: (301, 353, 328)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (299, 366, 140)
+			Shape after resampling: (301, 353, 328)
+	Resampling of MRIs and annotations took 6.75105357170105 seconds!
+
+	Pruned from 1 CMBs to 1.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 1, Unique labels: [0. 1.], Counts: [34850855      129]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 04 in 179.44 seconds (worker 2)!
+
+"
+"17";"completed";"Started processing 17... (worker 3)
+	Loading MRI scans and annotations...
+		---- Study found in manual fixes mapping CSV ----
+		Applying Region Growing with max_distance=22, max_size=2594
+
+			CMB-0
+				Will use RG radius of 1.285
+				Sphere created with radius 2.17333470657691mm, size=43
+			CMB-1
+				Will use RG radius of 0.965
+				Sphere created with radius 1.4586516277963593mm, size=13
+			CMB-2
+				Will use RG radius of 1.025
+				Sphere created with radius 1.7641942770035128mm, size=23
+			CMB-3
+				Will use RG radius of 1.165
+				Sphere created with radius 1.948757029812878mm, size=31
+			CMB-4
+				Will use pre-set radius of 1.5
+				Sphere created with radius 2.6618249652766988mm, size=79
+			CMB-5
+				Will use RG radius of 0.955
+				Sphere created with radius 1.4586516277963593mm, size=13
+			CMB-6
+				Will use RG radius of 1.2
+				Sphere created with radius 2.103739683417501mm, size=39
+		Loading of MRIs and annotations took 504.2824811935425 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 17.205082654953003 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (374, 397, 147)
+		Annotations shape before cropping: (374, 397, 147)
+		MRIs shape after cropping: (325, 358, 144)
+		Annotations shape after cropping: (325, 358, 144)
+	Cropping completed in 0.42 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (325, 358, 144) and orientation ('R', 'A', 'S')
+		Found SWI annotation, shape (325, 358, 144) and orientation ('R', 'A', 'S')
+	Orientation and data type adjustment took 0.002093791961669922 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (325, 358, 144)
+			Shape after resampling: (298, 333, 305)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (325, 358, 144)
+			Shape after resampling: (298, 333, 305)
+	Resampling of MRIs and annotations took 6.267434597015381 seconds!
+
+	Pruned from 7 CMBs to 7.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 7, Unique labels: [0. 1.], Counts: [30265987      383]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 17 in 612.94 seconds (worker 3)!
+
+"
+"10";"completed";"Started processing 10... (worker 1)
+	Loading MRI scans and annotations...
+		---- Study found in manual fixes mapping CSV ----
+		Applying Region Growing with max_distance=22, max_size=2594
+
+			CMB-0
+				Will use RG radius of 1.65
+				Sphere created with radius 2.8305988897884706mm, size=95
+			CMB-1
+				Will use pre-set radius of 1.75
+				Sphere created with radius 3.051308489600857mm, size=119
+			CMB-2
+				Will use RG radius of 1.29
+				Sphere created with radius 2.17333470657691mm, size=43
+			CMB-3
+				Will use RG radius of 1.215
+				Sphere created with radius 2.103739683417501mm, size=39
+			CMB-4
+				Will use pre-set radius of 2.25
+				Sphere created with radius 3.9644593215717836mm, size=261
+			CMB-5
+				Will use pre-set radius of 2.0
+				Sphere created with radius 3.303412283384499mm, size=151
+			CMB-6
+				Will use RG radius of 1.015
+				Sphere created with radius 1.7641942770035128mm, size=23
+			CMB-7
+				Will use pre-set radius of 1.5
+				Sphere created with radius 2.6618249652766988mm, size=79
+		Loading of MRIs and annotations took 972.7254259586334 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 26.67482614517212 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 150)
+		Annotations shape before cropping: (512, 512, 150)
+		MRIs shape after cropping: (295, 395, 147)
+		Annotations shape after cropping: (295, 395, 147)
+	Cropping completed in 1.11 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (295, 395, 147) and orientation ('L', 'P', 'S')
+		Found SWI annotation, shape (295, 395, 147) and orientation ('L', 'P', 'S')
+	Orientation and data type adjustment took 0.0034537315368652344 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (295, 395, 147)
+			Shape after resampling: (302, 372, 308)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (295, 395, 147)
+			Shape after resampling: (302, 372, 308)
+	Resampling of MRIs and annotations took 8.2463960647583 seconds!
+
+	Pruned from 8 CMBs to 8.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 8, Unique labels: [0. 1.], Counts: [34600685     1267]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 10 in 1112.09 seconds (worker 1)!
+
+"
+"09";"completed";"Started processing 09... (worker 0)
+	Loading MRI scans and annotations...
+		---- Study found in manual fixes mapping CSV ----
+		Applying Region Growing with max_distance=22, max_size=2594
+
+			CMB-0
+				Will use pre-set radius of 1.5
+				Sphere created with radius 2.6618249652766988mm, size=79
+			CMB-1
+				Will use RG radius of 1.45
+				Sphere created with radius 2.6618249652766988mm, size=79
+			CMB-2
+				Will use pre-set radius of 1.25
+				Sphere created with radius 2.103739683417501mm, size=39
+			CMB-3
+				Will use pre-set radius of 1.75
+				Sphere created with radius 3.051308489600857mm, size=119
+			CMB-4
+				Will use RG radius of 1.365
+				Sphere created with radius 2.3591634259004106mm, size=55
+			CMB-5
+				Will use pre-set radius of 2.0
+				Sphere created with radius 3.303412283384499mm, size=151
+			CMB-6
+				Will use RG radius of 1.16
+				Sphere created with radius 1.948757029812878mm, size=31
+			CMB-7
+				Will use RG radius of 1.21
+				Sphere created with radius 2.103739683417501mm, size=39
+			CMB-8
+				Will use RG radius of 1.255
+				Sphere created with radius 2.103739683417501mm, size=39
+			CMB-9
+				Will use RG radius of 1.195
+				Sphere created with radius 2.103739683417501mm, size=39
+			CMB-10
+				Will use RG radius of 1.675
+				Sphere created with radius 2.8305988897884706mm, size=95
+		Loading of MRIs and annotations took 1366.838131427765 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 26.513896942138672 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (512, 512, 150)
+		Annotations shape before cropping: (512, 512, 150)
+		MRIs shape after cropping: (305, 360, 138)
+		Annotations shape after cropping: (305, 360, 138)
+	Cropping completed in 1.07 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (305, 360, 138) and orientation ('L', 'P', 'S')
+		Found SWI annotation, shape (305, 360, 138) and orientation ('L', 'P', 'S')
+	Orientation and data type adjustment took 0.0034325122833251953 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (305, 360, 138)
+			Shape after resampling: (276, 370, 332)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (305, 360, 138)
+			Shape after resampling: (276, 370, 332)
+	Resampling of MRIs and annotations took 7.7886974811553955 seconds!
+
+	Pruned from 13 CMBs to 12.
+		All centers of mass were hit in processed mask.
+	Cleaning final masks and checking new stats for annotations after transforms
+		Applying closing operation to every CMB
+		Number of processed CMBs: 12, Unique labels: [0. 1.], Counts: [33902654     1186]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	ISSUE: number of original CMBs differ before (11) and after (12) preprocessing
+	Removed temporary cache for study folder
+Finished processing of 09 in 1540.27 seconds (worker 0)!
+
+"

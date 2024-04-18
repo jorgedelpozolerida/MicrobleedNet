@@ -1,0 +1,274 @@
+
+2024-03-06 19:57:07.793232
+***********************************************
+STARTING PROCESSING OF DATASET cerebriu-neg
+***********************************************
+CSV log: /datadrive_m2/jorge/datasets/processed_final/pCEREBRIU_neg/log_2024-03-06_19-57-01.csv
+TXT log: /datadrive_m2/jorge/datasets/processed_final/pCEREBRIU_neg/log_2024-03-06_19-57-01.txt
+Collected a total of 6 subjects (Failed: 6, Unprocessed: 0) out of 742 from log file /datadrive_m2/jorge/datasets/processed_final/pCEREBRIU_neg/log_2024-03-06_01-46-43.csv
+Processing 6 studies
+
+
+2024-03-06 19:57:30.333011
+Started processing 1.3.12.2.1107.5.2.6.24111.30000019082803592921800000074... (worker 0)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [2768896]
+		Loading of MRIs and annotations took 0.6574854850769043 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 10.174607038497925 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (208, 256, 52)
+		Annotations shape before cropping: (208, 256, 52)
+		MRIs shape after cropping: (143, 179, 50)
+		Annotations shape after cropping: (143, 179, 50)
+	Cropping completed in 0.03 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (143, 179, 50) and orientation ('L', 'A', 'S')
+		Found SWI annotation, shape (143, 179, 50) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0034363269805908203 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (143, 179, 50)
+			Shape after resampling: (283, 338, 261)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (143, 179, 50)
+			Shape after resampling: (283, 338, 261)
+	Resampling of MRIs and annotations took 4.037291526794434 seconds!
+
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Applying closing operation to every CMB
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [24965694]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 1.3.12.2.1107.5.2.6.24111.30000019082803592921800000074 in 22.53 seconds (worker 0)!
+
+
+2024-03-06 19:57:37.977121
+Started processing 1.2.840.113845.13.14329.872975378.2497239645283... (worker 1)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [3194880]
+		Loading of MRIs and annotations took 0.75765061378479 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 9.983357191085815 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (208, 256, 60)
+		Annotations shape before cropping: (208, 256, 60)
+		MRIs shape after cropping: (154, 181, 55)
+		Annotations shape after cropping: (154, 181, 55)
+	Cropping completed in 0.04 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (154, 181, 55) and orientation ('L', 'A', 'S')
+		Found SWI annotation, shape (154, 181, 55) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.005423307418823242 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (154, 181, 55)
+			Shape after resampling: (317, 391, 345)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (154, 181, 55)
+			Shape after resampling: (317, 391, 345)
+	Resampling of MRIs and annotations took 6.423628807067871 seconds!
+
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Applying closing operation to every CMB
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [42761715]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 1.2.840.113845.13.14329.872975378.2497239645283 in 30.17 seconds (worker 1)!
+
+
+2024-03-06 19:57:59.570770
+Started processing 1.2.826.1.3680043.9.5282.150415.34873.3487322232714... (worker 0)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [4751360]
+		Loading of MRIs and annotations took 0.9859051704406738 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 9.36412262916565 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (232, 256, 80)
+		Annotations shape before cropping: (232, 256, 80)
+		MRIs shape after cropping: (141, 171, 69)
+		Annotations shape after cropping: (141, 171, 69)
+	Cropping completed in 0.05 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (141, 171, 69) and orientation ('L', 'A', 'S')
+		Found SWI annotation, shape (141, 171, 69) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0029668807983398438 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (141, 171, 69)
+			Shape after resampling: (293, 387, 366)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (141, 171, 69)
+			Shape after resampling: (293, 387, 366)
+	Resampling of MRIs and annotations took 7.094897985458374 seconds!
+
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Applying closing operation to every CMB
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [41501106]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 1.2.826.1.3680043.9.5282.150415.34873.3487322232714 in 29.23 seconds (worker 0)!
+
+
+2024-03-06 19:58:07.222851
+Started processing 1.2.840.113845.11.1000000001815528930.20200817214648.3483196... (worker 1)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [4259840]
+		Loading of MRIs and annotations took 1.0303711891174316 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 9.717534303665161 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (208, 256, 80)
+		Annotations shape before cropping: (208, 256, 80)
+		MRIs shape after cropping: (158, 195, 76)
+		Annotations shape after cropping: (158, 195, 76)
+	Cropping completed in 0.06 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (158, 195, 76) and orientation ('L', 'A', 'S')
+		Found SWI annotation, shape (158, 195, 76) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.0046138763427734375 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (158, 195, 76)
+			Shape after resampling: (288, 392, 349)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (158, 195, 76)
+			Shape after resampling: (288, 392, 349)
+	Resampling of MRIs and annotations took 6.361613750457764 seconds!
+
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Applying closing operation to every CMB
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [39400704]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 1.2.840.113845.11.1000000001815528930.20200817214648.3483196 in 29.24 seconds (worker 1)!
+
+
+2024-03-06 19:58:33.531632
+Started processing 1.2.840.113845.13.14129.872975378.2383201156184... (worker 1)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [3194880]
+		Loading of MRIs and annotations took 0.6509966850280762 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 9.46269702911377 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (208, 256, 60)
+		Annotations shape before cropping: (208, 256, 60)
+		MRIs shape after cropping: (162, 179, 57)
+		Annotations shape after cropping: (162, 179, 57)
+	Cropping completed in 0.04 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (162, 179, 57) and orientation ('L', 'A', 'S')
+		Found SWI annotation, shape (162, 179, 57) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.003084421157836914 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (162, 179, 57)
+			Shape after resampling: (310, 351, 320)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (162, 179, 57)
+			Shape after resampling: (310, 351, 320)
+	Resampling of MRIs and annotations took 5.5831615924835205 seconds!
+
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Applying closing operation to every CMB
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [34819200]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 1.2.840.113845.13.14129.872975378.2383201156184 in 26.31 seconds (worker 1)!
+
+
+2024-03-06 19:58:44.002917
+Started processing 1.2.840.113845.11.1000000001815528930.20200731080107.3444390... (worker 0)
+	Loading MRI scans and annotations...
+		Only one label found: 0.0
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [4587520]
+		Loading of MRIs and annotations took 0.978499174118042 seconds!
+
+	Using SWI as primary sequence
+	Performing skull-stripping using SynthStrip algorithm...
+		Performing skull-stripping on SWI...
+	Skull-stripping of MRIs took 9.864310503005981 seconds!
+
+	Cropping MRIs and annotations to brain-only regions...
+		MRIs shape before cropping: (224, 256, 80)
+		Annotations shape before cropping: (224, 256, 80)
+		MRIs shape after cropping: (173, 200, 75)
+		Annotations shape after cropping: (173, 200, 75)
+	Cropping completed in 0.07 seconds.
+
+	Fixing orientation to RAS and data types...
+		Found SWI MRI sequence, shape (173, 200, 75) and orientation ('L', 'A', 'S')
+		Found SWI annotation, shape (173, 200, 75) and orientation ('L', 'A', 'S')
+	Orientation and data type adjustment took 0.003061532974243164 seconds.
+
+	Resampling MRIs and annotations maps...
+		Resampling SWI MRI to isotropic of voxel size 0.5 using linear interpolation...
+			Shape before resampling: (173, 200, 75)
+			Shape after resampling: (364, 470, 443)
+		Resampling SWI annotation to SWI using nearest interpolation...
+			Shape before resampling: (173, 200, 75)
+			Shape after resampling: (364, 470, 443)
+	Resampling of MRIs and annotations took 12.31540322303772 seconds!
+
+	Cleaning final masks and checking new stats for annotations after transforms
+		Only one label found: 0.0
+		Applying closing operation to every CMB
+		Number of processed CMBs: 0, Unique labels: [0.], Counts: [75788440]
+	Correctly saved NIfTI images and metadata for study
+	Correctly generated and saved CMB plots for study
+	Removed temporary cache for study folder
+Finished processing of 1.2.840.113845.11.1000000001815528930.20200731080107.3444390 in 44.43 seconds (worker 0)!
+
+
+2024-03-06 19:58:44.023970
+***********************************************
+FINISHED PROCESSING OF DATASET cerebriu-neg
+Succesful studies: 6, Failed studies: 0
+***********************************************

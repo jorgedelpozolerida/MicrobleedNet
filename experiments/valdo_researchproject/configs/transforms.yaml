@@ -1,0 +1,211 @@
+# Defines a list of mri_dict transformation layers to apply to different splits of data.
+# Each transform must be a layer implmeneted in crbr.augmentations.layers that can be applied in a
+# MRIDictTransform (see crbr.augmentations.transformations).
+
+# There are currently 4 levels of transforms supported which opperate consecutively:
+# 1. MRI loading transforms: These are applied to the raw MRI data before any cropping or 
+#    patching and are >not< TF compiled. This is to allow passing arbitrary values in the original 
+#    mri_dict which may not be TF tensor convertible. Usually, the final transform in this list
+#    should KeepOnlyMRIDictKeys layer which removes any items in the mri_dict not tf tensor 
+#    convertible. Only use this level for quick CPU-bound/eager data format checks etc. 
+#    Intensive data augmentation should be done in the whole_mri_transforms level instead which can 
+#    be compiled and put, e.g., on a GPU.
+# 2. Whole MRI transforms: These are applied to the output of the MRI loading transforms and are
+#    TF compiled. Usually, applies at least padding, cropping and normalization, but may also
+#    include image-level augmentations.
+# 3. Patch transforms: These are applied to individual patches after they have been extracted from
+#    the MRI data.
+# 4. Batch transforms: These are applied to batches of patches after they have been extracted from
+#    the MRI data.
+
+# The top-level key 'splits' with sub-keys split identifiers, e.g., 'train', 'valid' used to 
+# specify the transforms to apply to each split of data at level two.
+
+# Under each split group, sub-keys defining groups of transform, currently in 
+# ('mri_loading_transforms', 'whole_mri_transforms', 'patch_transforms', 'batch_transforms'). 
+# A whole transform can be omitted by setting its value to null.
+
+# Under each transform level is a list of transform layers to apply in that block. 
+# Each transform layer is a dictionary with the following keys:
+#   - name: The name of the transform layer to apply. Must be a layer implemented in
+#           crbr.augmentations.layers.
+#   - mri_keys: A list of keys in the mri_dict to apply the transform to. If None, applies to all
+#               keys in the mri_dict.
+#   - kwargs: A dictionary of keyword arguments to pass to the transform layer.
+
+# A set of transforms to be applied to the train split
+splits:
+  train:
+    mri_loading_transforms:
+        # A list of transform layers to apply to the raw training mri_dict data
+
+        - name: ToTensor
+          mri_keys: ['image', 'segmentation/mapped_labels']
+
+        # Cast image to float32 and segmentations to uint8
+        - name: CastTo
+          mri_keys: ['image']
+          kwargs:
+            dtype: 'float32'
+
+        - name: CastTo
+          mri_keys: ['segmentation/mapped_labels']
+          kwargs:
+            dtype: 'uint8'
+
+        # Add a trailing channel dimension if not already specified.
+        - name: EnsureChannelDim
+          mri_keys: ['image', 'segmentation/mapped_labels']
+          kwargs:
+            n_spatial_dims: 3
+
+        # Remove any potential non-tensor items from the mri_dict
+        - name: KeepOnlyMRIDictKeys
+          mri_keys: ['image', 'segmentation/mapped_labels', 'study_id']
+
+        # Pad and crop the image to a fixed size
+        - name: CenterPad
+          mri_keys: ['image', 'segmentation/mapped_labels']
+          kwargs:
+            pad_shape: &pad_shape_anchor [400, 400, 400] # TODO: make sure this makes sense
+        - name: Crop
+          mri_keys: ['image', 'segmentation/mapped_labels']
+          kwargs:
+            crop_shape: *pad_shape_anchor
+            random_crop: False
+
+    # A list of transform layers to apply to the mri_dict as output by the mri_loading_transforms.
+    # These transforms will be tf compiled.
+    whole_mri_transforms:
+      # Check that the pad/cropping is successful (can be removed after initial debug run)
+      - name: EnsureSpatialShape
+        mri_keys: ['image', 'segmentation/mapped_labels']
+        kwargs:
+          expected_spatial_shape: *pad_shape_anchor
+
+      # Check that all values are finite (not NaN or Inf)
+      - name: EnsureAllValuesFinite
+        mri_keys: ['image']
+
+      # # Replace empty/all zero channels with small Gaussian value numbers
+      # - name: ReplaceEmptyChannelsWithNoise
+      #   mri_keys: ['image']
+
+      # # Normalize the image to zero mean and unit variance (applied prior to augs to stabalize, 
+      # # also normally applied after, see below)
+      # - name: ChannelWiseScaling
+      #   mri_keys: ['image']
+
+      # # Apply (non-linear and affine) spatial augmentations
+      # - name: RandomSpatialDeformation
+      #   mri_keys: ['image', 'segmentation/mapped_labels']
+      #   kwargs:
+      #     interp_method:
+      #       "image": "linear"
+      #       "segmentation/mapped_labels": "nearest"
+      #     scaling_bounds: 0.05
+      #     rotation_bounds: 0.20
+      #     shearing_bounds: 0.010
+      #     apply_90_deg_rotations_prob: 1.0
+      #     apply_elastic_prob: 0.30
+      #     apply_affine_prob: 0.60
+      #     apply_prob: 0.40
+
+      # # Apply intensity augmentation
+      # - name: RandomIntensityTransformation
+      #   mri_keys: ['image']
+      #   kwargs:
+      #     noise_std_range: [0.0, 0.50]
+      #     salt_and_pepper_noise_prob_range: [0.0, 0.15]
+      #     apply_gaussian_noise_prob: 0.25
+      #     apply_gamma_prob: 0.50
+      #     apply_salt_and_pepper_noise_prob: 0.25
+      #     apply_contrast_inversion_prob: 0.25
+      #     apply_prob: 0.60
+
+      # # Apply Gaussian blur augmentation
+      # - name: RandomGaussianBlur
+      #   mri_keys: ['image']
+      #   kwargs:
+      #     apply_prob: 0.25
+      #     sigma_range: [0.5, 2.5]
+
+      - name: OneHotEncode
+        mri_keys: ['segmentation/mapped_labels']
+        kwargs:
+          n_classes: ${model.config.n_classes}
+
+      # Normalize the image to zero mean and unit variance (here applied after augs)
+      - name: ChannelWiseScaling
+        mri_keys: ['image']
+
+      # Rename segmentation to generic 'segmentation' key expected in code
+      # Should usually not be removed.
+      - name: RenameMRIDictKeys
+        mri_keys: ['segmentation/mapped_labels']
+        kwargs:
+          rename_to:
+            - 'segmentation'
+
+      # Final check that all values are finite (not NaN or Inf).
+      # Can be removed after initial debug run.
+      - name: EnsureAllValuesFinite
+        mri_keys: ['image']
+
+    # No patch transforms
+    patch_transforms: null
+
+    # No batch transforms. Not yet implemented!
+    batch_transforms: null
+
+  # A set of transforms to be applied to the validation split
+  valid:
+    mri_loading_transforms: ${..train.mri_loading_transforms}
+      # Validation data uses same transforms.
+      # Refer to the training transforms above (parsed using OmegaConf)
+
+    whole_mri_transforms: 
+      # Check that the pad/cropping is successful (can be removed after initial debug run)
+      - name: EnsureSpatialShape
+        mri_keys: ['image', 'segmentation/mapped_labels']
+        kwargs:
+          expected_spatial_shape: *pad_shape_anchor
+
+      # Check that all values are finite (not NaN or Inf)
+      - name: EnsureAllValuesFinite
+        mri_keys: ['image']
+
+      # # Replace empty/all zero channels with small Gaussian value numbers
+      # - name: ReplaceEmptyChannelsWithNoise
+      #   mri_keys: ['image']
+
+      - name: OneHotEncode
+        mri_keys: ['segmentation/mapped_labels']
+        kwargs:
+          n_classes: ${model.config.n_classes}
+
+      # Normalize the image to zero mean and unit variance (here applied after augs)
+      - name: ChannelWiseScaling
+        mri_keys: ['image']
+
+      - name: KeepOnlyMRIDictKeys
+        mri_keys: ['image', 'segmentation/mapped_labels', 'study_id']
+
+      # Rename segmentation to generic 'segmentation' key expected in code
+      # Should usually not be removed.
+      - name: RenameMRIDictKeys
+        mri_keys: ['segmentation/mapped_labels']
+        kwargs:
+          rename_to:
+            - 'segmentation'
+
+      # Final check that all values are finite (not NaN or Inf).
+      # Can be removed after initial debug run.
+      - name: EnsureAllValuesFinite
+        mri_keys: ['image']
+
+    # No patch transforms
+    patch_transforms: null
+
+    # No batch transforms. Not yet implemented!
+    batch_transforms: null

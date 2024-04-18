@@ -1,3 +1,0 @@
-docker_image: nvidia/12.2.2-cudnn8-runtime-ubuntu22.04
-docker_arguments: []  # string or list of strings, e.g., '-e ENV=1'
-docker_setup_bash_script: []  # string or list of strings, e.g., [‘apt update’, ‘apt-get install -y gcc’]

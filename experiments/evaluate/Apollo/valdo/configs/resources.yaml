@@ -1,0 +1,14 @@
+splits:
+  train:
+    batch_queue_capacity: 400
+    mri_loading_cache_capacity: 200
+
+  
+  valid:
+    batch_queue_capacity: 50
+    mri_loading_cache_capacity: 50
+
+# Number of inter- and intra-op threads for TF
+# NOTE: A value of 0 means system automatically determines an appropriate number of threads
+# NOTE: A value of 0 usually means all cores used at 100 %, which may reduce performance of other processes
+tf_cpu_threads: 10

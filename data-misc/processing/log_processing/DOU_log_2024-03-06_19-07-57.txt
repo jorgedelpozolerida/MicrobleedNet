@@ -1,0 +1,7 @@
+
+2024-03-06 19:08:00.212179
+***********************************************
+STARTING PROCESSING OF DATASET dou
+***********************************************
+STARTING DELETION OF STUDIES FOR DATASET dou
+Succesfully deleted the following study: 09
