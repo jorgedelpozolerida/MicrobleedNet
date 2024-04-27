@@ -28,7 +28,7 @@ logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 
 
-def ensure_directory_exists(dir_path, verbose=True):
+def ensure_directory_exists(dir_path, verbose=False):
     """ Create directory if non-existent """
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
