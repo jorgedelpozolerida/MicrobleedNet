@@ -36,6 +36,8 @@ from mpl_toolkits.mplot3d import Axes3D
 from mayavi import mlab
 import vtk
 from vtk.util.numpy_support import numpy_to_vtk
+import pyvista as pv
+import plotly.graph_objects as go
 
 
 
@@ -496,7 +498,6 @@ def plot_brain(
     else:
         plt.show()
 
-
 def plot_processed_mask_3x3(
     mri_im: Any,
     cmb_im: Any,
@@ -574,6 +575,9 @@ def plot_processed_mask_3x3(
         "coronal": out_mask[coronal_crop],
     }
 
+    # Initialize figure and axes for 2x3 layout
+    fig, axs = plt.subplots(3, 3, figsize=(15, 15))
+
     # Plotting cropped views for axial, sagittal, and coronal with processed masks
     for i, view in enumerate(["axial", "sagittal", "coronal"]):
         img_slice, mask_slice = None, None
@@ -649,6 +653,7 @@ def plot_processed_mask_3x3(
     plt.tight_layout()
     plt.savefig(save_path, dpi=300)
     plt.close(fig)
+
 
 
 def generate_cmb_plots(
@@ -890,6 +895,7 @@ def plot_microbleed_mayavi(binary_map, filepath=None, showfig=False, im_size=(40
     Args:
     - binary_map (numpy.ndarray): A 3D numpy array where the microbleed is represented by 1s.
     """
+    
     # Ensure all previous figures are closed to avoid interference
     mlab.close(all=True)
 
@@ -910,6 +916,7 @@ def plot_microbleed_mayavi(binary_map, filepath=None, showfig=False, im_size=(40
     dark_red_color = (0.8, 0, 0)  # Dark red, like blood
     mlab.pipeline.iso_surface(src, contours=[0.5], opacity=0.8, color=dark_red_color)
 
+
     # Save the figure if a filepath is provided
     if filepath:
         mlab.savefig(filepath, figure=fig, magnification=1)
@@ -920,15 +927,19 @@ def plot_microbleed_mayavi(binary_map, filepath=None, showfig=False, im_size=(40
     else:
         mlab.close()
 
-        
-def plot_microbleed_vtk(binary_map, filepath=None, showfig=False, im_size=(400, 400)):
+def plot_microbleed_vtk(binary_map, filepath=None, showfig=False, im_size=(400, 400), universal_bounds=10):
     """
-    Visualizes a binary map of a microbleed in 3D using VTK with a consistent figure size,
-    a grey background, and the microbleed rendered in green, resembling the color of vegetation.
-
+    Visualizes a binary map of a microbleed in 3D using VTK, with rendering adapted to universal coordinates and colored blood red.
+    Introduces random rotations to the camera view for each render.
+    
     Args:
     - binary_map (numpy.ndarray): A 3D numpy array where the microbleed is represented by 1s.
+    - filepath (str, optional): Path to save the output image.
+    - showfig (bool): Whether to display the figure interactively.
+    - im_size (tuple): Image size for the output figure.
+    - universal_bounds (int): Size of the cube that defines the universal coordinate system.
     """
+    
     # Convert numpy array to VTK array
     vtk_data_array = numpy_to_vtk(num_array=binary_map.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
     
@@ -949,25 +960,38 @@ def plot_microbleed_vtk(binary_map, filepath=None, showfig=False, im_size=(400, 
     # Create a mapper and actor for the image data
     iso = vtk.vtkContourFilter()
     iso.SetInputData(vtk_image)
-    iso.SetValue(0, 0.5)  # Draw contour at half the max value (assuming binary map is either 0 or 1)
+    iso.SetValue(0, 0.5)  # Draw contour at value = 0.5
     
     mapper = vtk.vtkPolyDataMapper()
     mapper.SetInputConnection(iso.GetOutputPort())
+    mapper.ScalarVisibilityOff()
 
     actor = vtk.vtkActor()
     actor.SetMapper(mapper)
-    actor.GetProperty().SetColor(136, 8, 8)  
-    actor.GetProperty().SetOpacity(0.8)  # Desired opacity
+    actor.GetProperty().SetColor(0.7, 0, 0)  # A deep red color
+    actor.GetProperty().SetOpacity(0.8)  # Set opacity
 
     # Add actor to the renderer
     renderer.AddActor(actor)
 
-    # Set camera position and orientation for good visualization angle
-    renderer.ResetCamera()
+    # Calculate the centroid of the non-zero elements
+    z, y, x = np.nonzero(binary_map)
+    if len(x) > 0 and len(y) > 0 and len(z) > 0:
+        centroid = [np.mean(x), np.mean(y), np.mean(z)]
+    else:
+        centroid = [universal_bounds / 2.0] * 3  # Default to center if no non-zero elements
+
+    # Set camera position and orientation for a good visualization angle
     camera = renderer.GetActiveCamera()
-    camera.Azimuth(180)
-    camera.Elevation(180)
-    camera.Zoom(1.5)  # Adjust zoom to ensure the object fits well in the view
+    camera.SetFocalPoint(centroid)
+    camera.SetPosition(centroid[0], centroid[1], centroid[2] + max(universal_bounds, np.max(binary_map.shape) * 1.5))
+    camera.SetViewUp(0, 1, 0)  # Assuming Y-axis is up
+
+    # Randomly rotate the camera for unique views
+    azimuth_angle = random.randint(0, 360)
+    elevation_angle = random.randint(-30, 30)
+    camera.Azimuth(azimuth_angle)
+    camera.Elevation(elevation_angle)
 
     # Render the scene
     renderWindow.Render()
@@ -989,6 +1013,5 @@ def plot_microbleed_vtk(binary_map, filepath=None, showfig=False, im_size=(400, 
         interactor.Initialize()
         interactor.Start()
     else:
-        # Clean up
         renderWindow.Finalize()
         renderer.RemoveAllViewProps()

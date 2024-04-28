@@ -115,11 +115,11 @@ def analyze_and_crop_im_data(args, im_data, com, rad, subject, pred=False):
         # Plot using the specified engine
         if args.engine == "mayavi":
             utils_plotting.plot_microbleed_mayavi(
-                cropped_im_data, filepath=filepath, im_size=(500, 500)
+                cropped_im_data, filepath=filepath,
             )
         elif args.engine == "vtk":
             utils_plotting.plot_microbleed_vtk(
-                cropped_im_data, filepath=filepath, im_size=(500, 500)
+                cropped_im_data,  filepath=filepath,
             )
         else:
             raise ValueError("Invalid engine: options are 'mayavi' or 'vtk'")
@@ -150,12 +150,9 @@ def parse_args():
         "--savedir", type=str, default=None, help="Path to the output directory"
     )
     parser.add_argument(
-        "--n_images", type=int, default=1, help="Number of images per datadir"
-    )
-    parser.add_argument(
         "--engine", type=str, default="mayavi", help="Plotting engine (mayavi or vtk)"
     )
-    parser.add_argument("--crop_size", type=int, default=50, help="Crop size")
+    parser.add_argument("--crop_size", type=int, default=30, help="Crop size")
     parser.add_argument(
         "--prediction_dir",
         type=str,

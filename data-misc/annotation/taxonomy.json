@@ -1,0 +1,551 @@
+{
+    "orgId": "ee09f50f-5afc-4d7a-a304-fdb8e45cbdd4",
+    "name": "Cerebral microbleeds (CMB)",
+    "createdAt": "2023-11-09T14:26:08.154304+00:00",
+    "archived": false,
+    "isNew": true,
+    "taxId": "9055e75c-120a-4dcd-a424-761d7bdfd50f",
+    "studyClassify": [
+        {
+            "name": "Excluded",
+            "attrType": "BOOL",
+            "attrId": 1,
+            "options": null,
+            "archived": true,
+            "parents": null,
+            "hint": null,
+            "defaultValue": null
+        },
+        {
+            "name": "Why excluded",
+            "attrType": "TEXT",
+            "attrId": 2,
+            "options": null,
+            "archived": true,
+            "parents": null,
+            "hint": null,
+            "defaultValue": null
+        },
+        {
+            "name": "Include",
+            "attrType": "MULTISELECT",
+            "attrId": 6,
+            "options": [
+                {
+                    "name": "yes",
+                    "optionId": 3,
+                    "color": "#d40119",
+                    "archived": false
+                },
+                {
+                    "name": "radiological read not possible",
+                    "optionId": 0,
+                    "color": "#5a01d6",
+                    "archived": false
+                },
+                {
+                    "name": "segmentation not possible due to artifact",
+                    "optionId": 1,
+                    "color": "#56c497",
+                    "archived": false
+                },
+                {
+                    "name": "Other",
+                    "optionId": 2,
+                    "color": "#fedde1",
+                    "archived": false
+                }
+            ],
+            "archived": false,
+            "parents": null,
+            "hint": null,
+            "defaultValue": null
+        },
+        {
+            "name": "Study quality",
+            "attrType": "MULTISELECT",
+            "attrId": 3,
+            "options": [
+                {
+                    "name": "sufficient",
+                    "optionId": 0,
+                    "color": "#b23e95",
+                    "archived": false
+                },
+                {
+                    "name": "Insufficient quality (T2* / SWI)",
+                    "optionId": 1,
+                    "color": "#04b235",
+                    "archived": false
+                },
+                {
+                    "name": "Insufficient quality (other sequences)",
+                    "optionId": 2,
+                    "color": "#1d5739",
+                    "archived": false
+                },
+                {
+                    "name": "Insufficient quality (all sequences)",
+                    "optionId": 3,
+                    "color": "#33cc68",
+                    "archived": false
+                }
+            ],
+            "archived": false,
+            "parents": null,
+            "hint": null,
+            "defaultValue": null
+        },
+        {
+            "name": "Possible issues",
+            "attrType": "TEXT",
+            "attrId": 0,
+            "options": null,
+            "archived": true,
+            "parents": null,
+            "hint": null,
+            "defaultValue": null
+        },
+        {
+            "name": "Comments",
+            "attrType": "TEXT",
+            "attrId": 4,
+            "options": null,
+            "archived": false,
+            "parents": null,
+            "hint": null,
+            "defaultValue": null
+        },
+        {
+            "name": "allCMBthesame",
+            "attrType": "BOOL",
+            "attrId": 5,
+            "options": null,
+            "archived": true,
+            "parents": null,
+            "hint": null,
+            "defaultValue": null
+        }
+    ],
+    "seriesClassify": [
+        {
+            "name": "Image Quality",
+            "attrType": "MULTISELECT",
+            "attrId": 5,
+            "options": [
+                {
+                    "name": "Blurry",
+                    "optionId": 0,
+                    "color": "#3ec9f3",
+                    "archived": false
+                },
+                {
+                    "name": "Faulty acquisition",
+                    "optionId": 1,
+                    "color": "#958d91",
+                    "archived": false
+                },
+                {
+                    "name": "Wrong image type",
+                    "optionId": 2,
+                    "color": "#84a385",
+                    "archived": false
+                },
+                {
+                    "name": "metal",
+                    "optionId": 4,
+                    "color": "#53abeb",
+                    "archived": false
+                },
+                {
+                    "name": "Other artefacts",
+                    "optionId": 3,
+                    "color": "#5eb3b9",
+                    "archived": false
+                }
+            ],
+            "archived": false,
+            "parents": null,
+            "hint": null,
+            "defaultValue": null
+        },
+        {
+            "name": "Comments",
+            "attrType": "TEXT",
+            "attrId": 6,
+            "options": null,
+            "archived": false,
+            "parents": null,
+            "hint": null,
+            "defaultValue": null
+        }
+    ],
+    "instanceClassify": [],
+    "objectTypes": [
+        {
+            "category": "CMB",
+            "classId": 0,
+            "labelType": "SEGMENTATION",
+            "attributes": [
+                {
+                    "name": "Problematic CMB",
+                    "attrType": "BOOL",
+                    "attrId": 0,
+                    "options": null,
+                    "archived": true,
+                    "parents": null,
+                    "hint": null,
+                    "defaultValue": null
+                },
+                {
+                    "name": "Uncertain",
+                    "attrType": "BOOL",
+                    "attrId": 1,
+                    "options": null,
+                    "archived": false,
+                    "parents": null,
+                    "hint": null,
+                    "defaultValue": null
+                },
+                {
+                    "name": "Why problematic/uncertain",
+                    "attrType": "TEXT",
+                    "attrId": 2,
+                    "options": null,
+                    "archived": true,
+                    "parents": null,
+                    "hint": null,
+                    "defaultValue": null
+                },
+                {
+                    "name": "Possible Cause of CMB",
+                    "attrType": "TEXT",
+                    "attrId": 3,
+                    "options": null,
+                    "archived": true,
+                    "parents": null,
+                    "hint": null,
+                    "defaultValue": null
+                },
+                {
+                    "name": "Cause",
+                    "attrType": "SELECT",
+                    "attrId": 5,
+                    "options": [
+                        {
+                            "name": "Trauma",
+                            "optionId": 0,
+                            "color": "#6a7b09",
+                            "archived": false
+                        },
+                        {
+                            "name": "Hypertension",
+                            "optionId": 1,
+                            "color": "#37cb7a",
+                            "archived": false
+                        },
+                        {
+                            "name": "DAI",
+                            "optionId": 2,
+                            "color": "#fac117",
+                            "archived": false
+                        },
+                        {
+                            "name": "Trauma-DAI",
+                            "optionId": 3,
+                            "color": "#f8dd19",
+                            "archived": false
+                        },
+                        {
+                            "name": "CAA",
+                            "optionId": 4,
+                            "color": "#efa618",
+                            "archived": false
+                        },
+                        {
+                            "name": "Radiotherapy",
+                            "optionId": 5,
+                            "color": "#e3a4a2",
+                            "archived": false
+                        },
+                        {
+                            "name": "Other",
+                            "optionId": 6,
+                            "color": "#7a40b5",
+                            "archived": false
+                        }
+                    ],
+                    "archived": false,
+                    "parents": null,
+                    "hint": null,
+                    "defaultValue": null
+                },
+                {
+                    "name": "Other",
+                    "attrType": "TEXT",
+                    "attrId": 4,
+                    "options": null,
+                    "archived": false,
+                    "parents": null,
+                    "hint": null,
+                    "defaultValue": null
+                },
+                {
+                    "name": "<5mm",
+                    "attrType": "BOOL",
+                    "attrId": 6,
+                    "options": null,
+                    "archived": false,
+                    "parents": null,
+                    "hint": null,
+                    "defaultValue": null
+                },
+                {
+                    "name": "Location",
+                    "attrType": "SELECT",
+                    "attrId": 7,
+                    "options": [
+                        {
+                            "name": "Cortex / grey-white junction",
+                            "optionId": 0,
+                            "color": "#07a562",
+                            "archived": false
+                        },
+                        {
+                            "name": "Basal ganglia grey matter",
+                            "optionId": 1,
+                            "color": "#7f8646",
+                            "archived": false
+                        },
+                        {
+                            "name": "Subcortical white matter",
+                            "optionId": 2,
+                            "color": "#37a20d",
+                            "archived": false
+                        },
+                        {
+                            "name": "Internal and external capsule",
+                            "optionId": 3,
+                            "color": "#ef4785",
+                            "archived": false
+                        },
+                        {
+                            "name": "Thalamus",
+                            "optionId": 4,
+                            "color": "#3d16f7",
+                            "archived": false
+                        },
+                        {
+                            "name": "Brainstem",
+                            "optionId": 5,
+                            "color": "#f68d33",
+                            "archived": false
+                        },
+                        {
+                            "name": "Cerebellum",
+                            "optionId": 6,
+                            "color": "#fa9971",
+                            "archived": false
+                        }
+                    ],
+                    "archived": false,
+                    "parents": null,
+                    "hint": null,
+                    "defaultValue": null
+                },
+                {
+                    "name": "Multiple",
+                    "attrType": "BOOL",
+                    "attrId": 8,
+                    "options": null,
+                    "archived": false,
+                    "parents": null,
+                    "hint": null,
+                    "defaultValue": null
+                }
+            ],
+            "color": "#d92d20",
+            "archived": false,
+            "parents": null,
+            "hint": "One instance per individual microbleed<br>\n\nOR<br>\n\nInclude several microbleeds but mark \"Multiple\" as True"
+        },
+        {
+            "category": "Landmark",
+            "classId": 1,
+            "labelType": "POINT",
+            "attributes": [],
+            "color": "#F670C7",
+            "archived": true,
+            "parents": null,
+            "hint": null
+        },
+        {
+            "category": "Basal ganglia calcification",
+            "classId": 2,
+            "labelType": "POINT",
+            "attributes": [
+                {
+                    "name": "Location",
+                    "attrType": "SELECT",
+                    "attrId": 8,
+                    "options": [
+                        {
+                            "name": "Left",
+                            "optionId": 0,
+                            "color": "#577cc8",
+                            "archived": false
+                        },
+                        {
+                            "name": "Right",
+                            "optionId": 1,
+                            "color": "#6b4852",
+                            "archived": false
+                        },
+                        {
+                            "name": "L+R",
+                            "optionId": 2,
+                            "color": "#61dd17",
+                            "archived": false
+                        }
+                    ],
+                    "archived": false,
+                    "parents": null,
+                    "hint": null,
+                    "defaultValue": null
+                }
+            ],
+            "color": "#DDD6FE",
+            "archived": true,
+            "parents": null,
+            "hint": null
+        },
+        {
+            "category": "Line",
+            "classId": 3,
+            "labelType": "LENGTH",
+            "attributes": [],
+            "color": "#3CCB7F",
+            "archived": true,
+            "parents": null,
+            "hint": null
+        },
+        {
+            "category": "Mimics",
+            "classId": 4,
+            "labelType": "POINT",
+            "attributes": [
+                {
+                    "name": "Type",
+                    "attrType": "MULTISELECT",
+                    "attrId": 8,
+                    "options": [
+                        {
+                            "name": "cavernoma",
+                            "optionId": 0,
+                            "color": "#16ef7e",
+                            "archived": false
+                        },
+                        {
+                            "name": "teleangectasis",
+                            "optionId": 1,
+                            "color": "#f3cb86",
+                            "archived": false
+                        },
+                        {
+                            "name": "Basal ganglia calcifications",
+                            "optionId": 2,
+                            "color": "#54688d",
+                            "archived": false
+                        },
+                        {
+                            "name": "Other",
+                            "optionId": 3,
+                            "color": "#9db696",
+                            "archived": false
+                        }
+                    ],
+                    "archived": false,
+                    "parents": null,
+                    "hint": null,
+                    "defaultValue": null
+                },
+                {
+                    "name": "Other",
+                    "attrType": "TEXT",
+                    "attrId": 9,
+                    "options": null,
+                    "archived": false,
+                    "parents": null,
+                    "hint": null,
+                    "defaultValue": null
+                }
+            ],
+            "color": "#FECDD6",
+            "archived": false,
+            "parents": null,
+            "hint": "Add this finding ONLY for mimic of microbleeds"
+        },
+        {
+            "category": "Additional findings",
+            "classId": 5,
+            "labelType": "SEGMENTATION",
+            "attributes": [
+                {
+                    "name": "Main finding",
+                    "attrType": "TEXT",
+                    "attrId": 0,
+                    "options": null,
+                    "archived": false,
+                    "parents": null,
+                    "hint": null,
+                    "defaultValue": null
+                },
+                {
+                    "name": "Other",
+                    "attrType": "TEXT",
+                    "attrId": 1,
+                    "options": null,
+                    "archived": false,
+                    "parents": null,
+                    "hint": null,
+                    "defaultValue": null
+                }
+            ],
+            "color": "#D9D6FE",
+            "archived": true,
+            "parents": null,
+            "hint": "Add this if you think there is something worth mentioning"
+        },
+        {
+            "category": "Additional Findings",
+            "classId": 6,
+            "labelType": "POINT",
+            "attributes": [
+                {
+                    "name": "Main finding",
+                    "attrType": "TEXT",
+                    "attrId": 0,
+                    "options": null,
+                    "archived": false,
+                    "parents": null,
+                    "hint": null,
+                    "defaultValue": null
+                },
+                {
+                    "name": "Other",
+                    "attrType": "TEXT",
+                    "attrId": 1,
+                    "options": null,
+                    "archived": false,
+                    "parents": null,
+                    "hint": null,
+                    "defaultValue": null
+                }
+            ],
+            "color": "#444CE7",
+            "archived": false,
+            "parents": null,
+            "hint": "Add this if you think there is something worth mentioning"
+        }
+    ]
+}

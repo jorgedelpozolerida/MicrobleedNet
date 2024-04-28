@@ -1,0 +1,13 @@
+Dataset,location,demographics,scanner_model,seq_type,field_strength,TR,TE,flip_angle,slice_thickness,rating_scale
+VALDO,"London, UK","SABRE: Tri-ethnic, high cardiovascular risk, 36-92 years old, mean age 72. ",Philips,T2S,3,1288,21,18,3,BOMBS
+VALDO,"Rotterdam, Netherlands",RSS: Aging population >45 without dementia,GE MRI,T2S,1.5,45,31,13,0.8,"(Vernooij et al., 2008)"
+VALDO,"Barcelona, Spain","ALFA: Enriched for APOE4, family risk of Alzheimer’s.  Cognitively normal participants aged 45-74",GE Discovery,T2S,3,1300,23,15,3,BOMBS
+RODEJA,"Copenhagen region, Denmark",unknown,several,SWI,1.5/3,several,several,several,several,unknown
+CRB,Brazil,"Ages between 40-57 and mean 48, with female","GE Optima MR450w, GE GENESIS_SIGNA",T2S,1.5,75-317,23-48,15-20,4.6-5.5,BOMBS
+CRB,India,"Ages between 25-80 and mean 59, with 31% female, 69% male","Siemens Spectra, Siemens MAGNETOM Sempra, Siemens Sempra, Siemens Symphony","T2S, SWI",1.5/3,48-936,19-40,12-20,2.5-5,BOMBS
+CRB,U.S.A,"Ages between 73-90 and mean 79, with 33% female, 67% male","Siemens MAGNETOM Vida,  ",SWI,3,27,20,15,1.9,BOMBS
+CRBneg,Brazil,"Ages between 18-90 and mean 50, with 53% female, 47% male","GE Brivo MR355, GE Optima MR450w, GE GENESIS_SIGNA",T2S,1.5,74-717,19-50,15-20,3-6,BOMBS
+CRBneg,India,"Ages between 18-87 and mean 52, with 45% female, 55% male","Siemens Spectra, Siemens MAGNETOM_ESSENZA, Siemens MAGNETOM Sempra, Siemens Sempra, Siemens , Siemens Symphony","T2S, SWI",1.5/3,48-968,19-40,12-20,2-5,BOMBS
+CRBneg,U.S.A,"Ages between 18-90 and mean 55, with 54% female, 46% male","Siemens MAGNETOM Vida, Siemens Prisma_fit, Siemens MAGNETOM Sola, Siemens , Siemens TrioTim,  ","SWI, T2S",1.5/3,27-782,20-40,15-20,1.75-4,BOMBS
+MOMENI,Australia,"Alzheimer’s disease, mild cognitive impairment and cognitively normal",Siemens TRIM TRIO scanner,SWI,3,27,20,20,1.75,MARS
+DOU,Hong Kong,stroke and normal aging, Philips Medical System,SWI,3,17,24,20,2,MARS

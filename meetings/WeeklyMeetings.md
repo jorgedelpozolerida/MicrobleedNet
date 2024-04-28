@@ -7,6 +7,7 @@
 * [11 March 2024](#date-11-march-2024)
 * [18 March 2024](#date-18-march-2024)
 * [25 March 2024](#date-25-march-2024)
+* [29 April 2024](#date-29-april-2024)
 
 
 <!-- *
@@ -529,20 +530,32 @@ All configs used for all experiments found in here: [experiments folder](../expe
 ### Date: 29 April 2024
 
 #### What did you achieve/do?
-* n/a
+* All training ifnished (in theory)
+* Some evaluations done already
+* Report started
 
 #### What did you struggle with?
-* n/a
+* Implementation
 
 #### What would you like to work on next ?
-* n/a
+* Finish report
 
 #### Where do you need help from Veronika?
-* n/a
+* Next week, if you could revise ongoing report, that'd be very . Still WIP and inmature to show you
+* Regarding mail I sent to you, basiclly ocnerned I wont be able to include nice grpahcs if rpeort limit is there. I have no problem in using two-column but oncerned about page limit
+* What statostocs about the data or any other factor from study you think is a must-have?
 
 #### Others
 
-* n/a
+* Some interesting plots for how different sized CMBs from GT look like:
+[CMB_3D_GT_by_dataset.png](../data-misc/img/CMB_3D_GT_by_dataset.png)
+
+* Plots of GT vs prediction for 2 test sets (very wide, to see how on tubular GT it ignores):
+[CMBs_3D_comparison_balanced_sorted.png](../data-misc/img/CMBs_3D_comparison_balanced_sorted.png)
+
+* Some plot about size radii and #cmb per scan:
+[CMB_radii_and_counts_by_dataset.png](../data-misc/img/CMB_radii_and_counts_by_dataset.png)
+
 
 <br><br><br><br><br>
 

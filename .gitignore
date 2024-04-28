@@ -164,6 +164,8 @@ cython_debug/
 
 # MORE
 old/*
+data-misc/img/cmb_3d/*
 synthstrip-docker
 TESTING/*
 __*
+.Rproj.user
