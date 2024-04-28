@@ -32,6 +32,11 @@ from scipy.ndimage import center_of_mass
 from skimage.segmentation import find_boundaries
 from skimage.morphology import binary_dilation
 import random
+from mpl_toolkits.mplot3d import Axes3D
+from mayavi import mlab
+import vtk
+from vtk.util.numpy_support import numpy_to_vtk
+
 
 
 ################################################################################
@@ -385,32 +390,6 @@ def plot_processed_mask_2x3(
     plt.close(fig)
 
 
-# def plot_brain(mri_im: Any, cmb_im: Any, processed_cmb_im: Any, cmb_coords: Tuple[float, float, float], zoom_size: float, metadata_str: str = None, save_path: str = None, subplot_spacing = 0.005) -> None:
-
-#     # Verify orientation consistency across images
-#     if not check_orientation_consistency([mri_im.affine, cmb_im.affine, processed_cmb_im.affine]):
-#         raise ValueError("All images must have the same orientation.")
-
-#     # Extracting data and handling 4D images by selecting the first volume
-#     mri_data = np.squeeze(mri_im.get_fdata())
-
-#     vmin = mri_data.min()
-#     vmax = mri_data.max()
-
-#     # Initialize figure and axes for 2x3 layout
-#     fig, ax = plt.subplots()
-
-
-#     # Plot the full view without zoom
-#     ax.imshow(mri_data[:, :, cmb_coords[-1]], cmap='gray', vmin=vmin, vmax=vmax)
-#     plot_cross_with_gap(ax, y=cmb_coords[0], x=cmb_coords[1], color='yellow', line_length=25, gap_size=15, linewidth=1)
-
-#     ax.axis('off')
-#     plt.tight_layout()
-#     plt.savefig(save_path, dpi=300)
-#     plt.close(fig)
-
-
 def plot_brain(
     mri_im,
     cmb_im,
@@ -595,22 +574,6 @@ def plot_processed_mask_3x3(
         "coronal": out_mask[coronal_crop],
     }
 
-    # Initialize figure and axes for 2x3 layout
-    fig, axs = plt.subplots(3, 3, figsize=(15, 15))
-
-    # # Plot the full view without zoom
-    # axs[0, 0].imshow(mri_data[:, :, cmb_coords[-1]], cmap='gray')
-    # plot_cross_with_gap(axs[0, 0], y=cmb_coords[0], x=cmb_coords[1], color='yellow', line_length=25, gap_size=15, linewidth=1)
-
-    # # Plot the full view with zoom on axial
-    # axs[0, 1].imshow(t2s_cropped_dict['axial'][:, :, cmb_coords[-1]], cmap='gray')
-    # plot_cross_with_gap(axs[0, 1], y=t2s_cropped_dict['axial'].shape[0] / 2, x=t2s_cropped_dict['axial'].shape[1] / 2, color='yellow', line_length=25, gap_size=15, linewidth=1)
-
-    # # Plot original and generated masks with cross on axial
-    # axs[0, 2].imshow(t2s_cropped_dict['axial'][:, :, cmb_coords[-1]], cmap='gray')
-    # axs[0, 2].imshow(cmb_cropped_dict['axial'][:, :, cmb_coords[-1]], alpha=0.5, cmap="Reds")
-    # plot_cross_with_gap(axs[0, 2], y=t2s_cropped_dict['axial'].shape[0] / 2, x=t2s_cropped_dict['axial'].shape[1] / 2, color='yellow', line_length=25, gap_size=15, linewidth=1)
-
     # Plotting cropped views for axial, sagittal, and coronal with processed masks
     for i, view in enumerate(["axial", "sagittal", "coronal"]):
         img_slice, mask_slice = None, None
@@ -780,30 +743,252 @@ def create_boxplot(
     data,
     column,
     group_by,
-    title,
+    ax,
+    title=None,
     xlabel=None,
     ylabel=None,
-    figsize=(12, 6),
     rotation=45,
+    fontsize_title=16,
+    fontsize_labels=14,
+    fontsize_ticks=12,
+    y_lim=None,
 ):
     """
-    Creates a boxplot for a specified column grouped by a specified group column.
+    Creates a boxplot on a given axis for a specified column grouped by a specified group column.
 
     Parameters:
     - data (pd.DataFrame): DataFrame containing the data.
     - column (str): Column name for which to create the boxplot.
     - group_by (str): Column name to group by for the boxplot.
-    - title (str): Title of the plot.
-    - xlabel (str): Label for the x-axis.
-    - ylabel (str): Label for the y-axis.
-    - figsize (tuple): Dimensions of the figure (width, height).
+    - ax (matplotlib.axes.Axes): Axis object where the boxplot will be plotted.
+    - title (str, optional): Title of the plot.
+    - xlabel (str, optional): Label for the x-axis.
+    - ylabel (str, optional): Label for the y-axis.
     - rotation (int): Degrees to rotate x-axis labels.
+    - fontsize_title (int): Font size for the title.
+    - fontsize_labels (int): Font size for the axis labels.
+    - fontsize_ticks (int): Font size for the tick labels.
+    - y_lim (tuple, optional): A tuple of (min, max) for y-axis limits.
     """
-    plt.figure(figsize=figsize)
-    sns.boxplot(x=group_by, y=column, data=data)
-    plt.title(title)
-    plt.xlabel(xlabel if xlabel else group_by)
-    plt.ylabel(ylabel if ylabel else column)
-    plt.xticks(rotation=rotation)
-    plt.tight_layout()
+    sns.boxplot(x=group_by, y=column, data=data, ax=ax)
+    ax.set_title(title, fontsize=fontsize_title)
+    ax.set_xlabel(xlabel, fontsize=fontsize_labels)
+    ax.set_ylabel(ylabel, fontsize=fontsize_labels)
+    ax.tick_params(axis="x", rotation=rotation, labelsize=fontsize_ticks)
+    ax.tick_params(axis="y", labelsize=fontsize_ticks)
+
+    # Set y-axis limits if specified
+    if y_lim is not None:
+        ax.set_ylim(y_lim)
+
+    # Adjust the subplot to fit the content (including rotated labels)
+    plt.gcf().subplots_adjust(
+        bottom=0.15
+    )  # Adjust as necessary depending on label rotations
+
+
+def create_violin_plot(
+    data,
+    column,
+    group_by,
+    ax,  # Accepting an axis argument to plot on
+    title=None,
+    xlabel=None,
+    ylabel=None,
+    rotation=45,
+    fontsize_title=16,
+    fontsize_labels=14,
+    fontsize_ticks=12,
+    palette="muted",  # Adding color palette
+    cut=0,  # Cut parameter for the KDE to limit it beyond the range of the data
+    showfliers=True,
+    showmeans=False,  # Optionally display the means
+    inner="quartile",  # Show quartiles within the violin
+    y_lim=None,
+):
+    """
+    Creates a violin plot on a given axis for a specified column grouped by a specified group column.
+    Enhanced with color and additional display options.
+
+    Parameters:
+    - data (pd.DataFrame): DataFrame containing the data.
+    - column (str): Column name for which to create the violin plot.
+    - group_by (str): Column name to group by for the plots.
+    - ax (matplotlib.axes.Axes): Axis object where the plots will be plotted.
+    - title (str, optional): Title of the plot.
+    - xlabel (str, optional): Label for the x-axis.
+    - ylabel (str, optional): Label for the y-axis.
+    - rotation (int): Degrees to rotate x-axis labels.
+    - fontsize_title (int): Font size for the title.
+    - fontsize_labels (int): Font size for the axis labels.
+    - fontsize_ticks (int): Font size for the tick labels.
+    - palette (str): Color palette to use for different groups.
+    - cut (int): Limits of the KDE used in the violin plot.
+    - showfliers (bool): Whether to show outliers.
+    - showmeans (bool): Whether to display mean values.
+    - inner (str): What to display inside the violin plot ('quartile', 'point', 'stick', None).
+    - y_lim
+    """
+    sns.violinplot(
+        x=group_by,
+        y=column,
+        data=data,
+        ax=ax,
+        palette=palette,
+        cut=cut,
+        inner=inner,
+        showmeans=showmeans,
+        meanprops={
+            "marker": "o",
+            "markerfacecolor": "white",
+            "markeredgecolor": "black",
+            "markersize": "10",
+        },
+    )
+
+    ax.set_title(title, fontsize=fontsize_title)
+    ax.set_xlabel(xlabel, fontsize=fontsize_labels)
+    ax.set_ylabel(ylabel, fontsize=fontsize_labels)
+    ax.tick_params(axis="x", rotation=rotation, labelsize=fontsize_ticks)
+    ax.tick_params(axis="y", labelsize=fontsize_ticks)
+
+    # Set y-axis limits if specified
+    if y_lim is not None:
+        ax.set_ylim(y_lim)
+
+    # Adjust the subplot to fit the content (including rotated labels)
+    plt.gcf().subplots_adjust(bottom=0.15)
+
+
+def plot_microbleed_3d(binary_map):
+    """
+    Visualizes a binary map of a microbleed in 3D using matplotlib.
+
+    Args:
+    - binary_map (numpy.ndarray): A 3D numpy array where the microbleed is represented by 1s.
+
+    """
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.set_title('3D Visualization of Microbleed')
+
+    # Get the coordinates of points to plot
+    x, y, z = np.where(binary_map == 1)
+    ax.scatter(x, y, z, c='r', marker='o')
+
+    ax.set_xlabel('X Dimension')
+    ax.set_ylabel('Y Dimension')
+    ax.set_zlabel('Z Dimension')
     plt.show()
+    
+
+def plot_microbleed_mayavi(binary_map, filepath=None, showfig=False, im_size=(400, 400)):
+    """
+    Visualizes a binary map of a microbleed in 3D using Mayavi with a consistent figure size,
+    a grey background, and the microbleed rendered in dark red, resembling the color of blood.
+
+    Args:
+    - binary_map (numpy.ndarray): A 3D numpy array where the microbleed is represented by 1s.
+    """
+    # Ensure all previous figures are closed to avoid interference
+    mlab.close(all=True)
+
+    # Set up the figure with a consistent size and grey background
+    fig = mlab.figure(bgcolor=(0.8, 0.8, 0.8), size=im_size)
+
+    # Create a scalar field from the binary map
+    src = mlab.pipeline.scalar_field(binary_map)
+
+    # Set the view to provide a good angle to observe the microbleed
+    scene = mlab.get_engine().current_scene
+    scene.scene.camera.position = [np.max(binary_map.shape) * 2, np.max(binary_map.shape) * 2, np.max(binary_map.shape) * 2]
+    scene.scene.camera.focal_point = [dim / 2 for dim in binary_map.shape]
+    scene.scene.camera.view_angle = 30  # Adjust this value as needed for best view
+    scene.scene.render()
+
+    # Create an iso-surface with dark red color and desired opacity
+    dark_red_color = (0.8, 0, 0)  # Dark red, like blood
+    mlab.pipeline.iso_surface(src, contours=[0.5], opacity=0.8, color=dark_red_color)
+
+    # Save the figure if a filepath is provided
+    if filepath:
+        mlab.savefig(filepath, figure=fig, magnification=1)
+
+    # Display the visualization if requested
+    if showfig:
+        mlab.show()
+    else:
+        mlab.close()
+
+        
+def plot_microbleed_vtk(binary_map, filepath=None, showfig=False, im_size=(400, 400)):
+    """
+    Visualizes a binary map of a microbleed in 3D using VTK with a consistent figure size,
+    a grey background, and the microbleed rendered in green, resembling the color of vegetation.
+
+    Args:
+    - binary_map (numpy.ndarray): A 3D numpy array where the microbleed is represented by 1s.
+    """
+    # Convert numpy array to VTK array
+    vtk_data_array = numpy_to_vtk(num_array=binary_map.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
+    
+    # Create a VTK image data object
+    vtk_image = vtk.vtkImageData()
+    vtk_image.SetDimensions(binary_map.shape)
+    vtk_image.GetPointData().SetScalars(vtk_data_array)
+    
+    # Set up the renderer, render window, and interactor
+    renderer = vtk.vtkRenderer()
+    renderWindow = vtk.vtkRenderWindow()
+    renderWindow.AddRenderer(renderer)
+    renderWindow.SetSize(im_size)
+
+    # Set the background color
+    renderer.SetBackground(0.8, 0.8, 0.8)  # Grey background
+
+    # Create a mapper and actor for the image data
+    iso = vtk.vtkContourFilter()
+    iso.SetInputData(vtk_image)
+    iso.SetValue(0, 0.5)  # Draw contour at half the max value (assuming binary map is either 0 or 1)
+    
+    mapper = vtk.vtkPolyDataMapper()
+    mapper.SetInputConnection(iso.GetOutputPort())
+
+    actor = vtk.vtkActor()
+    actor.SetMapper(mapper)
+    actor.GetProperty().SetColor(136, 8, 8)  
+    actor.GetProperty().SetOpacity(0.8)  # Desired opacity
+
+    # Add actor to the renderer
+    renderer.AddActor(actor)
+
+    # Set camera position and orientation for good visualization angle
+    renderer.ResetCamera()
+    camera = renderer.GetActiveCamera()
+    camera.Azimuth(180)
+    camera.Elevation(180)
+    camera.Zoom(1.5)  # Adjust zoom to ensure the object fits well in the view
+
+    # Render the scene
+    renderWindow.Render()
+
+    # Save the figure if a filepath is provided
+    if filepath:
+        writer = vtk.vtkPNGWriter()
+        writer.SetFileName(filepath)
+        windowto_image_filter = vtk.vtkWindowToImageFilter()
+        windowto_image_filter.SetInput(renderWindow)
+        windowto_image_filter.Update()
+        writer.SetInputConnection(windowto_image_filter.GetOutputPort())
+        writer.Write()
+
+    # Display the visualization if requested
+    if showfig:
+        interactor = vtk.vtkRenderWindowInteractor()
+        interactor.SetRenderWindow(renderWindow)
+        interactor.Initialize()
+        interactor.Start()
+    else:
+        # Clean up
+        renderWindow.Finalize()
+        renderer.RemoveAllViewProps()
