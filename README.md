@@ -32,16 +32,6 @@ To see results from preliminary work (7.5 ECTS research course) please go to [Se
 ## Abstract
 WIP
 
-## Methods & Results
-WIP
-
-## Data
-
-
-
-![](data-misc/img/table_datasets_2.png)
-![](data-misc/img/table_datasets_1.png)
-
 
 ## Repository structure overview
 
@@ -61,4 +51,20 @@ Most important commands are the following:
 Note: so far training and prediction are perfomed as part of a bigger MLOps codebase which could not be included in repo, so no specific scripts exists for that. Will add in the future functionality to run predict command as a Docker image (which preprocesses, predicts and postprocesses in one call)
 
 ### [data-misc](data-misc/)
-Contains metadtaa form datasets preprocessing, splits files, training config files, images for report, CSVs generated for analysis...etc
+Contains metadata form datasets preprocessing, splits files, training config files, images for report, CSVs generated for analysis...etc
+
+
+### [notebooks](notebooks/)
+Contains Python notebooks used to visualize and get overviews of different steps of the project
+
+### [R](R/)
+Contains R code used for different data anlysis and processing purposes
+
+
+## Methods & Results
+WIP
+
+## Data
+
+![](data-misc/img/table_datasets_2.png)
+<!-- ![](data-misc/img/table_datasets_1.png) -->

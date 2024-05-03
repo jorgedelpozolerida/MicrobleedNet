@@ -47,7 +47,7 @@ splits:
   # Parameters for splits defined in the splits_file (see above)
   # Training data
   train:
-    batch_size: 4
+    batch_size: 3
     mri_sampling_strategy:
       name: 'uniform_random' # TODO: use balanced classes!
     patch_sampling_strategy:
@@ -61,7 +61,7 @@ splits:
           1: &cmb_prop 0.9  # Proportion for CMB
   # Validation (same as train for now)
   valid:
-    batch_size: 10
+    batch_size: 8
     mri_sampling_strategy:
       # name: 'deterministic_loop'
       name: 'balanced_classes'

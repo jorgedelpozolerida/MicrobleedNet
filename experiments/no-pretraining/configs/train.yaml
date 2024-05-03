@@ -31,7 +31,7 @@ metrics:
 validation_routine:
   validation_type: 'images'  # one of 'images' and 'batches'
   kwargs:
-    cache_examples: 80  # Controls how many images are plotted each validation round --> set to all
+    cache_examples: 100  # Controls how many images are plotted each validation round --> set to all
     ignore_classes_in_avg: [0]
     evaluation_names:
       - "counts"

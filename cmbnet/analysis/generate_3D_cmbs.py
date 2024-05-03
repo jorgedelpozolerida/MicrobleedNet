@@ -19,7 +19,7 @@ def process_images(args, seed):
     all_subs = [
         d
         for d in os.listdir(datadir)
-        if "-H" not in d and os.path.isdir(os.path.join(datadir, d))
+        if "-H" not in d and os.path.isdir(os.path.join(datadir, d)) and "_pred" not in d
     ]
     all_subs_dat = {}
     for sub in all_subs:
