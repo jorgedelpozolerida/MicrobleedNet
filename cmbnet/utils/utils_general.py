@@ -12,6 +12,7 @@
 
 import os
 import sys
+import glob
 import argparse
 import traceback
 
@@ -28,6 +29,16 @@ logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 
 
+import cmbnet.preprocessing.loading as utils_loading
+import cmbnet.utils.utils_plotting as utils_plotting
+
+
+
+
+###############################################################################
+# General
+###############################################################################
+
 def ensure_directory_exists(dir_path, verbose=False):
     """ Create directory if non-existent """
     if not os.path.exists(dir_path):
@@ -36,7 +47,7 @@ def ensure_directory_exists(dir_path, verbose=False):
             print(f"Created the following dir: \n{dir_path}")
     return dir_path
 
-def write_to_log_file(msg, log_file_path):
+def write_to_log_file(msg, log_file_path, printmsg=False):
     '''
     Writes message to the log file.
     Args:
@@ -46,6 +57,8 @@ def write_to_log_file(msg, log_file_path):
     current_time = dt.now()
     with open(log_file_path, 'a+') as f:
         f.write(f'\n{current_time}\n{msg}')
+    if printmsg:
+        print(msg)
         
 def confirm_action(message=""):
     """Prompt the user for confirmation before proceeding."""
@@ -93,3 +106,57 @@ def create_nifti(data, affine, header, is_annotation=False):
         image.set_data_dtype(np.float32)
 
     return image
+
+
+
+###############################################################################
+# Data Loading and Manipulation
+###############################################################################
+
+def load_clearml_predictions(pred_dir):
+    
+    subjects = os.listdir(pred_dir)
+    metadata = []
+    for sub in subjects:
+        pred_files = glob.glob(
+            os.path.join(pred_dir, sub, f"**/{sub}_PRED.nii.gz"), recursive=True
+        )
+        if len(pred_files) == 0:
+            raise ValueError(
+                f"No prediction files found for {sub}, check your data"
+            )
+        elif len(pred_files) > 1:
+            raise ValueError(
+                f"Multiple prediction files found for {sub}, check your data"
+            )
+        assert os.path.exists(pred_files[0])
+        metadata.append({"id": sub, "pred_path": pred_files[0]})
+        
+    return metadata
+
+def add_groundtruth_metadata(groundtruth_dir, gt_dir_struct, metadata):
+    """
+    Adds ground truth metadata to dict for subjects present.
+    This function should be adapted to varying folder structures.
+    """
+    subjects_selected = [s_item["id"] for s_item in metadata]
+
+    if gt_dir_struct == "processed_final":
+        load_func = utils_loading.get_metadata_from_processed_final
+
+    elif gt_dir_struct == "cmb_format":
+        load_func = utils_loading.get_metadata_from_cmb_format
+    else:
+        raise NotImplementedError
+
+    gt_metadata = {}
+
+    for sub in subjects_selected:
+        sub_meta = load_func(groundtruth_dir, sub)
+        gt_metadata[sub] = sub_meta
+    for meta_item in metadata:
+        matching_item = gt_metadata[meta_item["id"]]
+        meta_item.update({"gt_path": matching_item["anno_path"], **matching_item})
+
+    return metadata
+
