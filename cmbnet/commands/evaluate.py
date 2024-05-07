@@ -14,6 +14,7 @@ Three evaluations are made:
 
 TODO:
 - Distance based evaluation
+- Allow to split performance by group
 
 @author: jorgedelpozolerida
 @date: 31/01/2024
@@ -50,12 +51,13 @@ import json
 from datetime import datetime
 from functools import partial
 import sys
+import ast
 
 # Utils
 import cmbnet.preprocessing.loading as utils_loading
 import cmbnet.utils.utils_plotting as utils_plotting
-import utils.utils_general as utils_general
-import utils.utils_evaluation as utils_eval
+import cmbnet.utils.utils_general as utils_general
+import cmbnet.utils.utils_evaluation as utils_eval
 
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
@@ -76,7 +78,7 @@ def evaluate_study(args, subject_metadata, msg):
     return results
 
 
-def load_clearml_predictions(args):
+def load_predictions(args):
     """
     Loads subjects metadata following clearml folder structure
 
@@ -84,22 +86,7 @@ def load_clearml_predictions(args):
     """
     pred_dir = args.predictions_dir
     if args.pred_dir_struct == "clearml":
-        subjects = os.listdir(pred_dir)
-        metadata = []
-        for sub in subjects:
-            pred_files = glob.glob(
-                os.path.join(pred_dir, sub, f"**/{sub}_PRED.nii.gz"), recursive=True
-            )
-            if len(pred_files) == 0:
-                raise ValueError(
-                    f"No prediction files found for {sub}, check your data"
-                )
-            elif len(pred_files) > 1:
-                raise ValueError(
-                    f"Multiple prediction files found for {sub}, check your data"
-                )
-            assert os.path.exists(pred_files[0])
-            metadata.append({"id": sub, "pred_path": pred_files[0]})
+        metadata = utils_general.load_clearml_predictions(pred_dir)
         return metadata
     elif args.pred_dir_struct == "post-process":
         metadata = [
@@ -110,6 +97,17 @@ def load_clearml_predictions(args):
     else:
         raise NotImplementedError
 
+
+def get_subjects_metadata(args):
+    """
+    Returns a list of dictionaries for studies present in predictions dir with
+    "id", "gt_path" and "pred_path" keys.
+    """
+
+    id_and_preds_metadata = load_predictions(args)
+    all_metadata = utils_general.add_groundtruth_metadata(args.groundtruth_dir, args.gt_dir_struct, id_and_preds_metadata)
+
+    return all_metadata
 
 def add_groundtruth_metadata(args, metadata):
     """
@@ -263,18 +261,6 @@ def process_study(args, subject_metadata, msg=""):
     utils_general.write_to_log_file(msg, args.log_file_path)
 
 
-def get_subjects_metadata(args):
-    """
-    Returns a list of dictionaries for studies present in predictions dir with
-    "id", "gt_path" and "pred_path" keys.
-    """
-
-    id_and_preds_metadata = load_clearml_predictions(args)
-    all_metadata = add_groundtruth_metadata(args, id_and_preds_metadata)
-
-    return all_metadata
-
-
 def combine_evaluations(args):
     all_results = []
 
@@ -315,33 +301,51 @@ def main(args):
     _logger.info(msg)
     utils_general.write_to_log_file(msg, args.log_file_path)
 
-    # Create necessary dirs
-    utils_general.ensure_directory_exists(os.path.join(args.output_dir, "temp"))
+    if args.combined_results_csv is None:
+        # Create necessary dirs
+        utils_general.ensure_directory_exists(os.path.join(args.output_dir, "temp"))
 
-    # Determine number of worker processes
-    available_cpu_count = multiprocessing.cpu_count()
-    num_workers = min(args.num_workers, available_cpu_count)
+        # Determine number of worker processes
+        available_cpu_count = multiprocessing.cpu_count()
+        num_workers = min(args.num_workers, available_cpu_count)
 
-    if num_workers == 1:
-        for sub_meta in tqdm(subjects_metadata):
-            process_study(args, sub_meta, msg="")
-    else:
-        # Parallelizing using multiprocessing
-        with multiprocessing.Pool(processes=num_workers) as pool:
-            list(
-                tqdm(
-                    pool.imap(partial(process_study, args), subjects_metadata),
-                    total=len(subjects_metadata),
+        if num_workers == 1:
+            for sub_meta in tqdm(subjects_metadata):
+                process_study(args, sub_meta, msg="")
+        else:
+            # Parallelizing using multiprocessing
+            with multiprocessing.Pool(processes=num_workers) as pool:
+                list(
+                    tqdm(
+                        pool.imap(partial(process_study, args), subjects_metadata),
+                        total=len(subjects_metadata),
+                    )
                 )
-            )
 
-    msg = f"Succesfully evaluated on all cases\n\n"
-    utils_general.write_to_log_file(msg, args.log_file_path)
+        msg = f"Succesfully evaluated on all cases\n\n"
+        utils_general.write_to_log_file(msg, args.log_file_path)
 
-    # Combine results
-    combined_df = combine_evaluations(args)
-    combined_df_file = os.path.join(args.output_dir, "combined_evaluation_results.csv")
-    combined_df.to_csv(combined_df_file, index=False)
+        # Combine results
+        combined_df = combine_evaluations(args)
+        combined_df_file = os.path.join(args.output_dir, "combined_evaluation_results.csv")
+        combined_df.to_csv(combined_df_file, index=False)
+    else:
+        combined_df = pd.read_csv(args.combined_results_csv)
+        combined_df['detection'] = combined_df['detection'].apply(ast.literal_eval)
+        combined_df['segmentation'] = combined_df['segmentation'].apply(ast.literal_eval)
+        msg = f"Loaded evaluations from pre-existing CSV:\n{args.combined_results_csv}\n\n"
+        utils_general.write_to_log_file(msg, args.log_file_path)
+
+    # Filter studies
+    n_before = len(combined_df)
+    selected_studies  = args.studies if args.studies is not None else combined_df['study_id'].to_list()
+    combined_df = combined_df[combined_df['study_id'].isin(selected_studies)]
+    msg = f"Filtered from {n_before} to {len(combined_df)} studies \n\n"
+    utils_general.write_to_log_file(msg, args.log_file_path, True)
+
+    # Study-level metadata split
+    if args.metadata_csv is not None:
+        metadata_df = pd.read_csv(args.metadata_csv)
 
     if "segmentation" in args.evaluations:
         macro_metrics, micro_metrics = utils_eval.combine_evaluate_segmentation(
@@ -463,6 +467,36 @@ def parse_args():
         type=int,
         default=5,
         help="Number of workers running in parallel",
+    )
+    parser.add_argument(
+        "--combined_results_csv",
+        type=str,
+        default=None,
+        help="Full path to the CSV with all results combined. If this provided evaluation results are not computed and taken from this file",
+    )
+    parser.add_argument(
+        "--metadata_csv",
+        type=str,
+        default=None,
+        help="Full path to the CSV with metadata to split evaluation by",
+    )
+    parser.add_argument(
+        "--metadata_column",
+        type=str,
+        default=None,
+        help="Column name from metadata CSV to use to split evaluation results",
+    )
+    parser.add_argument(
+        "--cmb_metadata_csv",
+        type=str,
+        default=None,
+        help="Full path to the CSV with CMB metadata to split evaluation by",
+    )
+    parser.add_argument(
+        "--cmb_metadata_column",
+        type=str,
+        default=None,
+        help="Column name from CMB metadata CSV to use to split evaluation results",
     )
     # FLAGS
     parser.add_argument(
