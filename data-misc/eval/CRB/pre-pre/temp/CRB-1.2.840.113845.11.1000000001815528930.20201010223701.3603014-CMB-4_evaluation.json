@@ -1,0 +1,23 @@
+{
+    "study_id": "CRB-1.2.840.113845.11.1000000001815528930.20201010223701.3603014-CMB-4",
+    "evaluation_results": {
+        "segmentation_results": [
+            [
+                41596588,
+                287
+            ],
+            [
+                1379,
+                106
+            ]
+        ],
+        "classification_results": "TP",
+        "detection_results": {
+            "n_true_CC": 4,
+            "n_pred_CC": 3,
+            "n_overlap_CC": 2,
+            "n_repeated_hits": 0,
+            "repeated_hits_per_CC": {}
+        }
+    }
+}

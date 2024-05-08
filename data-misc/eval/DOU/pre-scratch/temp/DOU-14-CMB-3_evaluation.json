@@ -1,0 +1,23 @@
+{
+    "study_id": "DOU-14-CMB-3",
+    "evaluation_results": {
+        "segmentation": [
+            [
+                27358786,
+                91
+            ],
+            [
+                69,
+                106
+            ]
+        ],
+        "classification": "TP",
+        "detection": {
+            "n_true_CC": 3,
+            "n_pred_CC": 2,
+            "n_overlap_CC": 2,
+            "n_repeated_hits": 0,
+            "repeated_hits_per_CC": {}
+        }
+    }
+}

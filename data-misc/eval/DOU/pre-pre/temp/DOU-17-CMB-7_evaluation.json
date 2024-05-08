@@ -1,0 +1,23 @@
+{
+    "study_id": "DOU-17-CMB-7",
+    "evaluation_results": {
+        "segmentation_results": [
+            [
+                30265695,
+                285
+            ],
+            [
+                110,
+                280
+            ]
+        ],
+        "classification_results": "TP",
+        "detection_results": {
+            "n_true_CC": 7,
+            "n_pred_CC": 6,
+            "n_overlap_CC": 5,
+            "n_repeated_hits": 0,
+            "repeated_hits_per_CC": {}
+        }
+    }
+}

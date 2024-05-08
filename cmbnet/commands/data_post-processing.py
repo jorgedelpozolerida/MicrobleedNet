@@ -24,7 +24,6 @@ import traceback
 
 import logging
 import numpy as np
-import pandas as pd
 import glob
 import json
 
@@ -91,6 +90,7 @@ def apply_synthseg(args, input_path, output_path, synthseg_repo_path):
     logging.info("Running command: " + " ".join(command))
 
     # Run the command
+    print(' '.join(command))
     subprocess.run(command, check=True)
 
 
@@ -340,14 +340,14 @@ def main(args):
 
         print("----------------------")
         print(f"Processing study {studyuid}")
-        output_path = os.path.join(args.output_dir, f"{studyuid}_synthseg.nii.gz")
+        output_path = os.path.join(args.synthseg_out_dir, f"{studyuid}_synthseg.nii.gz")
 
         # Apply/Load SynthSeg
         if not os.path.exists(output_path) or (args.overwrite_synthseg):
             _logger.info(
                 f"SynthSeg output not found. Will apply SynthSeg to MRI at {mri_path}"
             )
-            apply_synthseg(args, mri_path, args.output_dir, args.synthseg_repo_path)
+            apply_synthseg(args, mri_path, args.synthseg_out_dir, args.synthseg_repo_path)
             _logger.info(
                 f"SynthSeg applied to {studyuid} and output saved to {output_path}"
             )
@@ -446,7 +446,7 @@ def parse_args():
         help="Directory to save processed masks",
     )
     parser.add_argument(
-        "--output_dir",
+        "--synthseg_out_dir",
         type=str,
         default=None,
         help="Full path to the directory where results and logs will be saved",

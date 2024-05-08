@@ -1,0 +1,253 @@
+
+2024-05-07 23:14:05.073506
+EVALUATION MODE: per-study
+
+Found predictions and ground truth for a total of 20 studies
+
+
+2024-05-07 23:15:36.519234
+Started evaluating DOU-02-CMB-1...
+
+	Evaluation results: 
+		segmentation_results:  [[29946437, 0], [207, 0]]
+		classification_results:  FN
+		detection_results:  defaultdict(<class 'dict'>, {'n_true_CC': 1, 'n_pred_CC': 0, 'n_overlap_CC': 0, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}})
+Results saved to /storage/evo1/jorge/MicrobleedNet/data-misc/eval/DOU/pre-pre/temp/DOU-02-CMB-1_evaluation.json
+Finished evaluation of DOU-02-CMB-1 in 91.36744999885559 seconds!
+
+
+2024-05-07 23:15:38.250302
+Started evaluating DOU-12-CMB-1...
+
+	Evaluation results: 
+		segmentation_results:  [[31724721, 21], [22, 56]]
+		classification_results:  TP
+		detection_results:  defaultdict(<class 'dict'>, {'n_true_CC': 1, 'n_pred_CC': 1, 'n_overlap_CC': 1, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}})
+Results saved to /storage/evo1/jorge/MicrobleedNet/data-misc/eval/DOU/pre-pre/temp/DOU-12-CMB-1_evaluation.json
+Finished evaluation of DOU-12-CMB-1 in 93.09973073005676 seconds!
+
+
+2024-05-07 23:15:49.682864
+Started evaluating DOU-05-CMB-1...
+
+	Evaluation results: 
+		segmentation_results:  [[35584698, 26], [13, 39]]
+		classification_results:  TP
+		detection_results:  defaultdict(<class 'dict'>, {'n_true_CC': 1, 'n_pred_CC': 1, 'n_overlap_CC': 1, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}})
+Results saved to /storage/evo1/jorge/MicrobleedNet/data-misc/eval/DOU/pre-pre/temp/DOU-05-CMB-1_evaluation.json
+Finished evaluation of DOU-05-CMB-1 in 104.5321352481842 seconds!
+
+
+2024-05-07 23:18:18.068415
+Started evaluating DOU-06-CMB-1...
+
+	Evaluation results: 
+		segmentation_results:  [[31141442, 0], [214, 0]]
+		classification_results:  FN
+		detection_results:  defaultdict(<class 'dict'>, {'n_true_CC': 1, 'n_pred_CC': 0, 'n_overlap_CC': 0, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}})
+Results saved to /storage/evo1/jorge/MicrobleedNet/data-misc/eval/DOU/pre-pre/temp/DOU-06-CMB-1_evaluation.json
+Finished evaluation of DOU-06-CMB-1 in 161.5481572151184 seconds!
+
+
+2024-05-07 23:18:29.034008
+Started evaluating DOU-07-CMB-1...
+
+	Evaluation results: 
+		segmentation_results:  [[32249176, 135], [18, 0]]
+		classification_results:  TP
+		detection_results:  defaultdict(<class 'dict'>, {'n_true_CC': 1, 'n_pred_CC': 3, 'n_overlap_CC': 0, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}})
+Results saved to /storage/evo1/jorge/MicrobleedNet/data-misc/eval/DOU/pre-pre/temp/DOU-07-CMB-1_evaluation.json
+Finished evaluation of DOU-07-CMB-1 in 263.8817923069 seconds!
+
+
+2024-05-07 23:19:01.961713
+Started evaluating DOU-03-CMB-4...
+
+	Evaluation results: 
+		segmentation_results:  [[30235285, 149], [162, 204]]
+		classification_results:  TP
+		detection_results:  defaultdict(<class 'dict'>, {'n_true_CC': 4, 'n_pred_CC': 4, 'n_overlap_CC': 3, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}})
+Results saved to /storage/evo1/jorge/MicrobleedNet/data-misc/eval/DOU/pre-pre/temp/DOU-03-CMB-4_evaluation.json
+Finished evaluation of DOU-03-CMB-4 in 296.8130214214325 seconds!
+
+
+2024-05-07 23:19:21.782530
+Started evaluating DOU-18-CMB-3...
+
+	Evaluation results: 
+		segmentation_results:  [[33221756, 423], [15, 294]]
+		classification_results:  TP
+		detection_results:  defaultdict(<class 'dict'>, {'n_true_CC': 3, 'n_pred_CC': 6, 'n_overlap_CC': 3, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}})
+Results saved to /storage/evo1/jorge/MicrobleedNet/data-misc/eval/DOU/pre-pre/temp/DOU-18-CMB-3_evaluation.json
+Finished evaluation of DOU-18-CMB-3 in 316.6314146518707 seconds!
+
+
+2024-05-07 23:20:03.089248
+Started evaluating DOU-14-CMB-3...
+
+	Evaluation results: 
+		segmentation_results:  [[27358738, 139], [12, 163]]
+		classification_results:  TP
+		detection_results:  defaultdict(<class 'dict'>, {'n_true_CC': 3, 'n_pred_CC': 3, 'n_overlap_CC': 3, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}})
+Results saved to /storage/evo1/jorge/MicrobleedNet/data-misc/eval/DOU/pre-pre/temp/DOU-14-CMB-3_evaluation.json
+Finished evaluation of DOU-14-CMB-3 in 253.40567350387573 seconds!
+
+
+2024-05-07 23:21:17.327573
+Started evaluating DOU-19-CMB-1...
+
+	Evaluation results: 
+		segmentation_results:  [[32114239, 89], [44, 188]]
+		classification_results:  TP
+		detection_results:  defaultdict(<class 'dict'>, {'n_true_CC': 1, 'n_pred_CC': 1, 'n_overlap_CC': 1, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}})
+Results saved to /storage/evo1/jorge/MicrobleedNet/data-misc/eval/DOU/pre-pre/temp/DOU-19-CMB-1_evaluation.json
+Finished evaluation of DOU-19-CMB-1 in 168.29289412498474 seconds!
+
+
+2024-05-07 23:21:57.535615
+Started evaluating DOU-04-CMB-1...
+
+	Evaluation results: 
+		segmentation_results:  [[34850850, 5], [85, 44]]
+		classification_results:  TP
+		detection_results:  defaultdict(<class 'dict'>, {'n_true_CC': 1, 'n_pred_CC': 1, 'n_overlap_CC': 1, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}})
+Results saved to /storage/evo1/jorge/MicrobleedNet/data-misc/eval/DOU/pre-pre/temp/DOU-04-CMB-1_evaluation.json
+Finished evaluation of DOU-04-CMB-1 in 175.57322716712952 seconds!
+
+
+2024-05-07 23:22:20.142655
+Started evaluating DOU-10-CMB-8...
+
+	Evaluation results: 
+		segmentation_results:  [[34600280, 377], [508, 787]]
+		classification_results:  TP
+		detection_results:  defaultdict(<class 'dict'>, {'n_true_CC': 8, 'n_pred_CC': 6, 'n_overlap_CC': 6, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}})
+Results saved to /storage/evo1/jorge/MicrobleedNet/data-misc/eval/DOU/pre-pre/temp/DOU-10-CMB-8_evaluation.json
+Finished evaluation of DOU-10-CMB-8 in 494.99037051200867 seconds!
+
+
+2024-05-07 23:22:22.525870
+Started evaluating DOU-11-CMB-2...
+
+	Evaluation results: 
+		segmentation_results:  [[38115052, 74], [27, 87]]
+		classification_results:  TP
+		detection_results:  defaultdict(<class 'dict'>, {'n_true_CC': 2, 'n_pred_CC': 2, 'n_overlap_CC': 2, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}})
+Results saved to /storage/evo1/jorge/MicrobleedNet/data-misc/eval/DOU/pre-pre/temp/DOU-11-CMB-2_evaluation.json
+Finished evaluation of DOU-11-CMB-2 in 244.45660018920898 seconds!
+
+
+2024-05-07 23:23:04.940432
+Started evaluating DOU-17-CMB-7...
+
+	Evaluation results: 
+		segmentation_results:  [[30265695, 285], [110, 280]]
+		classification_results:  TP
+		detection_results:  defaultdict(<class 'dict'>, {'n_true_CC': 7, 'n_pred_CC': 6, 'n_overlap_CC': 5, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}})
+Results saved to /storage/evo1/jorge/MicrobleedNet/data-misc/eval/DOU/pre-pre/temp/DOU-17-CMB-7_evaluation.json
+Finished evaluation of DOU-17-CMB-7 in 539.7883191108704 seconds!
+
+
+2024-05-07 23:23:25.836035
+Started evaluating DOU-08-CMB-1...
+
+	Evaluation results: 
+		segmentation_results:  [[32447529, 151], [12, 38]]
+		classification_results:  TP
+		detection_results:  defaultdict(<class 'dict'>, {'n_true_CC': 1, 'n_pred_CC': 2, 'n_overlap_CC': 1, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}})
+Results saved to /storage/evo1/jorge/MicrobleedNet/data-misc/eval/DOU/pre-pre/temp/DOU-08-CMB-1_evaluation.json
+Finished evaluation of DOU-08-CMB-1 in 244.05280470848083 seconds!
+
+
+2024-05-07 23:23:40.188256
+Started evaluating DOU-01-CMB-1...
+
+	Evaluation results: 
+		segmentation_results:  [[36272355, 0], [45, 0]]
+		classification_results:  FN
+		detection_results:  defaultdict(<class 'dict'>, {'n_true_CC': 1, 'n_pred_CC': 0, 'n_overlap_CC': 0, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}})
+Results saved to /storage/evo1/jorge/MicrobleedNet/data-misc/eval/DOU/pre-pre/temp/DOU-01-CMB-1_evaluation.json
+Finished evaluation of DOU-01-CMB-1 in 142.86000895500183 seconds!
+
+
+2024-05-07 23:24:06.851503
+Started evaluating DOU-20-CMB-2...
+
+	Evaluation results: 
+		segmentation_results:  [[33259063, 232], [123, 214]]
+		classification_results:  TP
+		detection_results:  defaultdict(<class 'dict'>, {'n_true_CC': 2, 'n_pred_CC': 4, 'n_overlap_CC': 2, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}})
+Results saved to /storage/evo1/jorge/MicrobleedNet/data-misc/eval/DOU/pre-pre/temp/DOU-20-CMB-2_evaluation.json
+Finished evaluation of DOU-20-CMB-2 in 243.76152539253235 seconds!
+
+
+2024-05-07 23:24:13.731544
+Started evaluating DOU-13-CMB-1...
+
+	Evaluation results: 
+		segmentation_results:  [[32856118, 19], [13, 56]]
+		classification_results:  TP
+		detection_results:  defaultdict(<class 'dict'>, {'n_true_CC': 1, 'n_pred_CC': 2, 'n_overlap_CC': 1, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}})
+Results saved to /storage/evo1/jorge/MicrobleedNet/data-misc/eval/DOU/pre-pre/temp/DOU-13-CMB-1_evaluation.json
+Finished evaluation of DOU-13-CMB-1 in 136.19538974761963 seconds!
+
+
+2024-05-07 23:25:21.043173
+Started evaluating DOU-16-CMB-11...
+
+	Evaluation results: 
+		segmentation_results:  [[31688018, 489], [2227, 354]]
+		classification_results:  TP
+		detection_results:  defaultdict(<class 'dict'>, {'n_true_CC': 11, 'n_pred_CC': 7, 'n_overlap_CC': 5, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}})
+Results saved to /storage/evo1/jorge/MicrobleedNet/data-misc/eval/DOU/pre-pre/temp/DOU-16-CMB-11_evaluation.json
+Finished evaluation of DOU-16-CMB-11 in 675.8917622566223 seconds!
+
+
+2024-05-07 23:25:33.142791
+Started evaluating DOU-09-CMB-11...
+
+	Evaluation results: 
+		segmentation_results:  [[33902036, 475], [774, 555]]
+		classification_results:  TP
+		detection_results:  defaultdict(<class 'dict'>, {'n_true_CC': 11, 'n_pred_CC': 9, 'n_overlap_CC': 7, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}})
+Results saved to /storage/evo1/jorge/MicrobleedNet/data-misc/eval/DOU/pre-pre/temp/DOU-09-CMB-11_evaluation.json
+Finished evaluation of DOU-09-CMB-11 in 594.8914124965668 seconds!
+
+
+2024-05-07 23:26:19.556070
+Started evaluating DOU-15-CMB-13...
+
+	Evaluation results: 
+		segmentation_results:  [[44876402, 1139], [709, 934]]
+		classification_results:  TP
+		detection_results:  defaultdict(<class 'dict'>, {'n_true_CC': 13, 'n_pred_CC': 18, 'n_overlap_CC': 10, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}})
+Results saved to /storage/evo1/jorge/MicrobleedNet/data-misc/eval/DOU/pre-pre/temp/DOU-15-CMB-13_evaluation.json
+Finished evaluation of DOU-15-CMB-13 in 734.4037895202637 seconds!
+
+
+2024-05-07 23:26:19.843918
+Succesfully evaluated on all cases
+
+
+2024-05-07 23:26:19.853590
+Filtered from 20 to 20 studies 
+
+
+2024-05-07 23:26:19.871912
+   Precision    Recall  F1-Score  Specificity
+0   0.528267  0.523916  0.456396     0.999994
+2024-05-07 23:26:19.875642
+   Precision    Recall  F1-Score  Specificity
+0   0.503814  0.445656  0.472954     0.999994
+2024-05-07 23:26:19.886242
+    TPR  PPV      F1  TNR   ACC
+0  0.85  1.0  0.9189    0  0.85
+2024-05-07 23:26:19.920315
+      TPR    PPV      F1  FPavg  TPavg  FNavg  FPcmb_avg
+0  0.7037  0.743  0.7228    1.2    2.6    1.1     0.4186
+2024-05-07 23:26:19.925995
+      TPR     PPV      F1  FPavg  TPavg  FNavg  FPcmb_avg  FPmedian
+0  0.7027  0.6842  0.6933    1.2    2.6    1.1     0.3243       0.5
+2024-05-07 23:26:19.932698
+   true_CC  pred_CC  overlap_CC  repeated_CC  max_repeated_cmb  mean_repeated_cmb
+0       74       76          52            0                 0                NaN

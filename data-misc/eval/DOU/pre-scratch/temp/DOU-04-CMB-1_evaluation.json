@@ -1,0 +1,23 @@
+{
+    "study_id": "DOU-04-CMB-1",
+    "evaluation_results": {
+        "segmentation": [
+            [
+                34850855,
+                0
+            ],
+            [
+                129,
+                0
+            ]
+        ],
+        "classification": "FN",
+        "detection": {
+            "n_true_CC": 1,
+            "n_pred_CC": 0,
+            "n_overlap_CC": 0,
+            "n_repeated_hits": 0,
+            "repeated_hits_per_CC": {}
+        }
+    }
+}

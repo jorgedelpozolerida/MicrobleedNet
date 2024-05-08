@@ -29,15 +29,12 @@ import matplotlib.pyplot as plt
 from typing import Any, List, Tuple
 from scipy.ndimage import label as nd_label
 from scipy.ndimage import center_of_mass
-from skimage.segmentation import find_boundaries
-from skimage.morphology import binary_dilation
 import random
-from mpl_toolkits.mplot3d import Axes3D
-from mayavi import mlab
+# from mayavi import mlab
 import vtk
 from vtk.util.numpy_support import numpy_to_vtk
-import pyvista as pv
-import plotly.graph_objects as go
+# import pyvista as pv
+# import plotly.graph_objects as go
 
 
 

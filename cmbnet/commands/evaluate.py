@@ -38,7 +38,6 @@ import datetime
 import os
 import argparse
 import traceback
-import glob
 
 import logging
 import numpy as np
@@ -54,7 +53,6 @@ import sys
 import ast
 
 # Utils
-import cmbnet.preprocessing.loading as utils_loading
 import cmbnet.utils.utils_plotting as utils_plotting
 import cmbnet.utils.utils_general as utils_general
 import cmbnet.utils.utils_evaluation as utils_eval
@@ -63,7 +61,7 @@ logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 
 
-def evaluate_study(args, subject_metadata, msg):
+def evaluate_study_subject_level(args, subject_metadata, msg):
     """
     Computes evaluation for study
     """
@@ -71,12 +69,28 @@ def evaluate_study(args, subject_metadata, msg):
     pred_nib = nib.load(subject_metadata["pred_path"])
     results = {}
     for eval_method in args.evaluations:
-        results_m = utils_eval.compute_individual_evaluation(
+        results_m = utils_eval.compute_subject_level_evaluation(
             gt_nib.get_fdata(), np.squeeze(pred_nib.get_fdata()), eval_method
         )
         results.update(results_m)
-    return results
+    return results, msg
 
+def evaluate_study_CMB_level(args, subject_metadata, msg):
+    """
+    Computes evaluation for study
+    """
+    gt_nib = nib.load(subject_metadata["gt_path"])
+    pred_nib = nib.load(subject_metadata["pred_path"])
+    CMB_metadata = subject_metadata["CMBs_new"]
+
+    raise NotImplementedError
+    # TODO: finish CMB-level eval
+    results = utils_eval.compute_CMB_level_evaluation(
+            gt_nib.get_fdata(), np.squeeze(pred_nib.get_fdata()), args.evaluations, CMB_metadata
+        )
+    print(f"Results for {subject_metadata['id']}:")
+    print(results)
+    return results, msg
 
 def load_predictions(args):
     """
@@ -106,7 +120,11 @@ def get_subjects_metadata(args):
 
     id_and_preds_metadata = load_predictions(args)
     all_metadata = utils_general.add_groundtruth_metadata(args.groundtruth_dir, args.gt_dir_struct, id_and_preds_metadata)
-
+    if args.cmb_metadata_csv is not None:
+        cmb_metadata_df = pd.read_csv(args.cmb_metadata_csv)
+        cmb_metadata_df= cmb_metadata_df[cmb_metadata_df['seriesUID'].isin([v['id'] for v in all_metadata])]
+        cmb_metadata_df['CM'] = cmb_metadata_df['CM'].apply(ast.literal_eval).apply(lambda x: np.array(x, dtype=np.int32))
+        all_metadata = utils_general.add_CMB_metadata(cmb_metadata_df, all_metadata)
     return all_metadata
 
 def add_groundtruth_metadata(args, metadata):
@@ -117,10 +135,10 @@ def add_groundtruth_metadata(args, metadata):
     subjects_selected = [s_item["id"] for s_item in metadata]
 
     if args.gt_dir_struct == "processed_final":
-        load_func = utils_loading.get_metadata_from_processed_final
+        load_func = utils_general.get_metadata_from_processed_final
 
     elif args.gt_dir_struct == "cmb_format":
-        load_func = utils_loading.get_metadata_from_cmb_format
+        load_func = utils_general.get_metadata_from_cmb_format
     else:
         raise NotImplementedError
 
@@ -238,17 +256,25 @@ def process_study(args, subject_metadata, msg=""):
     # Initialize
     start = time.time()
     studyuid = subject_metadata["id"]
+    
+    
     msg = f"Started evaluating {studyuid}...\n\n"
 
     try:
-        evaluation_results = evaluate_study(args, subject_metadata, msg)
+        if args.eval_mode == "per-CMB":
+            evaluation_results, msg = evaluate_study_CMB_level(args, subject_metadata, msg)
+        elif args.eval_mode == "per-study":
+            evaluation_results, msg = evaluate_study_subject_level(args, subject_metadata, msg)
+        else:
+            raise NotImplementedError
         msg += f"\tEvaluation results: \n"
         for k, v in evaluation_results.items():
             msg += f"\t\t{k}:  {v}\n"
         file_path = save_individual_eval(args, evaluation_results, studyuid)
         msg += f"Results saved to {file_path}\n"
 
-        if args.create_plots:
+        # TODO: investigate effect of this when cmb mode is on
+        if args.create_plots and args.eval_mode == "per-study":
             # Create plots
             generate_CMB_calls_plots(args, studyuid, subject_metadata)
 
@@ -270,8 +296,21 @@ def combine_evaluations(args):
             file_path = os.path.join(args.output_dir, "temp", file)
             with open(file_path, "r") as f:
                 data = json.load(f)
-                data["evaluation_results"]["study_id"] = data["study_id"]
-                all_results.append(data["evaluation_results"])
+                checkifresultskey = any(["results" in d for d in data["evaluation_results"].keys()])
+                if checkifresultskey:
+                    all_results.append({
+                        "study_id": data["study_id"],
+                        **{k.replace("_results", ""):val for k,val in data["evaluation_results"].items()}
+                    })
+                else:
+                    for cmb_id, cmb_results in data["evaluation_results"].items():
+                        print(cmb_results)
+                        all_results.append({
+                            "study_id": data["study_id"],
+                            "cmb_id": cmb_id,
+                            "CM": cmb_results['CM'],
+                            **{k.replace("_results", ""):val for k,val in cmb_results.items() if k != "CM"}
+                        })
 
     # Convert to DataFrame
     df = pd.DataFrame(all_results)
@@ -289,14 +328,22 @@ def main(args):
         os.path.join(args.output_dir, "plots")
     )
 
-    # Get subject list
+    # Handle evaluation mode
+    if args.cmb_metadata_csv is not None:
+        assert args.cmb_metadata_columns is not None
+        args.eval_mode = "per-CMB"
+    else:
+        args.eval_mode = "per-study"
+    msg = f"EVALUATION MODE: {args.eval_mode}\n\n"
+
+
+    # Get subject list and metadata
     subjects_metadata = get_subjects_metadata(args)
-
-    msg = f"Found predictions and ground truth for a total of {len(subjects_metadata)} studies\n\n"
-
+    msg += f"Found predictions and ground truth for a total of {len(subjects_metadata)} studies\n\n"
     if args.studies is not None:
         subjects_metadata = [s for s in subjects_metadata if s["id"] in args.studies]
         msg += f"Selected {len(subjects_metadata)} studies to evaluate\n\n"
+
 
     _logger.info(msg)
     utils_general.write_to_log_file(msg, args.log_file_path)
@@ -493,7 +540,8 @@ def parse_args():
         help="Full path to the CSV with CMB metadata to split evaluation by",
     )
     parser.add_argument(
-        "--cmb_metadata_column",
+        "--cmb_metadata_columns",
+        nargs="+",
         type=str,
         default=None,
         help="Column name from CMB metadata CSV to use to split evaluation results",

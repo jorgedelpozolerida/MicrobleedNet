@@ -23,16 +23,11 @@ import pandas as pd
 from datetime import datetime as dt
 import json
 import nibabel as nib
+import ast
 
 
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
-
-
-import cmbnet.preprocessing.loading as utils_loading
-import cmbnet.utils.utils_plotting as utils_plotting
-
-
 
 
 ###############################################################################
@@ -113,6 +108,49 @@ def create_nifti(data, affine, header, is_annotation=False):
 # Data Loading and Manipulation
 ###############################################################################
 
+def get_metadata_from_processed_final(data_dir, sub):
+
+    metadata_dict = read_json_to_dict(
+        os.path.join(data_dir, sub, "Annotations_metadata", f"{sub}_metadata.json")
+    )
+    metadata_dict_keys = list(metadata_dict.keys())
+    return         {
+            "id": sub,
+            "anno_path": os.path.join(
+                data_dir, sub, "Annotations", f"{sub}.nii.gz"
+            ),
+            "mri_path": os.path.join(data_dir, sub, "MRIs", f"{sub}.nii.gz"),
+            "seq_type": metadata_dict_keys[0],
+            "raw_metadata_path": os.path.join(
+                data_dir, sub, "Annotations_metadata", f"{sub}_raw.json"
+            ),
+            "processed_metadata_path": os.path.join(
+                data_dir, sub, "Annotations_metadata", f"{sub}_processed.json"
+            ),
+        }
+
+
+
+def get_metadata_from_cmb_format(data_dir, sub_id):
+    """
+    Get all metadata from study using its subject id
+    """
+
+    fullpath_processing_metadata = os.path.join(
+        data_dir, sub_id, "processing_metadata", f"{sub_id}.json"
+    )
+    processing_metadata_dict = read_json_to_dict(
+        fullpath_processing_metadata
+    )
+
+    return {
+        "id": sub_id,
+        "anno_path": os.path.join(data_dir, sub_id, "Annotations", f"{sub_id}.nii.gz"),
+        "mri_path": os.path.join(data_dir, sub_id, "MRIs", f"{sub_id}.nii.gz"),
+        "processing_metadata_path": fullpath_processing_metadata, 
+        **processing_metadata_dict,
+    }
+
 def load_clearml_predictions(pred_dir):
     
     subjects = os.listdir(pred_dir)
@@ -142,10 +180,10 @@ def add_groundtruth_metadata(groundtruth_dir, gt_dir_struct, metadata):
     subjects_selected = [s_item["id"] for s_item in metadata]
 
     if gt_dir_struct == "processed_final":
-        load_func = utils_loading.get_metadata_from_processed_final
+        load_func = get_metadata_from_processed_final
 
     elif gt_dir_struct == "cmb_format":
-        load_func = utils_loading.get_metadata_from_cmb_format
+        load_func = get_metadata_from_cmb_format
     else:
         raise NotImplementedError
 
@@ -160,3 +198,21 @@ def add_groundtruth_metadata(groundtruth_dir, gt_dir_struct, metadata):
 
     return metadata
 
+
+def add_CMB_metadata(CMB_metadata_df, metadata):
+
+    for study_dict in metadata:
+        sub_id = study_dict["id"]
+        CMB_dict = study_dict['CMBs_new']
+        for cmb_id, cmb_dict in CMB_dict.items():
+            com = np.array(cmb_dict['CM'], dtype=np.int32) # Center of mass
+            cmb_row = CMB_metadata_df[
+                (CMB_metadata_df['seriesUID'] == sub_id) & (CMB_metadata_df['cmb_id'].astype(int) == int(cmb_id))
+            ] 
+            if cmb_row.empty:
+                raise ValueError(f"CMB {cmb_id} not found for subject {sub_id}")
+            cmb_row = cmb_row.to_dict(orient='records')[0]
+            assert all(com == cmb_row['CM']), f"CM not mathcing for {sub_id} - {cmb_id}"
+            cmb_row['CM'] = tuple(map(int, com))
+            cmb_dict.update(cmb_row)
+    return metadata

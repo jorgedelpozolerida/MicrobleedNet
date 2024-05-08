@@ -1,0 +1,21 @@
+segmentation,classification,detection,study_id
+"[[32114290, 38], [86, 146]]",TP,"{'n_true_CC': 1, 'n_pred_CC': 1, 'n_overlap_CC': 1, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}}",DOU-19-CMB-1
+"[[30265959, 21], [297, 93]]",TP,"{'n_true_CC': 7, 'n_pred_CC': 3, 'n_overlap_CC': 3, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}}",DOU-17-CMB-7
+"[[29946437, 0], [207, 0]]",FN,"{'n_true_CC': 1, 'n_pred_CC': 0, 'n_overlap_CC': 0, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}}",DOU-02-CMB-1
+"[[34600548, 109], [858, 437]]",TP,"{'n_true_CC': 8, 'n_pred_CC': 7, 'n_overlap_CC': 7, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}}",DOU-10-CMB-8
+"[[32856137, 0], [69, 0]]",FN,"{'n_true_CC': 1, 'n_pred_CC': 0, 'n_overlap_CC': 0, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}}",DOU-13-CMB-1
+"[[30235376, 58], [277, 89]]",TP,"{'n_true_CC': 4, 'n_pred_CC': 1, 'n_overlap_CC': 1, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}}",DOU-03-CMB-4
+"[[31724742, 0], [78, 0]]",FN,"{'n_true_CC': 1, 'n_pred_CC': 0, 'n_overlap_CC': 0, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}}",DOU-12-CMB-1
+"[[32447680, 0], [32, 18]]",TP,"{'n_true_CC': 1, 'n_pred_CC': 1, 'n_overlap_CC': 1, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}}",DOU-08-CMB-1
+"[[36272355, 0], [44, 1]]",TP,"{'n_true_CC': 1, 'n_pred_CC': 1, 'n_overlap_CC': 1, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}}",DOU-01-CMB-1
+"[[31141442, 0], [214, 0]]",FN,"{'n_true_CC': 1, 'n_pred_CC': 0, 'n_overlap_CC': 0, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}}",DOU-06-CMB-1
+"[[31688291, 216], [2335, 246]]",TP,"{'n_true_CC': 11, 'n_pred_CC': 4, 'n_overlap_CC': 3, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}}",DOU-16-CMB-11
+"[[38115108, 18], [83, 31]]",TP,"{'n_true_CC': 2, 'n_pred_CC': 1, 'n_overlap_CC': 1, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}}",DOU-11-CMB-2
+"[[32249311, 0], [18, 0]]",FN,"{'n_true_CC': 1, 'n_pred_CC': 0, 'n_overlap_CC': 0, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}}",DOU-07-CMB-1
+"[[33902436, 75], [1173, 156]]",TP,"{'n_true_CC': 11, 'n_pred_CC': 3, 'n_overlap_CC': 3, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}}",DOU-09-CMB-11
+"[[33259247, 48], [140, 197]]",TP,"{'n_true_CC': 2, 'n_pred_CC': 4, 'n_overlap_CC': 2, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}}",DOU-20-CMB-2
+"[[27358786, 91], [69, 106]]",TP,"{'n_true_CC': 3, 'n_pred_CC': 2, 'n_overlap_CC': 2, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}}",DOU-14-CMB-3
+"[[33222141, 38], [115, 194]]",TP,"{'n_true_CC': 3, 'n_pred_CC': 2, 'n_overlap_CC': 2, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}}",DOU-18-CMB-3
+"[[34850855, 0], [129, 0]]",FN,"{'n_true_CC': 1, 'n_pred_CC': 0, 'n_overlap_CC': 0, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}}",DOU-04-CMB-1
+"[[35584704, 20], [34, 18]]",TP,"{'n_true_CC': 1, 'n_pred_CC': 1, 'n_overlap_CC': 1, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}}",DOU-05-CMB-1
+"[[44877318, 223], [1196, 447]]",TP,"{'n_true_CC': 13, 'n_pred_CC': 9, 'n_overlap_CC': 7, 'n_repeated_hits': 0, 'repeated_hits_per_CC': {}}",DOU-15-CMB-13

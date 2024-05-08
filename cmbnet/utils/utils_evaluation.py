@@ -22,10 +22,14 @@ from collections import defaultdict, Counter
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 
-from scipy.ndimage import label, generate_binary_structure
-from scipy.spatial.distance import dice as dice_score
+from scipy.ndimage import generate_binary_structure
 from scipy.ndimage import label as nd_label
 from sklearn.metrics import confusion_matrix as sklearn_confusion_matrix
+
+
+###############################################################################
+# Helper functions
+###############################################################################
 
 
 def safe_divide(numerator: np.ndarray, denominator: np.ndarray) -> np.ndarray:
@@ -40,7 +44,12 @@ def safe_divide(numerator: np.ndarray, denominator: np.ndarray) -> np.ndarray:
     return result
 
 
-def compute_classification_eval_individual(true_matrix, predicted_matrix):
+###############################################################################
+# Subject level evaluation
+###############################################################################
+
+
+def compute_classification_eval(true_matrix, predicted_matrix):
     # Check if class is present in the true and predicted matrices
     true_contains_class = np.any(true_matrix == 1)
     predicted_contains_class = np.any(predicted_matrix == 1)
@@ -55,7 +64,7 @@ def compute_classification_eval_individual(true_matrix, predicted_matrix):
         return "TN"
 
 
-def compute_segmentation_eval_individual(true_array, predicted_array, n_classes=2):
+def compute_segmentation_eval(true_array, predicted_array, n_classes=2):
     # Flatten the arrays to treat them as 1D arrays for confusion matrix computation
     true_flat = true_array.ravel()
     pred_flat = predicted_array.ravel()
@@ -68,7 +77,7 @@ def compute_segmentation_eval_individual(true_array, predicted_array, n_classes=
     return cm_list
 
 
-def compute_detection_eval_individual(
+def compute_detection_eval_subject_level(
     true_array: np.ndarray, predicted_array: np.ndarray, min_overlap_voxels=1
 ) -> dict:
 
@@ -115,21 +124,155 @@ def compute_detection_eval_individual(
     return results
 
 
-def compute_individual_evaluation(gt_mask, pred_mask, eval_method):
+def compute_subject_level_evaluation(gt_mask, pred_mask, eval_method):
     """
     Selects function to use for each type of eval
     Possible: 'segmentation', 'classification', 'detection'
     """
     assert gt_mask.shape == pred_mask.shape
     func_mapping = {
-        "segmentation": compute_segmentation_eval_individual,
-        "classification": compute_classification_eval_individual,
-        "detection": compute_detection_eval_individual,
+        "segmentation": compute_segmentation_eval,
+        "classification": compute_classification_eval,
+        "detection": compute_detection_eval_subject_level,
     }
 
-    metrics_out = {eval_method: func_mapping[eval_method](gt_mask, pred_mask)}
+    metrics_out = {f"{eval_method}_results": func_mapping[eval_method](gt_mask, pred_mask)}
     return metrics_out
 
+
+###############################################################################
+# CMB level evaluation
+###############################################################################
+
+def compute_classification_eval_CMB(true_array, predicted_array, min_overlap_voxels=1):
+    """
+    Evaluates classification performance for binary class predictions on CMBs.
+    Args:
+        true_array (np.ndarray): The ground truth binary mask.
+        predicted_array (np.ndarray): The predicted binary mask.
+        min_overlap_voxels (int): Minimum number of overlapping voxels to consider as a true positive.
+    
+    Returns:
+        dict: Dictionary containing counts of 'TP', 'TN', 'FN', and 'FP'.
+    """
+    class_int = 1  # HARDCODED: Assuming binary classification
+    true_array_mask = true_array == class_int
+    predicted_array_class = predicted_array == class_int
+
+    # Calculate overlaps
+    overlap = np.logical_and(predicted_array_class, true_array_mask)
+    overlap_size = np.sum(overlap)
+
+    # Calculate True Positives, False Positives, False Negatives, True Negatives
+    tp = overlap_size >= min_overlap_voxels
+    fp = np.sum(predicted_array_class) > 0 and overlap_size < min_overlap_voxels
+    fn = np.sum(true_array_mask) > 0 and overlap_size < min_overlap_voxels
+    tn = np.sum(true_array_mask) == 0 and np.sum(predicted_array_class) == 0
+
+    # Returning counts as a dictionary
+    return {
+        "TP": int(tp),
+        "FP": int(fp),
+        "FN": int(fn),
+        "TN": int(tn)
+    }
+
+        
+def compute_detection_eval_CMB_level(
+    true_array: np.ndarray, predicted_array: np.ndarray, min_overlap_voxels=1
+) -> dict:
+
+    
+    raise NotImplementedError
+
+
+def compute_CMB_level_evaluation(gt_mask, pred_mask, eval_methods, CMB_metadata):
+    """
+    Evaluates CMBs using different methods and includes evaluations for all predicted connected components.
+    """
+    func_mapping = {
+            "segmentation": compute_segmentation_eval,
+            "classification": compute_classification_eval_CMB,
+            # "detection": compute_detection_eval_CMB_level, # NOTE: does not make sense here
+        }
+    assert gt_mask.shape == pred_mask.shape, "Ground truth and prediction masks must have the same dimensions."
+
+    # Label the connected components in both GT and predicted masks
+    gt_labeled, _ = nd_label(gt_mask)
+    pred_labeled, num_pred_cc = nd_label(pred_mask)
+
+    metrics_out = {}
+
+    # Evaluate based on known CMB metadata
+    for cmb_id, cmb_info in CMB_metadata.items():
+        com = tuple(map(int, cmb_info["CM"]))
+        gt_cc = gt_labeled[com]
+        pred_cc = pred_labeled[com]
+
+        # Masks for the current CMB in both GT and predicted data
+        gt_cmb_mask = gt_labeled == gt_cc
+        pred_cmb_mask = pred_labeled == pred_cc
+
+        cmb_results = {
+            "CM": com  # Include center of mass in the results
+        }
+        for eval_method in eval_methods:
+            eval_result = func_mapping[eval_method](gt_cmb_mask, pred_cmb_mask)
+            cmb_results[eval_method] = eval_result
+        metrics_out[cmb_id] = cmb_results
+
+    # Evaluate all other predicted CCs that were not referenced
+    for cc in range(1, num_pred_cc + 1):
+        if cc not in {pred_labeled[com] for com in (tuple(map(int, cmb_info["CM"])) for cmb_id, cmb_info in CMB_metadata.items())}:
+            pred_cmb_mask = pred_labeled == cc
+            pred_cc_com = center_of_mass(center_of_mass)
+            pred_cc_results = {
+                "CM": pred_cc_com  # Compute and include center of mass for new CCs
+            }
+            for eval_method in eval_methods:
+                eval_result = func_mapping[eval_method](gt_mask, pred_cmb_mask)
+                pred_cc_results[eval_method] = eval_result
+            metrics_out[f"pred_cc_{cc}"] = pred_cc_results
+
+    return metrics_out
+
+# def compute_CMB_level_evaluation(gt_mask, pred_mask, eval_methods, CMB_metadata):
+#     """
+#     Selects function to use for each type of eval
+#     Possible: 'segmentation', 'classification', 'detection'
+#     """
+#     assert gt_mask.shape == pred_mask.shape, "Ground truth and prediction masks must have the same dimensions."
+
+#     # Label the connected components in both GT and predicted masks
+#     gt_labeled, _ = nd_label(gt_mask)
+#     pred_labeled, _ = nd_label(pred_mask)
+
+#     # Mapping of evaluation methods to their respective function implementations
+#     func_mapping = {
+#         "segmentation": compute_segmentation_eval,
+#         "classification": compute_classification_eval_CMB,
+#         # "detection": compute_detection_eval_CMB_level, # NOTE: does not make sense here
+#     }
+
+#     metrics_out = {}
+#     for cmb_id, cmb_info in CMB_metadata.items():
+#         com = tuple(map(int, cmb_info["CM"]))
+#         if cmb_id not in metrics_out:
+#             metrics_out[cmb_id] = {}
+#         metrics_out[cmb_id]["CM"] = com
+#         gt_cc = gt_labeled[com]
+#         pred_cc = pred_labeled[com]
+
+#         # Masks for the current CMB in both GT and predicted data
+#         gt_cmb_mask = gt_labeled == gt_cc
+#         pred_cmb_mask = pred_labeled == pred_cc
+
+#         for eval_method in eval_methods:
+#             eval_result = func_mapping[eval_method](gt_cmb_mask, pred_cmb_mask)
+#             cmb_eval_key = f"{eval_method}_results"
+#             metrics_out[cmb_id][cmb_eval_key] = eval_result
+
+#     return metrics_out 
 
 ###############################################################################
 # COMBINE METRICS
@@ -345,10 +488,10 @@ def combine_evaluate_segmentation(df_cms, zero_division=np.nan):
     macro_metrics = {"Precision": [], "Recall": [], "F1-Score": [], "Specificity": []}
     # Initialize a zero matrix for microaveraging
     n_classes = 2  # harcoded
-    micro_cm = np.zeros((n_classes, n_classes), dtype=np.int)
+    micro_cm = np.zeros((n_classes, n_classes), dtype=np.int64)
 
     for _, row in df_cms.iterrows():
-        cm = np.array(row["segmentation"])
+        cm = np.array(row["segmentation"], dtype=np.int64)
         micro_cm += cm  # Aggregate confusion matrices for microaveraging
         metrics = compute_metrics_from_cm(cm, zero_division=zero_division)
         # Collect metrics for macroaveraging

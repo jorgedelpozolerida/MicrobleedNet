@@ -32,9 +32,6 @@ parent_dir_path = os.path.abspath(os.path.join(current_dir_path, os.pardir))
 sys.path.append(parent_dir_path)
 
 import cmbnet.preprocessing.datasets as dat_load
-import cmbnet.preprocessing.process_masks as process_masks
-import cmbnet.utils.utils_general as utils_general
-
 
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
@@ -307,52 +304,3 @@ def get_sphere_df(csv_path, study, dataset):
         subject = study
 
     return df[df["studyUID"] == subject]
-
-
-###############################################################################
-# Loading nifties
-###############################################################################
-
-
-def get_metadata_from_processed_final(data_dir, sub):
-
-    metadata_dict = utils_general.read_json_to_dict(
-        os.path.join(data_dir, sub, "Annotations_metadata", f"{sub}_metadata.json")
-    )
-    metadata_dict_keys = list(metadata_dict.keys())
-    return         {
-            "id": sub,
-            "anno_path": os.path.join(
-                data_dir, sub, "Annotations", f"{sub}.nii.gz"
-            ),
-            "mri_path": os.path.join(data_dir, sub, "MRIs", f"{sub}.nii.gz"),
-            "seq_type": metadata_dict_keys[0],
-            "raw_metadata_path": os.path.join(
-                data_dir, sub, "Annotations_metadata", f"{sub}_raw.json"
-            ),
-            "processed_metadata_path": os.path.join(
-                data_dir, sub, "Annotations_metadata", f"{sub}_processed.json"
-            ),
-        }
-
-
-
-def get_metadata_from_cmb_format(data_dir, sub_id):
-    """
-    Get all metadata from study using its subject id
-    """
-
-    fullpath_processing_metadata = os.path.join(
-        data_dir, sub_id, "processing_metadata", f"{sub_id}.json"
-    )
-    processing_metadata_dict = utils_general.read_json_to_dict(
-        fullpath_processing_metadata
-    )
-
-    return {
-        "id": sub_id,
-        "anno_path": os.path.join(data_dir, sub_id, "Annotations", f"{sub_id}.nii.gz"),
-        "mri_path": os.path.join(data_dir, sub_id, "MRIs", f"{sub_id}.nii.gz"),
-        "processing_metadata_path": fullpath_processing_metadata, 
-        **processing_metadata_dict,
-    }
