@@ -61,7 +61,7 @@ splits:
           1: &cmb_prop 0.9  # Proportion for CMB
   # Validation (same as train for now)
   valid:
-    batch_size: 14
+    batch_size: 10
     mri_sampling_strategy:
       # name: 'deterministic_loop'
       name: 'balanced_classes'

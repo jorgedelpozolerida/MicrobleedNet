@@ -57,10 +57,15 @@ def write_to_log_file(msg, log_file_path, printmsg=False):
         
 def confirm_action(message=""):
     """Prompt the user for confirmation before proceeding."""
-    confirm = input(f"{message}\nDo you want to continue (yes/no): ")
-    if confirm.lower() != 'yes':
-        print("Action cancelled by user.")
-        sys.exit(0)
+    while True:
+        answer = input(f'Do you want to proceed? [Y/n]: ')
+        if not answer or answer[0].lower() == 'y':
+            return answer
+        elif answer[0].lower() == 'n':
+            print('You did not approve. Exiting...')
+            sys.exit(1)
+        else:
+            print('Invalid input. Please enter Y or n.')
 
 
 def read_json_to_dict(file_path):
