@@ -9,7 +9,7 @@ study_folder_glob: '*'
 
 # Metadata settings
 metadata_task_id: null  # if the metadata file is to be fetched from a ClearML task.
-# metadata_file: /home/cerebriu/data/RESEARCH/MicrobleedNet/data-misc/training/metadata_cmb_train.yaml   # must contain split keys like those in 'splits' below
+metadata_file: /home/cerebriu/data/RESEARCH/MicrobleedNet/data-misc/training/metadata_cmb_crb.yaml   # must contain split keys like those in 'splits' below
 # splits_file: /home/cerebriu/data/RESEARCH/MicrobleedNet/data-misc/training/splits_without_sMOMENI_CRBneg.json
 study_dir_relative_metadata_path: null  # relative path to per-study folder metadata files within each study folder
 

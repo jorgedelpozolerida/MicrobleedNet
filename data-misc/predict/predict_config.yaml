@@ -1,0 +1,62 @@
+datasets:
+  - id: "dff29ecae1934fd2bed5112e98bc2f4f"
+    name: "cmb_valid"
+    split: null
+  - id: "262ed092ea414bc08977bd804d9b7a30"
+    name: "DOU"
+    split: null
+  - id: "0a34730c405342f1bfe1e76b0a4e470f"
+    name: "CRB"
+    split: null
+
+
+models:
+# Pre-trained from Scratch, fine-tuned after
+- id: "945e5aca0f9640179daa289e63364436"
+  name: "Scratch-Pretrained-FineTuned_F1macro"
+  subfolder: "Scratch-Pretrained-FineTuned"
+- id: "04113de3ba4b4e5ea8d58caa9e63c098"
+  name: "Scratch-Pretrained-FineTuned_valloss"
+  subfolder: "Scratch-Pretrained-FineTuned"
+- id: "4375a096fbad485aa31a943502b0d9f9"
+  name: "Scratch-Pretrained-FineTuned_PPV"
+  subfolder: "Scratch-Pretrained-FineTuned"
+
+# Pre-trained from pre-trained, fine-tuned after
+- id: "32324d0b107c4e4c84a1ea9106588bab"
+  name: "TL-Pretrained-FineTuned_F1macro"
+  subfolder: "TL-Pretrained-FineTuned"
+- id: "63768ab125814b309a9551a874d9fe79"
+  name: "TL-Pretrained-FineTuned_valloss"
+  subfolder: "TL-Pretrained-FineTuned"
+- id: "8362ae87ac8d4e888d8e283f12c17cdd"
+  name: "TL-Pretrained-FineTuned_PPV"
+  subfolder: "TL-Pretrained-FineTuned"
+
+# No pre-training, trained from scratch
+- id: "0f042373b4a4488f826bbf64ebbbc53e"
+  name: "Scratch-NoPretraining_F1macro"
+  subfolder: "Scratch-NoPretraining"
+- id: "f2d71dfe47754a2cb8d0e096688e3693"
+  name: "Scratch-NoPretraining_valloss"
+  subfolder: "Scratch-NoPretraining"
+- id: "4bab4d59e8c54caa8fd4dbe80ffd0944"
+  name: "Scratch-NoPretraining_PPV"
+  subfolder: "Scratch-NoPretraining"
+
+# # No pre-training, trained from pre-trained
+# - id: ""
+#   name: "TL-NoPretraining_F1macro"
+#   subfolder: "TL-NoPretraining"
+# - id: ""
+#   name: "TL-NoPretraining_valloss"
+#   subfolder: "TL-NoPretraining"
+# - id: ""
+#   name: "TL-NoPretraining_PPV"
+#   subfolder: "TL-NoPretraining"
+
+
+command_parameters:
+  worker: "single-gpu-16"
+  configs_dir: "/home/cerebriu/data/RESEARCH/MicrobleedNet/experiments/evaluate/Apollo"
+  clearml_basedir: "CMB/predictions"
