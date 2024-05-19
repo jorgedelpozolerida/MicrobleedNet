@@ -25,12 +25,47 @@ import json
 import nibabel as nib
 import ast
 from clearml import Task
-
+import SimpleITK as sitk
+from radiomics import featureextractor
 import subprocess
+import numpy as np
+from scipy.ndimage import center_of_mass, label as nd_label
 
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 
+radiomics_logger = logging.getLogger('radiomics')
+radiomics_logger.setLevel(logging.ERROR)  # Suppresses INFO and DEBUG messages
+
+
+BRAIN_LABELS = set(
+    [
+        2,  # left cerebral white matter
+        3,  # left cerebral cortex
+        7,  # left cerebellum white matter
+        8,  # left cerebellum cortex
+        10,  # left thalamus
+        11,  # left caudate
+        12,  # left putamen
+        13,  # left pallidum
+        17,  # left hippocampus
+        18,  # left amygdala
+        26,  # left accumbens area
+        28,  # left ventral DC (Diencephalon)
+        41,  # right cerebral white matter
+        42,  # right cerebral cortex
+        46,  # right cerebellum white matter
+        47,  # right cerebellum cortex
+        49,  # right thalamus
+        50,  # right caudate
+        51,  # right putamen
+        52,  # right pallidum
+        53,  # right hippocampus
+        54,  # right amygdala
+        58,  # right accumbens area
+        60,  # right ventral DC (Diencephalon)
+    ]
+)
 
 ###############################################################################
 # General
@@ -225,6 +260,67 @@ def add_CMB_metadata(CMB_metadata_df, metadata):
     return metadata
 
 
+
+##############################################################################
+# Radiomics/Shape analysis
+##############################################################################
+
+
+def calculate_radiomics_features(mri_data, mask_data):
+    """
+    Calculate Shape and First Order radiomics features for an object in a binary mask using PyRadiomics,
+    considering isotropic voxel spacing of 0.5mm.
+
+    Args:
+        mri_data (numpy.ndarray): The MRI data array.
+        mask_data (numpy.ndarray): The binary mask array where the object is labeled with 1.
+
+    Returns:
+        dict: A dictionary containing Shape and First Order radiomics features with simplified names.
+    """
+    # Convert numpy arrays to SimpleITK images and set spacing
+    image_sitk = sitk.GetImageFromArray(mri_data)
+    image_sitk.SetSpacing((0.5, 0.5, 0.5))  # Set isotropic spacing
+
+    mask_sitk = sitk.GetImageFromArray(mask_data.astype(np.uint8))
+    mask_sitk.SetSpacing((0.5, 0.5, 0.5))  # Set isotropic spacing
+
+    # Check that the mask is binary with the correct labels
+    unique_labels = np.unique(mask_data)
+    assert len(unique_labels) == 2 and 0 in unique_labels and 1 in unique_labels, 'Mask must be binary'
+
+    # Set up the PyRadiomics feature extractor with specific parameters
+    settings = {
+        'binWidth': 25,
+        'resampledPixelSpacing': [0.5, 0.5, 0.5],  # Override pixel spacing if necessary
+        'interpolator': sitk.sitkBSpline,
+        'enableCExtensions': True
+    }
+
+    extractor = featureextractor.RadiomicsFeatureExtractor(**settings)
+    extractor.enableFeatureClassByName('shape')  # Enable only Shape features
+    extractor.enableFeatureClassByName('firstorder')  # Enable only First Order features
+
+    # Extract features
+    result = extractor.execute(image_sitk, mask_sitk)
+
+    # Convert the result to a clean dictionary and rename features for better clarity
+    features_dict = {}
+    for key, value in result.items():
+        # Exclude diagnostics data
+        if 'diagnostics' not in key and 'shape' in key or 'firstorder' in key:
+            # Normalize the key to create a readable format
+            simplified_key = key.replace('original_', '')
+            # Convert numpy arrays to floats if they contain only one element
+            features_dict[simplified_key] = float(value.item()) if isinstance(value, np.ndarray) and value.size == 1 else value
+
+    return features_dict
+
+
+##############################################################################
+# Synhtseg
+##############################################################################
+
 def apply_synthseg(args, input_path, output_path, synthseg_repo_path):
     # Construct the command
     command = [
@@ -245,3 +341,37 @@ def apply_synthseg(args, input_path, output_path, synthseg_repo_path):
     # Run the command
     print(' '.join(command))
     subprocess.run(command, check=True)
+
+
+def calculate_synthseg_features(mri_data, mask_data, synthseg_mask_data):
+    """
+    Calculates and returns the number of times each label in synthseg_mask_data
+    is present in the mask_data where mask_data is equal to 1, and determines 
+    to which label the center of mass of mask_data belongs.
+
+    Args:
+        mri_data (numpy.ndarray): MRI data array (not used in this function, but provided for context).
+        mask_data (numpy.ndarray): Binary mask data array where 1 indicates regions of interest.
+        synthseg_mask_data (numpy.ndarray): Mask data with multiple labels to compare against mask_data.
+
+    Returns:
+        dict: A dictionary containing:
+            - count_dict: a dictionary of label counts where the keys are labels from synthseg_mask_data
+              and the values are the counts of these labels where mask_data is 1.
+            - com_label: the label from synthseg_mask_data that corresponds to the center of mass of mask_data.
+    """
+    # First, create a mask where synthseg labels are only considered where mask_data is 1
+    filtered_synthseg_mask = np.where(mask_data == 1, synthseg_mask_data, 0)
+
+    # Calculate how many times each label in synthseg_mask_data is present where mask_data is 1
+    unique_labels, counts = np.unique(filtered_synthseg_mask, return_counts=True)
+    count_dict = dict(zip(unique_labels, counts))
+    
+    # Calculate the center of mass of the mask_data
+    com = center_of_mass(mask_data)
+    com_label = synthseg_mask_data[int(com[0]), int(com[1]), int(com[2])]  # Assume 3D data; adjust for 2D if necessary
+
+    return {
+        'count_dict': count_dict,
+        'com_label': com_label
+    }

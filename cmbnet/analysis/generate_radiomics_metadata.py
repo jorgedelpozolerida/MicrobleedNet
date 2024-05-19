@@ -18,10 +18,10 @@ from scipy.ndimage import label as nd_label
 from multiprocessing import Pool, cpu_count
 import ast
 from logging.handlers import RotatingFileHandler
-from cmbnet.preprocessing.process_masks import calculate_radiomics_features, calculate_synthseg_features
+from cmbnet.utils.utils_general import calculate_radiomics_features, calculate_synthseg_features
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 # ATTENTION: this changes fomr server to server
 # maps subfolder in data dir for every dataset
@@ -59,18 +59,22 @@ def process_study(study_data):
         # NOTE: to remove later
         if dataset not in datasets_mapping:
             # print(f"IGNORED study {study}")
-            return f"IGNORED study {study}"
+            # return f"IGNORED study {study}"
+            return 
 
         folder = datasets_mapping.get(dataset, datasets_mapping["rest"])
         study_folder = os.path.join(data_dir, folder["folder"], "Data", study)
 
         mri_file = os.path.join(study_folder, "MRIs", f"{study}.nii.gz")
         cmb_file = os.path.join(study_folder, "Annotations", f"{study}.nii.gz")
+        synthseg_file = os.path.join(args.synthseg_dir, f"{study}_synthseg_resampled.nii.gz")
 
         mri_im = nib.load(mri_file)
         mri_data = mri_im.get_fdata()
         cmb_im = nib.load(cmb_file)
         cmb_data = cmb_im.get_fdata()
+        synth_im = nib.load(synthseg_file)
+        synth_data = synth_im.get_fdata()
 
         cmbs_df = df_cmb_metadata[df_cmb_metadata["seriesUID"] == study]
 
@@ -96,10 +100,13 @@ def process_study(study_data):
                             mri_data, cmb_mask_individual
                         )
                         synthseg_results = calculate_synthseg_features(
-                            mri_data, cmb_mask_individual
+                            mri_data, cmb_mask_individual, synth_data
                         )
                         results.append(
-                            {"seriesUID": study, "CM": CM, **radiomics_results}
+                            {"seriesUID": study, "CM": CM, 
+                             **radiomics_results,
+                             **synthseg_results
+                             }
                         )
 
             if not hitted_CCs:
@@ -108,6 +115,7 @@ def process_study(study_data):
         # Save results to cache
         output_path = os.path.join(cache_folder, f"{study}_results.csv")
         pd.DataFrame(results).to_csv(output_path, index=False)
+        _logger.info(f"Processed {study} and saved results to {output_path}")
 
         return f"Processed {study}"
     except Exception as e:
@@ -129,7 +137,7 @@ def main(data_dir, cache_folder, log_file, num_workers):
         for result in results:
             logging.info(result)
             
-    all_files = [os.path.join(cache_folder, f) for f in os.listdir(cache_folder) if f.endswith('.csv')]
+    all_files = [os.path.join(cache_folder, f) for f in os.listdir(cache_folder) if f.endswith('.csv') and f != "CMB_radiomics_metadata.csv"]
     df_list = [pd.read_csv(file) for file in all_files]
     
     combined_df = pd.concat(df_list, ignore_index=True)
@@ -164,7 +172,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--workers",
         type=int,
-        default=cpu_count(),
+        default=1,
         help="Number of worker processes to use. Default is the number of CPU cores.",
     )
 
