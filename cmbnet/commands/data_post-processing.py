@@ -71,29 +71,6 @@ BRAIN_LABELS = set(
     ]
 )
 
-
-def apply_synthseg(args, input_path, output_path, synthseg_repo_path):
-    # Construct the command
-    command = [
-        "python",
-        f"{synthseg_repo_path}/scripts/commands/SynthSeg_predict.py",
-        "--i",
-        input_path,
-        "--o",
-        output_path,
-    ]
-
-    if args.robust_synthseg:
-        command.extend(["--robust"])
-
-    # Log the command
-    logging.info("Running command: " + " ".join(command))
-
-    # Run the command
-    print(' '.join(command))
-    subprocess.run(command, check=True)
-
-
 def read_json_to_dict(file_path):
     """
     Reads a JSON file and converts it into a Python dictionary.
@@ -347,7 +324,7 @@ def main(args):
             _logger.info(
                 f"SynthSeg output not found. Will apply SynthSeg to MRI at {mri_path}"
             )
-            apply_synthseg(args, mri_path, args.synthseg_out_dir, args.synthseg_repo_path)
+            utils_general.apply_synthseg(args, mri_path, args.synthseg_out_dir, args.synthseg_repo_path)
             _logger.info(
                 f"SynthSeg applied to {studyuid} and output saved to {output_path}"
             )
@@ -474,6 +451,12 @@ def parse_args():
         default=False,
         action="store_true",
         help="Add this flag if you want previous post-processed masks to be overwritten",
+    )
+    parser.add_argument(
+        "--apply_synthseg_only",
+        default=False,
+        action="store_true",
+        help="Add this flag if you want to apply SynthSeg only",
     )
     return parser.parse_args()
 

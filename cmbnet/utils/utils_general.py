@@ -24,7 +24,9 @@ from datetime import datetime as dt
 import json
 import nibabel as nib
 import ast
+from clearml import Task
 
+import subprocess
 
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
@@ -221,3 +223,25 @@ def add_CMB_metadata(CMB_metadata_df, metadata):
             cmb_row['CM'] = tuple(map(int, com))
             cmb_dict.update(cmb_row)
     return metadata
+
+
+def apply_synthseg(args, input_path, output_path, synthseg_repo_path):
+    # Construct the command
+    command = [
+        "python",
+        f"{synthseg_repo_path}/scripts/commands/SynthSeg_predict.py",
+        "--i",
+        input_path,
+        "--o",
+        output_path,
+    ]
+
+    if args.robust_synthseg:
+        command.extend(["--robust"])
+
+    # Log the command
+    logging.info("Running command: " + " ".join(command))
+
+    # Run the command
+    print(' '.join(command))
+    subprocess.run(command, check=True)

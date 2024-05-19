@@ -36,6 +36,8 @@ import SimpleITK as sitk
 from radiomics import featureextractor
 
 warnings.filterwarnings("ignore", category=RuntimeWarning, module='kneed')
+radiomics_logger = logging.getLogger('radiomics')
+radiomics_logger.setLevel(logging.WARNING)  # Suppresses INFO and DEBUG messages
 
 
 import cmbnet.preprocessing.loading as loading
@@ -857,19 +859,20 @@ def prune_CMBs(args, annotations, annotations_resampled, labels_metadata, primar
 def calculate_radiomics_features(mri_data, mask_data):
     """
     Calculate Shape and First Order radiomics features for an object in a binary mask using PyRadiomics.
+    Returns a dictionary with simplified feature names.
 
     Args:
         mri_data (numpy.ndarray): The MRI data array.
         mask_data (numpy.ndarray): The binary mask array where the object is labeled with 1.
 
     Returns:
-        dict: A dictionary containing Shape and First Order radiomics features, nicely named.
+        dict: A dictionary containing Shape and First Order radiomics features with simplified names.
     """
     # Convert numpy arrays to SimpleITK images
     image_sitk = sitk.GetImageFromArray(mri_data)
     mask_sitk = sitk.GetImageFromArray(mask_data.astype(np.uint8))  # Ensure mask is in correct data type
 
-    # Ensure the mask is binary with the correct labels
+    # Check that the mask is binary with the correct labels
     unique_labels = np.unique(mask_data)
     assert len(unique_labels) == 2 and 0 in unique_labels and 1 in unique_labels, 'Mask must be binary'
 
@@ -891,9 +894,11 @@ def calculate_radiomics_features(mri_data, mask_data):
     # Convert the result to a clean dictionary and rename features for better clarity
     features_dict = {}
     for key, value in result.items():
-        if 'shape' in key or 'firstorder' in key:
-            # Nicely format the key by removing the 'original_' prefix and making it more readable
-            nice_key = key.replace('original_', '').replace('_', ' ').title()
-            features_dict[nice_key] = value
+        if 'shape' in key.lower() or 'firstorder' in key.lower():
+            # Remove the 'original_' prefix and unnecessary parts, simplify naming
+            simple_key = key.split('_')[-1]  # Take the last part after '_'
+            features_dict[simple_key.capitalize()] = np.squeeze(value) if isinstance(value, np.ndarray) else value
+    # Convert arrays to floats
+    features_dict = {key: float(value) for key, value in features_dict.items() if isinstance(value, np.ndarray)}
 
     return features_dict
