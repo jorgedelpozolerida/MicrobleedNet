@@ -5,7 +5,7 @@ import numpy as np
 import nibabel as nib
 from scipy.ndimage import label as nd_label
 from cmbnet.utils import utils_plotting, utils_general
-from cmbnet.preprocessing.loading import get_metadata_from_cmb_format
+from cmbnet.utils.utils_general import get_metadata_from_cmb_format
 import glob
 
 
@@ -150,7 +150,7 @@ def parse_args():
         "--savedir", type=str, default=None, help="Path to the output directory"
     )
     parser.add_argument(
-        "--engine", type=str, default="mayavi", help="Plotting engine (mayavi or vtk)"
+        "--engine", type=str, default="vtk", help="Plotting engine (mayavi or vtk)"
     )
     parser.add_argument("--crop_size", type=int, default=30, help="Crop size")
     parser.add_argument(
