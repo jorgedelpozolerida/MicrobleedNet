@@ -32,6 +32,8 @@ import warnings
 import json
 import numpy.linalg as npl
 from nibabel.affines import apply_affine
+import SimpleITK as sitk
+from radiomics import featureextractor
 
 warnings.filterwarnings("ignore", category=RuntimeWarning, module='kneed')
 
@@ -846,3 +848,52 @@ def prune_CMBs(args, annotations, annotations_resampled, labels_metadata, primar
     labels_metadata_modified = labels_metadata.copy()  # Placeholder for actual metadata modifications
 
     return {primary_seq: annotations_pruned}, labels_metadata_modified, msg
+
+
+##############################################################################
+# Radiomics/Shape analysis
+##############################################################################
+
+def calculate_radiomics_features(mri_data, mask_data):
+    """
+    Calculate Shape and First Order radiomics features for an object in a binary mask using PyRadiomics.
+
+    Args:
+        mri_data (numpy.ndarray): The MRI data array.
+        mask_data (numpy.ndarray): The binary mask array where the object is labeled with 1.
+
+    Returns:
+        dict: A dictionary containing Shape and First Order radiomics features, nicely named.
+    """
+    # Convert numpy arrays to SimpleITK images
+    image_sitk = sitk.GetImageFromArray(mri_data)
+    mask_sitk = sitk.GetImageFromArray(mask_data.astype(np.uint8))  # Ensure mask is in correct data type
+
+    # Ensure the mask is binary with the correct labels
+    unique_labels = np.unique(mask_data)
+    assert len(unique_labels) == 2 and 0 in unique_labels and 1 in unique_labels, 'Mask must be binary'
+
+    # Set up the PyRadiomics feature extractor with specific parameters
+    settings = {
+        'binWidth': 25,
+        'resampledPixelSpacing': None,
+        'interpolator': sitk.sitkBSpline,
+        'enableCExtensions': True
+    }
+
+    extractor = featureextractor.RadiomicsFeatureExtractor(**settings)
+    extractor.enableFeatureClassByName('shape')  # Enable only Shape features
+    extractor.enableFeatureClassByName('firstorder')  # Enable only First Order features
+
+    # Extract features
+    result = extractor.execute(image_sitk, mask_sitk)
+
+    # Convert the result to a clean dictionary and rename features for better clarity
+    features_dict = {}
+    for key, value in result.items():
+        if 'shape' in key or 'firstorder' in key:
+            # Nicely format the key by removing the 'original_' prefix and making it more readable
+            nice_key = key.replace('original_', '').replace('_', ' ').title()
+            features_dict[nice_key] = value
+
+    return features_dict
