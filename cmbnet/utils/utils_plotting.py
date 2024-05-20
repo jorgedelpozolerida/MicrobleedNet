@@ -33,8 +33,8 @@ import random
 # from mayavi import mlab
 import vtk
 from vtk.util.numpy_support import numpy_to_vtk
-# import pyvista as pv
-# import plotly.graph_objects as go
+import pyvista as pv
+import plotly.graph_objects as go
 
 
 
@@ -924,7 +924,7 @@ def plot_microbleed_mayavi(binary_map, filepath=None, showfig=False, im_size=(40
     else:
         mlab.close()
 
-def plot_microbleed_vtk(binary_map, filepath=None, showfig=False, im_size=(400, 400), universal_bounds=10):
+def plot_microbleed_vtk(binary_map, filepath=None, showfig=False, im_size=(400, 400), universal_bounds=25):
     """
     Visualizes a binary map of a microbleed in 3D using VTK, with rendering adapted to universal coordinates and colored blood red.
     Introduces random rotations to the camera view for each render.

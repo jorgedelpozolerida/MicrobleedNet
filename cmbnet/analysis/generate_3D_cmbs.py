@@ -9,7 +9,7 @@ from cmbnet.utils.utils_general import get_metadata_from_cmb_format
 import glob
 
 
-SEED = 42
+SEED = 1234
 
 
 def process_images(args, seed):
@@ -19,7 +19,9 @@ def process_images(args, seed):
     all_subs = [
         d
         for d in os.listdir(datadir)
-        if "-H" not in d and os.path.isdir(os.path.join(datadir, d)) and "_pred" not in d
+        if "-H" not in d
+        and os.path.isdir(os.path.join(datadir, d))
+        and "_pred" not in d
     ]
     all_subs_dat = {}
     for sub in all_subs:
@@ -63,7 +65,7 @@ def analyze_image(args, metadata, subject, pred_meta=None):
     im_data = im.get_fdata()
 
     # cmb_id = random.choice(list(metadata["CMBs_new"].keys()))
-    
+
     for cmb_id in metadata["CMBs_new"]:
         com = metadata["CMBs_new"][cmb_id]["CM"]
         rad = metadata["CMBs_new"][cmb_id]["radius"]
@@ -83,14 +85,6 @@ def analyze_image(args, metadata, subject, pred_meta=None):
 
 def analyze_and_crop_im_data(args, im_data, com, rad, subject, pred=False):
 
-    extra = "_pred" if pred else ""
-    filepath = f"{args.savedir}/{subject}_{com}_{rad}{extra}.png"
-
-    if os.path.exists(filepath) and not args.overwrite:
-        print(
-            f"WARNING: File already exists: {filepath}. Skipping, or add --overwrite to overwrite"
-        )
-        return
     # Label all connected components and extract the component including the center of mass
     labeled_im_data, num_labels = nd_label(im_data)
     connected_component = (
@@ -104,10 +98,21 @@ def analyze_and_crop_im_data(args, im_data, com, rad, subject, pred=False):
     masked_im_data = masked_im_data.astype(np.uint8)
     # Calculate the number of voxels in the connected component and derive an equivalent spherical radius
     n_vox = np.sum(masked_im_data > 0)
+    rad = round(
+        ((n_vox * (0.5**3)) * (3 / (4 * np.pi))) ** (1 / 3), 2
+    )  # correct radius
     if n_vox == 0:
         print(f"No voxels for subject {subject} in the connected component {com}")
         return
 
+    extra = "_pred" if pred else ""
+    filepath = f"{args.savedir}/{subject}_{com}_{rad}{extra}.png"
+
+    if os.path.exists(filepath) and not args.overwrite:
+        print(
+            f"WARNING: File already exists: {filepath}. Skipping, or add --overwrite to overwrite"
+        )
+        return
     # Crop the image data around the center of mass based on the specified crop size
     cropped_im_data = crop_data_around_center(masked_im_data, com, args.crop_size)
 
@@ -115,11 +120,13 @@ def analyze_and_crop_im_data(args, im_data, com, rad, subject, pred=False):
         # Plot using the specified engine
         if args.engine == "mayavi":
             utils_plotting.plot_microbleed_mayavi(
-                cropped_im_data, filepath=filepath,
+                cropped_im_data,
+                filepath=filepath,
             )
         elif args.engine == "vtk":
             utils_plotting.plot_microbleed_vtk(
-                cropped_im_data,  filepath=filepath,
+                cropped_im_data,
+                filepath=filepath,
             )
         else:
             raise ValueError("Invalid engine: options are 'mayavi' or 'vtk'")
@@ -152,7 +159,7 @@ def parse_args():
     parser.add_argument(
         "--engine", type=str, default="vtk", help="Plotting engine (mayavi or vtk)"
     )
-    parser.add_argument("--crop_size", type=int, default=30, help="Crop size")
+    parser.add_argument("--crop_size", type=int, default=40, help="Crop size")
     parser.add_argument(
         "--prediction_dir",
         type=str,
