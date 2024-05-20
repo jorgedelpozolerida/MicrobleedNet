@@ -34,7 +34,7 @@ from scipy.ndimage import center_of_mass, label as nd_label
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 
-radiomics_logger = logging.getLogger('radiomics')
+radiomics_logger = logging.getLogger("radiomics")
 radiomics_logger.setLevel(logging.ERROR)  # Suppresses INFO and DEBUG messages
 
 
@@ -71,38 +71,41 @@ BRAIN_LABELS = set(
 # General
 ###############################################################################
 
+
 def ensure_directory_exists(dir_path, verbose=False):
-    """ Create directory if non-existent """
+    """Create directory if non-existent"""
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
         if verbose:
             print(f"Created the following dir: \n{dir_path}")
     return dir_path
 
+
 def write_to_log_file(msg, log_file_path, printmsg=False):
-    '''
+    """
     Writes message to the log file.
     Args:
         msg (str): Message to be written to log file.
         log_file_path (str): Path to log file.
-    '''
+    """
     current_time = dt.now()
-    with open(log_file_path, 'a+') as f:
-        f.write(f'\n{current_time}\n{msg}')
+    with open(log_file_path, "a+") as f:
+        f.write(f"\n{current_time}\n{msg}")
     if printmsg:
         print(msg)
-        
+
+
 def confirm_action(message=""):
     """Prompt the user for confirmation before proceeding."""
     while True:
-        answer = input(f'Do you want to proceed? [Y/n]: ')
-        if not answer or answer[0].lower() == 'y':
+        answer = input(f"Do you want to proceed? [Y/n]: ")
+        if not answer or answer[0].lower() == "y":
             return answer
-        elif answer[0].lower() == 'n':
-            print('You did not approve. Exiting...')
+        elif answer[0].lower() == "n":
+            print("You did not approve. Exiting...")
             sys.exit(1)
         else:
-            print('Invalid input. Please enter Y or n.')
+            print("Invalid input. Please enter Y or n.")
 
 
 def read_json_to_dict(file_path):
@@ -116,15 +119,15 @@ def read_json_to_dict(file_path):
         dict: The JSON file content as a Python dictionary.
     """
     try:
-        with open(file_path, 'r') as file:
+        with open(file_path, "r") as file:
             return json.load(file)
     except Exception as e:
         print(f"Error reading the JSON file: {e}")
         return None
-    
-    
+
+
 def create_nifti(data, affine, header, is_annotation=False):
-    '''
+    """
     Creates Nifti1Image given data array, header and affine matrix.
     Args:
         data (np.ndarray): Input data array.
@@ -133,7 +136,7 @@ def create_nifti(data, affine, header, is_annotation=False):
         is_annotation (bool): Whether image is an annotation or not.
     Returns:
         image (nib.Nifti1Image): Created Nifti1Image.
-    '''
+    """
     if is_annotation:
         image = nib.Nifti1Image(data.astype(np.uint8), affine=affine, header=header)
         image.set_data_dtype(np.uint8)
@@ -145,10 +148,10 @@ def create_nifti(data, affine, header, is_annotation=False):
     return image
 
 
-
 ###############################################################################
 # Data Loading and Manipulation
 ###############################################################################
+
 
 def get_metadata_from_processed_final(data_dir, sub):
 
@@ -156,21 +159,18 @@ def get_metadata_from_processed_final(data_dir, sub):
         os.path.join(data_dir, sub, "Annotations_metadata", f"{sub}_metadata.json")
     )
     metadata_dict_keys = list(metadata_dict.keys())
-    return         {
-            "id": sub,
-            "anno_path": os.path.join(
-                data_dir, sub, "Annotations", f"{sub}.nii.gz"
-            ),
-            "mri_path": os.path.join(data_dir, sub, "MRIs", f"{sub}.nii.gz"),
-            "seq_type": metadata_dict_keys[0],
-            "raw_metadata_path": os.path.join(
-                data_dir, sub, "Annotations_metadata", f"{sub}_raw.json"
-            ),
-            "processed_metadata_path": os.path.join(
-                data_dir, sub, "Annotations_metadata", f"{sub}_processed.json"
-            ),
-        }
-
+    return {
+        "id": sub,
+        "anno_path": os.path.join(data_dir, sub, "Annotations", f"{sub}.nii.gz"),
+        "mri_path": os.path.join(data_dir, sub, "MRIs", f"{sub}.nii.gz"),
+        "seq_type": metadata_dict_keys[0],
+        "raw_metadata_path": os.path.join(
+            data_dir, sub, "Annotations_metadata", f"{sub}_raw.json"
+        ),
+        "processed_metadata_path": os.path.join(
+            data_dir, sub, "Annotations_metadata", f"{sub}_processed.json"
+        ),
+    }
 
 
 def get_metadata_from_cmb_format(data_dir, sub_id):
@@ -181,20 +181,19 @@ def get_metadata_from_cmb_format(data_dir, sub_id):
     fullpath_processing_metadata = os.path.join(
         data_dir, sub_id, "processing_metadata", f"{sub_id}.json"
     )
-    processing_metadata_dict = read_json_to_dict(
-        fullpath_processing_metadata
-    )
+    processing_metadata_dict = read_json_to_dict(fullpath_processing_metadata)
 
     return {
         "id": sub_id,
         "anno_path": os.path.join(data_dir, sub_id, "Annotations", f"{sub_id}.nii.gz"),
         "mri_path": os.path.join(data_dir, sub_id, "MRIs", f"{sub_id}.nii.gz"),
-        "processing_metadata_path": fullpath_processing_metadata, 
+        "processing_metadata_path": fullpath_processing_metadata,
         **processing_metadata_dict,
     }
 
+
 def load_clearml_predictions(pred_dir):
-    
+
     subjects = os.listdir(pred_dir)
     metadata = []
     for sub in subjects:
@@ -202,17 +201,16 @@ def load_clearml_predictions(pred_dir):
             os.path.join(pred_dir, sub, f"**/{sub}_PRED.nii.gz"), recursive=True
         )
         if len(pred_files) == 0:
-            raise ValueError(
-                f"No prediction files found for {sub}, check your data"
-            )
+            raise ValueError(f"No prediction files found for {sub}, check your data")
         elif len(pred_files) > 1:
             raise ValueError(
                 f"Multiple prediction files found for {sub}, check your data"
             )
         assert os.path.exists(pred_files[0])
         metadata.append({"id": sub, "pred_path": pred_files[0]})
-        
+
     return metadata
+
 
 def add_groundtruth_metadata(groundtruth_dir, gt_dir_struct, metadata):
     """
@@ -245,28 +243,63 @@ def add_CMB_metadata(CMB_metadata_df, metadata):
 
     for study_dict in metadata:
         sub_id = study_dict["id"]
-        CMB_dict = study_dict['CMBs_new']
+        CMB_dict = study_dict["CMBs_new"]
         for cmb_id, cmb_dict in CMB_dict.items():
-            com = np.array(cmb_dict['CM'], dtype=np.int32) # Center of mass
+            com = np.array(cmb_dict["CM"], dtype=np.int32)  # Center of mass
             cmb_row = CMB_metadata_df[
-                (CMB_metadata_df['seriesUID'] == sub_id) & (CMB_metadata_df['cmb_id'].astype(int) == int(cmb_id))
-            ] 
+                (CMB_metadata_df["seriesUID"] == sub_id)
+                & (CMB_metadata_df["cmb_id"].astype(int) == int(cmb_id))
+            ]
             if cmb_row.empty:
                 raise ValueError(f"CMB {cmb_id} not found for subject {sub_id}")
-            cmb_row = cmb_row.to_dict(orient='records')[0]
-            assert all(com == cmb_row['CM']), f"CM not mathcing for {sub_id} - {cmb_id}"
-            cmb_row['CM'] = tuple(map(int, com))
+            cmb_row = cmb_row.to_dict(orient="records")[0]
+            assert all(com == cmb_row["CM"]), f"CM not mathcing for {sub_id} - {cmb_id}"
+            cmb_row["CM"] = tuple(map(int, com))
             cmb_dict.update(cmb_row)
     return metadata
-
 
 
 ##############################################################################
 # Radiomics/Shape analysis
 ##############################################################################
 
+RADIOMICS_KEYS = [
+    "shape_Elongation",
+    "shape_Flatness",
+    "shape_LeastAxisLength",
+    "shape_MajorAxisLength",
+    "shape_Maximum2DDiameterColumn",
+    "shape_Maximum2DDiameterRow",
+    "shape_Maximum2DDiameterSlice",
+    "shape_Maximum3DDiameter",
+    "shape_MeshVolume",
+    "shape_MinorAxisLength",
+    "shape_Sphericity",
+    "shape_SurfaceArea",
+    "shape_SurfaceVolumeRatio",
+    "shape_VoxelVolume",
+    "firstorder_10Percentile",
+    "firstorder_90Percentile",
+    "firstorder_Energy",
+    "firstorder_Entropy",
+    "firstorder_InterquartileRange",
+    "firstorder_Kurtosis",
+    "firstorder_Maximum",
+    "firstorder_MeanAbsoluteDeviation",
+    "firstorder_Mean",
+    "firstorder_Median",
+    "firstorder_Minimum",
+    "firstorder_Range",
+    "firstorder_RobustMeanAbsoluteDeviation",
+    "firstorder_RootMeanSquared",
+    "firstorder_Skewness",
+    "firstorder_TotalEnergy",
+    "firstorder_Uniformity",
+    "firstorder_Variance",
+]
 
-def calculate_radiomics_features(mri_data, mask_data):
+
+def calculate_radiomics_features(mri_data, mask_data, msg=''):
     """
     Calculate Shape and First Order radiomics features for an object in a binary mask using PyRadiomics,
     considering isotropic voxel spacing of 0.5mm.
@@ -278,48 +311,66 @@ def calculate_radiomics_features(mri_data, mask_data):
     Returns:
         dict: A dictionary containing Shape and First Order radiomics features with simplified names.
     """
-    # Convert numpy arrays to SimpleITK images and set spacing
-    image_sitk = sitk.GetImageFromArray(mri_data)
-    image_sitk.SetSpacing((0.5, 0.5, 0.5))  # Set isotropic spacing
+    try:
+        # Convert numpy arrays to SimpleITK images and set spacing
+        image_sitk = sitk.GetImageFromArray(mri_data)
+        image_sitk.SetSpacing((0.5, 0.5, 0.5))  # Set isotropic spacing
 
-    mask_sitk = sitk.GetImageFromArray(mask_data.astype(np.uint8))
-    mask_sitk.SetSpacing((0.5, 0.5, 0.5))  # Set isotropic spacing
+        mask_sitk = sitk.GetImageFromArray(mask_data.astype(np.uint8))
+        mask_sitk.SetSpacing((0.5, 0.5, 0.5))  # Set isotropic spacing
 
-    # Check that the mask is binary with the correct labels
-    unique_labels = np.unique(mask_data)
-    assert len(unique_labels) == 2 and 0 in unique_labels and 1 in unique_labels, 'Mask must be binary'
+        # Check that the mask is binary with the correct labels
+        unique_labels = np.unique(mask_data)
+        assert (
+            len(unique_labels) == 2 and 0 in unique_labels and 1 in unique_labels
+        ), "Mask must be binary"
 
-    # Set up the PyRadiomics feature extractor with specific parameters
-    settings = {
-        'binWidth': 25,
-        'resampledPixelSpacing': [0.5, 0.5, 0.5],  # Override pixel spacing if necessary
-        'interpolator': sitk.sitkBSpline,
-        'enableCExtensions': True
-    }
+        # Set up the PyRadiomics feature extractor with specific parameters
+        settings = {
+            "binWidth": 25,
+            "resampledPixelSpacing": [
+                0.5,
+                0.5,
+                0.5,
+            ],  # Override pixel spacing if necessary
+            "interpolator": sitk.sitkBSpline,
+            "enableCExtensions": True,
+        }
 
-    extractor = featureextractor.RadiomicsFeatureExtractor(**settings)
-    extractor.enableFeatureClassByName('shape')  # Enable only Shape features
-    extractor.enableFeatureClassByName('firstorder')  # Enable only First Order features
+        extractor = featureextractor.RadiomicsFeatureExtractor(**settings)
+        extractor.enableFeatureClassByName("shape")  # Enable only Shape features
+        extractor.enableFeatureClassByName(
+            "firstorder"
+        )  # Enable only First Order features
 
-    # Extract features
-    result = extractor.execute(image_sitk, mask_sitk)
+        # Extract features
+        result = extractor.execute(image_sitk, mask_sitk)
 
-    # Convert the result to a clean dictionary and rename features for better clarity
-    features_dict = {}
-    for key, value in result.items():
-        # Exclude diagnostics data
-        if 'diagnostics' not in key and 'shape' in key or 'firstorder' in key:
-            # Normalize the key to create a readable format
-            simplified_key = key.replace('original_', '')
-            # Convert numpy arrays to floats if they contain only one element
-            features_dict[simplified_key] = float(value.item()) if isinstance(value, np.ndarray) and value.size == 1 else value
-
-    return features_dict
+        # Convert the result to a clean dictionary and rename features for better clarity
+        features_dict = {}
+        for key, value in result.items():
+            # Exclude diagnostics data
+            if "diagnostics" not in key and "shape" in key or "firstorder" in key:
+                # Normalize the key to create a readable format
+                simplified_key = key.replace("original_", "")
+                # Convert numpy arrays to floats if they contain only one element
+                features_dict[simplified_key] = (
+                    float(value.item())
+                    if isinstance(value, np.ndarray) and value.size == 1
+                    else value
+                )
+    except Exception as e:
+        msg += f"Error calculating radiomics features: {e}"
+        print(f"Error calculating radiomics features: {e}")
+        return {key: None for key in RADIOMICS_KEYS}, msg
+    
+    return features_dict, msg
 
 
 ##############################################################################
 # Synhtseg
 ##############################################################################
+
 
 def apply_synthseg(args, input_path, output_path, synthseg_repo_path):
     # Construct the command
@@ -339,14 +390,14 @@ def apply_synthseg(args, input_path, output_path, synthseg_repo_path):
     logging.info("Running command: " + " ".join(command))
 
     # Run the command
-    print(' '.join(command))
+    print(" ".join(command))
     subprocess.run(command, check=True)
 
 
 def calculate_synthseg_features(mri_data, mask_data, synthseg_mask_data):
     """
     Calculates and returns the number of times each label in synthseg_mask_data
-    is present in the mask_data where mask_data is equal to 1, and determines 
+    is present in the mask_data where mask_data is equal to 1, and determines
     to which label the center of mass of mask_data belongs.
 
     Args:
@@ -366,12 +417,11 @@ def calculate_synthseg_features(mri_data, mask_data, synthseg_mask_data):
     # Calculate how many times each label in synthseg_mask_data is present where mask_data is 1
     unique_labels, counts = np.unique(filtered_synthseg_mask, return_counts=True)
     count_dict = dict(zip(unique_labels, counts))
-    
+
     # Calculate the center of mass of the mask_data
     com = center_of_mass(mask_data)
-    com_label = synthseg_mask_data[int(com[0]), int(com[1]), int(com[2])]  # Assume 3D data; adjust for 2D if necessary
+    com_label = synthseg_mask_data[
+        int(com[0]), int(com[1]), int(com[2])
+    ]  # Assume 3D data; adjust for 2D if necessary
 
-    return {
-        'count_dict': count_dict,
-        'com_label': com_label
-    }
+    return {"count_dict": count_dict, "com_label": com_label}

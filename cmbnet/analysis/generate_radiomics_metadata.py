@@ -19,6 +19,8 @@ from multiprocessing import Pool, cpu_count
 import ast
 from logging.handlers import RotatingFileHandler
 from cmbnet.utils.utils_general import calculate_radiomics_features, calculate_synthseg_features
+from tqdm import tqdm
+
 
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
@@ -56,8 +58,7 @@ def process_study(study_data):
         study, data_dir, datasets_mapping, df_cmb_metadata, cache_folder = study_data
         dataset = study.split("-")[0]
 
-        # NOTE: to remove later
-        if dataset not in datasets_mapping:
+        if dataset in ['sMOMENI', 'CRBneg']:
             # print(f"IGNORED study {study}")
             # return f"IGNORED study {study}"
             return 
@@ -77,10 +78,11 @@ def process_study(study_data):
         synth_data = synth_im.get_fdata()
 
         cmbs_df = df_cmb_metadata[df_cmb_metadata["seriesUID"] == study]
-
+    
         labeled_array, num_features = nd_label(
             cmb_data == 1
         )  # Ensure we're labeling the correct regions
+
         results = []
 
         for i in range(1, num_features + 1):
@@ -89,6 +91,7 @@ def process_study(study_data):
             hitted_CCs = []
 
             for CM in cmbs_df["CM"]:
+                # print
                 CM = ast.literal_eval(CM)
                 CM = tuple(map(int, CM))
 
@@ -96,8 +99,8 @@ def process_study(study_data):
                     if CM not in hitted_CCs:
                         hitted_CCs.append(CM)
                         # print(f"Found CMB for CC-{i} in CM-{CM}")
-                        radiomics_results = calculate_radiomics_features(
-                            mri_data, cmb_mask_individual
+                        radiomics_results, msg = calculate_radiomics_features(
+                            mri_data, cmb_mask_individual, ''
                         )
                         synthseg_results = calculate_synthseg_features(
                             mri_data, cmb_mask_individual, synth_data
@@ -108,9 +111,25 @@ def process_study(study_data):
                              **synthseg_results
                              }
                         )
-
+       
             if not hitted_CCs:
-                print(f"CC-{i} not found in metadata for study {study}")
+                if num_features == 1:
+                    hitted_CCs.append(CM)
+                    # patch for cases with only 1 CMBs that fail to be processed
+                    radiomics_results = calculate_radiomics_features(
+                        mri_data, cmb_mask_individual
+                    )
+                    synthseg_results = calculate_synthseg_features(
+                        mri_data, cmb_mask_individual, synth_data
+                    )
+                    results.append(
+                        {"seriesUID": study, "CM": CM, 
+                            **radiomics_results,
+                            **synthseg_results
+                            }
+                    )
+                else:
+                    print(f"CC-{i} not found in metadata for study {study}")
 
         # Save results to cache
         output_path = os.path.join(cache_folder, f"{study}_results.csv")
@@ -126,21 +145,32 @@ def process_study(study_data):
 def main(data_dir, cache_folder, log_file, num_workers):
     setup_logging(log_file)
     df_cmb_metadata = pd.read_csv(args.cmb_metadata)
+    if args.studies is not None:
+        df_cmb_metadata = df_cmb_metadata[df_cmb_metadata["seriesUID"].isin(args.studies)]
+    
     studies = df_cmb_metadata["seriesUID"].unique()
     num_workers = min(num_workers, len(studies))
-    
-    with Pool(processes=num_workers) as pool:
-        results = pool.map(
-            process_study,
-            [(study, data_dir, datasets_mapping, df_cmb_metadata, cache_folder) for study in studies],
-        )
-        for result in results:
-            logging.info(result)
-            
-    all_files = [os.path.join(cache_folder, f) for f in os.listdir(cache_folder) if f.endswith('.csv') and f != "CMB_radiomics_metadata.csv"]
-    df_list = [pd.read_csv(file) for file in all_files]
-    
-    combined_df = pd.concat(df_list, ignore_index=True)
+    # if num_workers == 1:
+    #     for study in tqdm(studies):
+    #         process_study((study, data_dir, datasets_mapping, df_cmb_metadata, cache_folder))
+    # else:
+    #     with Pool(processes=num_workers) as pool:
+    #         results = pool.map(
+    #             process_study,
+    #             [(study, data_dir, datasets_mapping, df_cmb_metadata, cache_folder) for study in studies],
+    #         )
+    #         for result in results:
+    #             logging.info(result)
+    all_dfs = []
+    for f in os.listdir(cache_folder):
+        if f.endswith('.csv') and f != "CMB_radiomics_metadata.csv":
+            try:
+                fullp = os.path.join(cache_folder, f)
+                all_dfs.append(pd.read_csv(fullp))
+            except Exception as e:
+                print(f"Error reading {fullp}: {e}")
+
+    combined_df = pd.concat(all_dfs, ignore_index=True)
     outpath = os.path.join(cache_folder, 'CMB_radiomics_metadata.csv')
     combined_df.to_csv(outpath, index=False)
     print(f"Final combined metadata saved in: {outpath}")
@@ -175,7 +205,13 @@ if __name__ == "__main__":
         default=1,
         help="Number of worker processes to use. Default is the number of CPU cores.",
     )
-
+    parser.add_argument(
+        "--studies",
+        nargs="+",
+        type=str,
+        default=None,
+        help="Specific studies to evaluate",
+    )
     args = parser.parse_args()
 
     main(args.data_dir, args.cache_folder, args.log_file, args.workers)

@@ -1,0 +1,10 @@
+﻿TYPE,NAME,TAGS: tags,TAGS: system_tags,STATUS,USER,STARTED,UPDATED,ITERATION,PARENT TASK: parent.name,PARENT TASK: parent.project.id,PARENT TASK: parent.project.name
+"inference","predict_CRB","CRB,Scratch-Pretrained-FineTuned_PPV","","completed","Jorge Lérida","2024-05-18T10:03:27.664000+00:00","2024-05-18T14:34:13.110000+00:00",0,"","",""
+"inference","predict_CRB","CRB,Scratch-Pretrained-FineTuned_valloss","","completed","Jorge Lérida","2024-05-18T10:03:13.514000+00:00","2024-05-18T14:31:04.747000+00:00",0,"","",""
+"inference","predict_CRB","CRB,Scratch-Pretrained-FineTuned_F1macro","","completed","Jorge Lérida","2024-05-18T10:02:59.278000+00:00","2024-05-18T14:30:57.994000+00:00",0,"","",""
+"inference","predict_DOU","DOU,Scratch-Pretrained-FineTuned_PPV","","completed","Jorge Lérida","2024-05-18T10:01:19.478000+00:00","2024-05-18T13:27:23.477000+00:00",0,"","",""
+"inference","predict_DOU","DOU,Scratch-Pretrained-FineTuned_valloss","","completed","Jorge Lérida","2024-05-18T10:01:05.282000+00:00","2024-05-18T12:59:31.551000+00:00",0,"","",""
+"inference","predict_DOU","DOU,Scratch-Pretrained-FineTuned_F1macro","","completed","Jorge Lérida","2024-05-18T10:00:51.111000+00:00","2024-05-18T12:25:33.006000+00:00",0,"","",""
+"inference","predict_cmb_valid","Scratch-Pretrained-FineTuned_valloss,cmb_valid","","completed","Jorge Lérida","2024-05-18T09:58:57.129000+00:00","2024-05-18T11:53:15.105000+00:00",0,"","",""
+"inference","predict_cmb_valid","Scratch-Pretrained-FineTuned_F1macro,cmb_valid","","completed","Jorge Lérida","2024-05-18T09:58:42.840000+00:00","2024-05-18T11:46:43.616000+00:00",0,"","",""
+"inference","predict_cmb_valid","Scratch-Pretrained-FineTuned_PPV,cmb_valid","","completed","Jorge Lérida","2024-05-18T09:59:11.414000+00:00","2024-05-18T11:38:53.803000+00:00",0,"","",""
