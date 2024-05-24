@@ -361,7 +361,7 @@ def calculate_radiomics_features(mri_data, mask_data, msg=''):
                 )
     except Exception as e:
         msg += f"Error calculating radiomics features: {e}"
-        print(f"Error calculating radiomics features: {e}")
+        print(f"Error calculating radiomics features: {e}. Setting all to None...")
         return {key: None for key in RADIOMICS_KEYS}, msg
     
     return features_dict, msg

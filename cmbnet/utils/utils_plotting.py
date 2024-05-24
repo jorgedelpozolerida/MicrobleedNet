@@ -33,8 +33,6 @@ import random
 # from mayavi import mlab
 import vtk
 from vtk.util.numpy_support import numpy_to_vtk
-import pyvista as pv
-import plotly.graph_objects as go
 
 
 

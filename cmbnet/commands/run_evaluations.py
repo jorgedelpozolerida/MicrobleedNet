@@ -1,65 +1,90 @@
 import os
 import subprocess
 from multiprocessing import Pool
-
+import cmbnet.utils.utils_general as utils_gen
 
 # Define the base directories for the three levels
-level1_dirs = ['Scratch-Pretrained-FineTuned', 'TL-Pretrained-FineTuned']
-level2_dirs = ['predict_CRB', 'predict_DOU']
-level3_dirs = ['PPV', 'F1macro', 'valloss']
+level1_dirs = ["Scratch-Pretrained-FineTuned", "TL-Pretrained-FineTuned"]
+level2_dirs = ["predict_cmb_dou", "predict_cmb_crb", "predict_cmb_valid"]
+# level3_dirs = ["PPV", "F1macro", "valloss"]
+level3_dirs = [ "F1macro", "valloss"]
+
+# Dictionary specifying the DataFrame and the column to split the analysis by
+# splits = {
+#     "GT_metadata": "CMB_level",
+#     "GT_metadata_radiomics": "Sphericity",
+# }
+
 
 # Base directory paths
-base_prediction_dir = '/storage/evo1/jorge/datasets/cmb/predictions_last'
-synthseg_dir = '/storage/evo1/jorge/datasets/cmb/synthseg_masks_resampled/'
-metadata_csv_path = '/storage/evo1/jorge/MicrobleedNet/data-misc/csv/CMB_metadata_all.csv'
+savedir_base = "/storage/evo1/jorge/MicrobleedNet/data-misc/evaluations"
+cmb_pred_metadata_dir_base = "/storage/evo1/jorge/datasets/cmb/evaluations"
+
+# CSV paths
+metadata_csv_path = "/storage/evo1/jorge/MicrobleedNet/data-misc/csv/CMB_metadata_all.csv"
+gt_radiomics_metadata_csv = "/storage/evo1/jorge/MicrobleedNet/data-misc/csv/CMB_radiomics_metadata.csv"
+gt_cmb_metadata_csv = "/storage/evo1/jorge/MicrobleedNet/data-misc/csv/CMB_metadata_all.csv"
+all_studies_csv = "/storage/evo1/jorge/MicrobleedNet/data-misc/csv/ALL_studies.csv"
 
 def run_evaluation(command):
     """
     Function to run a subprocess with the given command.
     """
-    print("Running command:", ' '.join(command))
+    print("Running command:", " ".join(command))
     subprocess.run(command)
-    print(f"Completed command: {' '.join(command)}")
+    print(f"Completed command")
 
-def generate_commands():
-    """
-    Generator that yields command lists to be run in subprocesses.
-    """
+def run_evals():
     for l1 in level1_dirs:
         for l2 in level2_dirs:
             for l3 in level3_dirs:
-                # Construct the specific paths
-                predictions_dir = os.path.join(base_prediction_dir, l1, l2, l3)
-                savedir = os.path.join('/storage/evo1/jorge/datasets/cmb/evaluations', l1, l2, l3)
-                dataset = l2.split("_")[1].lower()
-                base_groundtruth_dir_dataset = f"/storage/evo1/jorge/datasets/cmb/cmb_{dataset}/Data"
-                
+                print(l1, l2, l3)
+                predictions_dir = os.path.join(cmb_pred_metadata_dir_base, l1, l2, l3)
+                savedir = os.path.join(savedir_base, l1, l2, l3)
+                if l2 == "predict_cmb_valid":
+                    dataset = "cmb_valid"
+                elif l2 == "predict_cmb_dou":
+                    dataset = "DOU"
+                elif l2 == "predict_cmb_crb":
+                    dataset = "CRB"
                 # Ensure the savedir exists
                 os.makedirs(savedir, exist_ok=True)
 
                 # Construct the command to run
                 cmd = [
-                    'python', 'evaluate_CMBlevel.py',
-                    '--savedir', savedir,
-                    '--groundtruth_dir', base_groundtruth_dir_dataset,
-                    '--predictions_dir', predictions_dir,
-                    '--num_workers', '1',
-                    '--cmb_metadata_csv', metadata_csv_path,
-                    '--synthseg_dir', synthseg_dir,
-                    '--overwrite',
-                    '--create_plots'
+                    "python", "evaluate.py",
+                    "--output_dir", savedir,
+                    "--cmb_pred_metadata_dir", predictions_dir,
+                    "--gt_radiomics_metadata_csv", gt_radiomics_metadata_csv,
+                    "--gt_cmb_metadata_csv", gt_cmb_metadata_csv,
+                    "--all_studies_csv", all_studies_csv,
+                    "--dataset", dataset,
                 ]
-                yield cmd
+                print(".......................................................")
+                print("Running command with the following arguments:")
+                print("\t",l1,"-", l2,"-", l3)
+                print(".......................................................")
 
-if __name__ == '__main__':
-    
-    NUM_WORKERS = 10
+                utils_gen.confirm_action()
+                run_evaluation(cmd)
+                
+                # for split_df, split_column in splits.items():
+                #     # Construct the command to run
+                #     cmd = [
+                #         "python", "evaluate.py",
+                #         "--output_dir", savedir,
+                #         "--cmb_pred_metadata_dir", predictions_dir,
+                #         "--gt_radiomics_metadata_csv", gt_radiomics_metadata_csv,
+                #         "--gt_cmb_metadata_csv", gt_cmb_metadata_csv,
+                #         "--all_studies_csv", all_studies_csv,
+                #         "--dataset", dataset,
+                #         "--split_column", split_column,
+                #         "--split_df", split_df
+                #     ]
+                #     yield cmd
 
-    # PArse num workser arparse
-    num_workers = min(NUM_WORKERS, os.cpu_count())
-    
-    # Setup a pool of workers equal to the number of available CPU cores
-    with Pool(processes=num_workers) as pool:
-        pool.map(run_evaluation, generate_commands())
+if __name__ == "__main__":
+
+    run_evals() 
 
     print("All evaluations completed.")

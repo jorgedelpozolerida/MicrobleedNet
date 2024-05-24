@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*-coding:utf-8 -*-
-""" Generate evaluation at study-CMB level
+""" Generate data at CMB-level for predicted CMBs
 
 
-Output of this file is meant to be post-processed in separate script
+Output of this file is meant to be post-processed in separate script to compute 
+evaluation.
 
 @author: jorgedelpozolerida
 @date: 20/05/2024
@@ -296,7 +297,7 @@ def process_study(args, subject_metadata, cmb_metadata, msg=""):
 
     # Construct the file path
     file_path = os.path.join(args.savedir, "temp", f"{studyuid}_evaluation.pkl")
-    if os.path.exists(file_path) and not args.overwrite:
+    if os.path.exists(file_path) or args.overwrite:
         msg += f"\tResults already exist for {studyuid}!!!\n"
         # Finalize
         end = time.time()

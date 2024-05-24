@@ -1,0 +1,44 @@
+
+2024-05-24 14:52:19.041100
+Starting evaluation at 24052024_145219
+
+Selected 20 studies from dataset ['DOU'] to evaluate
+
+
+2024-05-24 14:52:19.154485
+
+Segmentation Metrics:
+
+2024-05-24 14:52:19.155368
+                        Mean      Std.
+Macro - Dice Score  0.614541  0.174099
+Micro - Dice Score  0.617973       NaN
+2024-05-24 14:52:19.155429
+
+Classification metrics:
+
+2024-05-24 14:52:19.156937
+   threshold  Precision  Recall  F1-Score  Specificity
+0          1   0.000000     NaN  0.000000          0.7
+1          2   0.909091     1.0  0.952381          0.9
+2          5   0.833333     1.0  0.909091          0.4
+2024-05-24 14:52:19.157002
+
+Detection metrics:
+
+2024-05-24 14:52:19.157969
+                       Mean      Std.
+Micro - Precision  0.886364       NaN
+Micro - Recall     0.527027       NaN
+Micro - F1         0.661017       NaN
+Micro - FPavg      0.250000       NaN
+Micro - FPcmb      0.067568       NaN
+Macro - Precision  0.918254  0.156869
+Macro - Recall     0.515509  0.426572
+Macro - F1         0.777223  0.238258
+Macro - FPavg      0.250000  0.550120
+Macro - FPcmb      0.062238  0.154658
+2024-05-24 14:52:19.161410
+Results saved in /storage/evo1/jorge/MicrobleedNet/data-misc/evaluations/Scratch-Pretrained-FineTuned/predict_cmb_dou/F1macro
+2024-05-24 14:52:19.161460
+Finished evaluation
