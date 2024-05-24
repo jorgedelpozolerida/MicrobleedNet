@@ -1,34 +1,34 @@
-labels,new_map,BOMBS,correctly _Assigned
-background,NN,NN,n
-left cerebral white matter,lobar,Subcortical white matter,y
-left cerebral cortex,lobar,Cortex / grey-white junction ,y
-left lateral ventricle,lobar,Subcortical white matter,n
-left inferior lateral ventricle,lobar,Subcortical white matter,n
-left cerebellum white matter,deep,Cerebellum,y
-left cerebellum cortex,deep,Cerebellum,y
-left thalamus,deep,Thalamus,y
-left caudate,deep,Basal ganglia grey matter,y
-left putamen,deep,Basal ganglia grey matter,y
-left pallidum,deep,Basal ganglia grey matter,y
-3rd ventricle,deep,Basal ganglia grey matter,n
-4th ventricle,deep,Cerebellum,n
-brain-stem,deep,Brainstem,n
-left hippocampus,lobar,Cortex / grey-white junction ,y
-left amygdala,lobar,Cortex / grey-white junction ,y
-left accumbens area,deep,Basal ganglia grey matter,y
-CSF,NN,NN,n
-left ventral DC,deep,Brainstem,n
-right cerebral white matter,lobar,Subcortical white matter,y
-right cerebral cortex,lobar,Cortex / grey-white junction ,y
-right lateral ventricle,lobar,Subcortical white matter,n
-right inferior lateral ventricle,lobar,Subcortical white matter,n
-right cerebellum white matter,deep,Cerebellum,y
-right cerebellum cortex,deep,Cerebellum,y
-right thalamus,deep,Thalamus,y
-right caudate,deep,Basal ganglia grey matter,y
-right putamen,deep,Basal ganglia grey matter,y
-right pallidum,deep,Basal ganglia grey matter,y
-right hippocampus,lobar,Cortex / grey-white junction ,y
-right amygdala,lobar,Cortex / grey-white junction ,y
-right accumbens area,deep,Basal ganglia grey matter,y
-right ventral DC,deep,Brainstem,n
+labels,highlevel_location,BOMBS,COMMENT
+left caudate,deep,Basal ganglia grey matter,
+left putamen,deep,Basal ganglia grey matter,
+left pallidum,deep,Basal ganglia grey matter,
+3rd ventricle,deep,Basal ganglia grey matter,Best guess assigned
+left accumbens area,deep,Basal ganglia grey matter,
+right caudate,deep,Basal ganglia grey matter,
+right putamen,deep,Basal ganglia grey matter,
+right pallidum,deep,Basal ganglia grey matter,
+right accumbens area,deep,Basal ganglia grey matter,
+brain-stem,deep,Brainstem,
+left ventral DC,deep,Brainstem,Best guess assigned
+right ventral DC,deep,Brainstem,Best guess assigned
+left cerebellum white matter,deep,Cerebellum,
+left cerebellum cortex,deep,Cerebellum,
+4th ventricle,deep,Cerebellum,Best guess assigned
+right cerebellum white matter,deep,Cerebellum,
+right cerebellum cortex,deep,Cerebellum,
+left cerebral cortex,lobar,Cortex / grey-white junction ,
+left hippocampus,lobar,Cortex / grey-white junction ,
+left amygdala,lobar,Cortex / grey-white junction ,
+right cerebral cortex,lobar,Cortex / grey-white junction ,
+right hippocampus,lobar,Cortex / grey-white junction ,
+right amygdala,lobar,Cortex / grey-white junction ,
+background,NN,NN,Apply NN label
+CSF,NN,NN,Apply NN label
+left cerebral white matter,lobar,Subcortical white matter,
+left lateral ventricle,lobar,Subcortical white matter,Best guess assigned
+left inferior lateral ventricle,lobar,Subcortical white matter,Best guess assigned
+right cerebral white matter,lobar,Subcortical white matter,
+right lateral ventricle,lobar,Subcortical white matter,Best guess assigned
+right inferior lateral ventricle,lobar,Subcortical white matter,Best guess assigned
+left thalamus,deep,Thalamus,
+right thalamus,deep,Thalamus,
