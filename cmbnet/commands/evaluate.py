@@ -70,13 +70,43 @@ import cmbnet.utils.utils_evaluation as utils_eval
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 
+BRAIN_LABELS = set(
+    [
+        2,  # left cerebral white matter
+        3,  # left cerebral cortex
+        7,  # left cerebellum white matter
+        8,  # left cerebellum cortex
+        10,  # left thalamus
+        11,  # left caudate
+        12,  # left putamen
+        13,  # left pallidum
+        17,  # left hippocampus
+        18,  # left amygdala
+        26,  # left accumbens area
+        28,  # left ventral DC (Diencephalon)
+        41,  # right cerebral white matter
+        42,  # right cerebral cortex
+        46,  # right cerebellum white matter
+        47,  # right cerebellum cortex
+        49,  # right thalamus
+        50,  # right caudate
+        51,  # right putamen
+        52,  # right pallidum
+        53,  # right hippocampus
+        54,  # right amygdala
+        58,  # right accumbens area
+        60,  # right ventral DC (Diencephalon)
+    ]
+)
+
 
 def get_predictions_df(pred_metadata_dir):
     """
     Load into dict all metadata from predictions
     """
     all_studies = [
-        f.replace("_evaluation.pkl", "") for f in os.listdir(os.path.join(pred_metadata_dir, "temp"))
+        f.replace("_evaluation.pkl", "")
+        for f in os.listdir(os.path.join(pred_metadata_dir, "temp"))
     ]
     all_data = []
     for study in all_studies:
@@ -105,6 +135,7 @@ def evaluate_from_dataframes(args, all_studies_df, GT_metadata_all, pred_metadat
         segmentation_metrics,
         study_results_detection,
         study_results_segmentation,
+        all_cmbs_tracking
     ) = utils_eval.evaluate_detection_from_cmb_data(
         all_studies_df,
         GT_metadata_all,
@@ -127,29 +158,221 @@ def evaluate_from_dataframes(args, all_studies_df, GT_metadata_all, pred_metadat
         all_classifications.append({"threshold": th, **classification_metrics})
     classification_metrics = pd.DataFrame(all_classifications)
 
-    return detection_metrics, segmentation_metrics, classification_metrics, study_results_detection, study_results_segmentation
+    return (
+        detection_metrics,
+        segmentation_metrics,
+        classification_metrics,
+        study_results_detection,
+        study_results_segmentation,
+        all_cmbs_tracking
+    )
+    
+def read_synthseg_labels(file_path):
+    labels_dict = {}
+    with open(file_path, "r") as file:
+        # Skip header lines until we reach the line starting with 'labels'
+        for line in file:
+            if line.strip().lower().startswith("labels"):
+                break
 
+        # Process the label lines
+        for line in file:
+            parts = line.strip().split()
+            if len(parts) >= 2:
+                label_num = int(parts[0])
+                label_name = " ".join(parts[1:])
+                labels_dict[label_num] = label_name
+    return labels_dict
+    
+def add_location(df_location, pred=True):
+    synth_labels  = read_synthseg_labels("/storage/evo1/jorge/MicrobleedNet/data-misc/cmb_analysis/labels table.txt")
+    
+    synthseg_mappings = pd.read_csv("/storage/evo1/jorge/MicrobleedNet/data-misc/cmb_analysis/synth_labels_mappedSilvia.csv")
+    def get_max_key(x: pd.Series):
+        
+        x = {int(k):v for k, v in x.items()}
+        
+        # Check if there is any non-brain region
+        x_filt = {k: v for k, v in x.items() if k in BRAIN_LABELS}
+        if len(x_filt) > 0:
+            x = x_filt
+        if 0 in x and len(x) > 1:
+            x.pop(0)
+        if 24 in x and len(x) > 1:
+            x.pop(24)
 
-def main(args):
+        # ignore the key with the value 0
+        max_key = max(x, key=x.get) 
+        
+        # if is cortex but also white matter present, then choose white matter
+        if max_key in [3, 42]:
+            # get second max key
+            if len(x) > 1:
+                x.pop(max_key)
+                try:
+                    second_max_key = max(x, key=x.get)
+                    if second_max_key in [2, 41]:
+                        max_key = second_max_key
+                except:
+                    print(x)
+        
+        return max_key
 
-    # Load metadata dfs and clean
+    def get_percentages(x: pd.Series):
+        
+        x = {int(k):v for k, v in x.items()}
+        
+        if len(x) > 1:
+            x.pop(0)
+        # get percentages of total
+        total = sum(x.values())
+        x = {k: v/total for k, v in x.items()}
+        return x
+
+    def get_synthlabel_names(x: pd.Series, synth_labels):
+        
+        x = {int(k):v for k, v in x.items()}
+        x.pop(0)
+        x = {synth_labels[int(k)]: v for k, v in x.items()} 
+        return x
+
+    if not pred:
+        df_location['count_dict'] = df_location['count_dict'].apply(lambda x: ast.literal_eval(x))
+    df_location['counts_names'] = df_location['count_dict'].apply(get_synthlabel_names, args=(synth_labels,))
+    df_location['percentages_name'] = df_location['count_dict'].apply(get_percentages)
+    df_location['max_key'] = df_location['count_dict'].apply(get_max_key)
+    df_location['label'] = df_location['max_key'].astype(int).apply(lambda x: synth_labels[x])
+    df_location['BOMBS_label'] = df_location['label'].apply(lambda x: synthseg_mappings[synthseg_mappings['labels'] == x]['BOMBS'].values[0])
+    
+    return df_location
+
+def load_and_prepare_data(args):
     all_studies_df = pd.read_csv(args.all_studies_csv)
     GT_metadata = pd.read_csv(args.gt_cmb_metadata_csv)
     GT_metadata_radiomics = pd.read_csv(args.gt_radiomics_metadata_csv)
     pred_metadata_df = get_predictions_df(args.cmb_pred_metadata_dir)
 
-   # Merge into one dataframe all GT cmb metadata
+    # Compute extra metrics for pred
+    pred_metadata_df['radius'] = pred_metadata_df['n_voxels'].apply(
+        lambda x: ((x * (0.5**3)) / (4 / 3 * np.pi)) ** (1 / 3)
+    )
+    pred_metadata_df = add_location(pred_metadata_df) # add locations
+
+    # Convert string representations of tuples to actual tuples
     GT_metadata["CM"] = GT_metadata["CM"].apply(lambda x: tuple(ast.literal_eval(x)))
     GT_metadata_radiomics["CM"] = GT_metadata_radiomics["CM"].apply(
         lambda x: tuple(ast.literal_eval(x))
     )
+
     GT_metadata_all = pd.merge(
         GT_metadata, GT_metadata_radiomics, on=["seriesUID", "CM"], how="inner"
     )
+    GT_metadata_all = add_location(GT_metadata_all, False) # add locations
     
+    
+    
+
+    return (
+        all_studies_df,
+        GT_metadata,
+        GT_metadata_radiomics,
+        pred_metadata_df,
+        GT_metadata_all,
+    )
+
+
+def evaluate_group(
+    output_dir,
+    GT_metadata_all_filt,
+    all_studies_df_filt,
+    pred_metadata_df_filt,
+    suffix="",
+):
+    # Logging
+    current_time = datetime.now()
+    current_datetime = current_time.strftime("%d%m%Y_%H%M%S")
+    utils_general.ensure_directory_exists(output_dir)
+    log_file_path = os.path.join(output_dir, f"log_{current_datetime}.txt")
+    msg = f"Starting evaluation at {current_datetime}\n\n"
+    _logger.info(msg)
+    utils_general.write_to_log_file(msg, log_file_path)
+
+    # Evaluate
+    (
+        detection_metrics,
+        segmentation_metrics,
+        classification_metrics,
+        study_results_detection,
+        study_results_segmentation,
+        all_cmbs_tracking
+    ) = evaluate_from_dataframes(
+        args, all_studies_df_filt, GT_metadata_all_filt, pred_metadata_df_filt
+    )
+
+    print("\nSegmentation Metrics:")
+    print(segmentation_metrics)
+    print("\nClassification metrics:")
+    print(classification_metrics)
+    print("\nDetection metrics:")
+    print(detection_metrics)
+
+    utils_general.write_to_log_file("\nSegmentation Metrics:\n", log_file_path)
+    utils_general.write_to_log_file(segmentation_metrics.to_string(), log_file_path)
+    utils_general.write_to_log_file("\nClassification metrics:\n", log_file_path)
+    utils_general.write_to_log_file(classification_metrics.to_string(), log_file_path)
+    utils_general.write_to_log_file("\nDetection metrics:\n", log_file_path)
+    utils_general.write_to_log_file(detection_metrics.to_string(), log_file_path)
+
+    # Save results
+    segmentation_metrics.reset_index(names=["Metric"]).to_csv(
+        os.path.join(output_dir, f"segmentation_metrics{suffix}.csv"), index=False
+    )
+    classification_metrics.to_csv(
+        os.path.join(output_dir, f"classification_metrics{suffix}.csv"), index=False
+    )
+    detection_metrics.reset_index(names=["Metric"]).to_csv(
+        os.path.join(output_dir, f"detection_metrics{suffix}.csv"), index=False
+    )
+
+    # Save study-level results with pickle
+    with open(
+        os.path.join(output_dir, f"study_results_detection{suffix}.pkl"), "wb"
+    ) as file:
+        pickle.dump(study_results_detection, file)
+    with open(
+        os.path.join(output_dir, f"study_results_segmentation{suffix}.pkl"), "wb"
+    ) as file:
+        pickle.dump(study_results_segmentation, file)
+        
+    # Save cmb-level results with pickle
+    with open(
+        os.path.join(output_dir, f"all_cmbs_tracking{suffix}.pkl"), "wb"
+    ) as file:
+        pickle.dump(all_cmbs_tracking, file)
+
+    utils_general.write_to_log_file(f"Results saved in {output_dir}", log_file_path)
+    utils_general.write_to_log_file("Finished evaluation", log_file_path)
+
+
+def main(args):
+
+    # Load metadata dfs and clean
+    (
+        all_studies_df,
+        GT_metadata,
+        GT_metadata_radiomics,
+        pred_metadata_df,
+        GT_metadata_all,
+    ) = load_and_prepare_data(args)
+
     if args.dataset == ["cmb_valid"]:
         args.datasets = ["VALDO", "MOMENI", "RODEJA"]
-        # args.studies  = os.listdir("/storage/evo1/jorge/datasets/cmb/cmb_valid/Data") # HARCODED
+        cmb_valid_dir = "/storage/evo1/jorge/datasets/cmb/cmb_valid/Data"
+        args.studies = [
+            s
+            for s in os.listdir(cmb_valid_dir)
+            if os.path.isdir(os.path.join(cmb_valid_dir, s))
+        ]  # HARCODED
 
     else:
         args.datasets = args.dataset
@@ -159,15 +382,18 @@ def main(args):
         args.studies = GT_metadata_all[GT_metadata_all["Dataset"].isin(args.datasets)][
             "seriesUID"
         ].unique()
-        
-    # First filtering 
+
+    # First filtering
     all_studies_df = all_studies_df[all_studies_df["seriesUID"].isin(args.studies)]
     GT_metadata = GT_metadata[GT_metadata["seriesUID"].isin(args.studies)]
     GT_metadata_radiomics = GT_metadata_radiomics[
         GT_metadata_radiomics["seriesUID"].isin(args.studies)
     ]
-    pred_metadata_df = pred_metadata_df[pred_metadata_df["seriesUID"].isin(args.studies)]
-  
+    GT_metadata_all = GT_metadata_all[GT_metadata_all["seriesUID"].isin(args.studies)]
+    pred_metadata_df = pred_metadata_df[
+        pred_metadata_df["seriesUID"].isin(args.studies)
+    ]
+
     # Check validity of data
     # jorge = GT_metadata[~(GT_metadata['seriesUID'].isin(GT_metadata_radiomics['seriesUID']) & GT_metadata['CM'].isin(GT_metadata_radiomics['CM']))]
     # print(jorge)
@@ -178,107 +404,114 @@ def main(args):
         len(all_studies_df) >= GT_metadata["seriesUID"].nunique()
     ), "Different number of studies in all studies metadata and GT metadata"
 
-    
-    # GT_metadata_all.to_csv(
-    #     os.path.join(args.output_dir, "GT_metadata_all.csv"), index=False
-    # )
-    # all_studies_df.to_csv(
-    #     os.path.join(args.output_dir, "all_studies_df.csv"), index=False
-    # )
-    # pred_metadata_df.to_csv(
-    #     os.path.join(args.output_dir, "pred_metadata_df.csv"), index=False
-    # )
-
-    all_dfs = {
-        "GT_metadata": GT_metadata,
-        "GT_metadata_radiomics": GT_metadata_radiomics,
-        "all_studies_df": all_studies_df,
-        "pred_metadata_df": pred_metadata_df,
-    }
-
-    if args.split_column:
-        assert args.split_df, "Split column provided but no split dataframe"
-        df_selected  = all_dfs[args.split_df]
-        unique_categories = df_selected[args.split_column].unique()
-    else:
-        unique_categories = [None]
-
     # Assertions
     assert set(args.datasets).issubset(
         set(GT_metadata["Dataset"].unique())
     ), "Some datasets are not present in GT metadata"
+
+    missing_studies = [
+        s for s in args.studies if s not in all_studies_df["seriesUID"].unique()
+    ]
+    print(f"Missing studies in all studies metadata: {missing_studies}")
     assert set(args.studies).issubset(
-        set(GT_metadata["seriesUID"].unique())
+        set(all_studies_df["seriesUID"].unique())
     ), "Some studies are not present in GT metadata"
 
-    for category in unique_categories:
-        
-        # Filter for that group
-        if category is not None:
-            studies_category = df_selected[df_selected[args.split_column] == category]["seriesUID"]
-            args.studies = studies_category
+    ##############################################################################
+    # Evaluations (comment out what not desired)
+    ##############################################################################
 
-        current_time = datetime.now()
-        current_datetime = current_time.strftime("%d%m%Y_%H%M%S")
-        utils_general.ensure_directory_exists(args.output_dir)
-        args.log_file_path = os.path.join(args.output_dir, f"log_{current_datetime}.txt")
-        msg = f"Starting evaluation at {current_datetime}\n\n"
-        if category:
-            msg += f"Evaluating category {category}, filtered in dataframe {args.split_df}\n\n"
-        msg += f"Selected {len(args.studies)} studies from dataset {args.dataset} to evaluate\n\n"
-        _logger.info(msg)
-        utils_general.write_to_log_file(msg, args.log_file_path)
+    # All
+    evaluate_group(
+        args.output_dir,
+        GT_metadata_all_filt=GT_metadata_all,
+        all_studies_df_filt=all_studies_df,
+        pred_metadata_df_filt=pred_metadata_df,
+        suffix="",
+    )
 
-        # Filter all to datasets
-        GT_metadata_all_filt = GT_metadata_all[GT_metadata_all["seriesUID"].isin(args.studies)]
-        all_studies_df_filt = all_studies_df[all_studies_df["seriesUID"].isin(args.studies)]
-        pred_metadata_df_filt = pred_metadata_df[
-            pred_metadata_df["seriesUID"].isin(args.studies)
+    # # Remove Anatomically impossible microbleeds, either too small or too big
+    # GT_metadata_all_minimum_size = GT_metadata_all[
+    #     (
+    #         # (GT_metadata_all["shape_MeshVolume"] < 4.3)
+    #         # | (GT_metadata_all["shape_Maximum3DDiameter"] > 10)
+    #         # # remove nulls as these are tiny and thus have no radiomics data
+    #         # | (GT_metadata_all["shape_MeshVolume"].isnull())
+    #         # | (GT_metadata_all["shape_Maximum3DDiameter"].isnull())
+    #         GT_metadata_all['radius'].between(0.5, 5)
+    #     )
+    # ]
+    # pred_metadata_df_minimum_size = pred_metadata_df[
+    #     (
+    #         # (pred_metadata_df["shape_MeshVolume"] < 4.3)
+    #         # | (pred_metadata_df["shape_Maximum3DDiameter"] > 10)
+    #         # | (pred_metadata_df["shape_MeshVolume"].isnull())
+    #         # | (pred_metadata_df["shape_Maximum3DDiameter"].isnull())
+    #         pred_metadata_df['radius'].between(0.5, 5)
+    #     )
+    # ]
+    # print(f"GT metadata size before : {len(GT_metadata_all)}")
+    # print(f"GT metadata size after : {len(GT_metadata_all_minimum_size)}")
+    # print(f"Pred metadata size before : {len(pred_metadata_df)}")
+    # print(f"Pred metadata size after : {len(pred_metadata_df_minimum_size)}")
+
+    # evaluate_group(
+    #     os.path.join(args.output_dir, "minimum_size"),
+    #     GT_metadata_all_filt=GT_metadata_all_minimum_size,
+    #     all_studies_df_filt=all_studies_df,
+    #     pred_metadata_df_filt=pred_metadata_df_minimum_size,
+    #     suffix="",
+    # )
+
+    # GT_metadata_all_minimum_size = GT_metadata_all[
+    #         (
+    #             # (GT_metadata_all["shape_MeshVolume"] < 4.3)
+    #             # | (GT_metadata_all["shape_Maximum3DDiameter"] > 10)
+    #             # # remove nulls as these are tiny and thus have no radiomics data
+    #             # | (GT_metadata_all["shape_MeshVolume"].isnull())
+    #             # | (GT_metadata_all["shape_Maximum3DDiameter"].isnull())
+    #             GT_metadata_all['radius'].between(0.5, 5)
+    #         )
+    #     ]
+    # pred_metadata_df_minimum_size = pred_metadata_df[
+    #         (
+    #             # (pred_metadata_df["shape_MeshVolume"] < 4.3)
+    #             # | (pred_metadata_df["shape_Maximum3DDiameter"] > 10)
+    #             # | (pred_metadata_df["shape_MeshVolume"].isnull())
+    #             # | (pred_metadata_df["shape_Maximum3DDiameter"].isnull())
+    #             pred_metadata_df['radius'].between(0.5, 5)
+    #         )
+    # ]
+
+    for loc in [
+    'Cortex / grey-white junction ', 'Subcortical white matter', 
+        'Basal ganglia grey matter', 'Thalamus', 'Brainstem', 'Cerebellum', 
+    ]:
+        print("-----------------------------")
+        print(f"Location: {loc}")
+        utils_general.confirm_action()
+        GT_metadata_all_location = GT_metadata_all[
+                (
+                    GT_metadata_all['BOMBS_label'] == loc
+                )
+            ]
+        pred_metadata_df_location = pred_metadata_df[
+                (
+                pred_metadata_df['BOMBS_label'] == loc
+                )
         ]
-
-        # Evaluate ----------------------------------------------------------------
-        detection_metrics, segmentation_metrics, classification_metrics, study_results_detection, study_results_detection = (
-            evaluate_from_dataframes(
-                args, all_studies_df_filt, GT_metadata_all_filt, pred_metadata_df_filt
-            )
-        )
-        print("\nSegmentation Metrics:")
-        print(segmentation_metrics)
-        print("\nClassification metrics:")
-        print(classification_metrics)
-        print("\nDetection metrics:")
-        print(detection_metrics)
+        print(f"GT metadata size before : {len(GT_metadata_all)}")
+        print(f"GT metadata size after : {len(GT_metadata_all_location)}")
+        print(f"Pred metadata size before : {len(pred_metadata_df)}")
+        print(f"Pred metadata size after : {len(pred_metadata_df_location)}")
         
-        utils_general.write_to_log_file("\nSegmentation Metrics:\n", args.log_file_path)
-        utils_general.write_to_log_file(segmentation_metrics.to_string(), args.log_file_path)
-        utils_general.write_to_log_file("\nClassification metrics:\n", args.log_file_path)
-        utils_general.write_to_log_file(classification_metrics.to_string(), args.log_file_path)
-        utils_general.write_to_log_file("\nDetection metrics:\n", args.log_file_path)
-        utils_general.write_to_log_file(detection_metrics.to_string(), args.log_file_path)
-        
-        suffix = f"_{category}" if category else ""
-
-        # Save results
-        segmentation_metrics.reset_index(names=['Metric']).to_csv(
-            os.path.join(args.output_dir, f"segmentation_metrics{suffix}.csv"), index=False
+        evaluate_group(
+            os.path.join(args.output_dir, loc.replace(" ", "").replace("/", "OR")),
+            GT_metadata_all_filt=GT_metadata_all_location,
+            all_studies_df_filt=all_studies_df,
+            pred_metadata_df_filt=pred_metadata_df_location,
+            suffix="",
         )
-        classification_metrics.to_csv(
-            os.path.join(args.output_dir, f"classification_metrics{suffix}.csv"), index=False
-        )
-        detection_metrics.reset_index(names=['Metric']).to_csv(
-            os.path.join(args.output_dir, f"detection_metrics{suffix}.csv"), index=False
-        )
-        
-        # Save study-level results with pickle
-        with open(os.path.join(args.output_dir, f"study_results_detection{suffix}.pkl"), "wb") as file:
-            pickle.dump(study_results_detection, file)
-        with open(os.path.join(args.output_dir, f"study_results_segmentation{suffix}.pkl"), "wb") as file:
-            pickle.dump(study_results_detection, file)
-
-        utils_general.write_to_log_file(
-            f"Results saved in {args.output_dir}", args.log_file_path
-        )
-        utils_general.write_to_log_file(f"Finished evaluation", args.log_file_path)
 
 def parse_args():
     """
@@ -342,14 +575,6 @@ def parse_args():
         default=None,
         required=True,
         help="Specific studies to evaluate",
-    )
-    parser.add_argument(
-        "--split_column", type=str, help="Column to split the analysis by", default=None
-    )
-    parser.add_argument(
-        "--split_df", type=str,
-        choices=['GT_metadata', 'GT_metadata_radiomics', 'all_studies_df', 'pred_metadata_df'],
-        default=None,
     )
     return parser.parse_args()
 

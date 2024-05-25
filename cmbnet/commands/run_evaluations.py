@@ -7,18 +7,21 @@ import cmbnet.utils.utils_general as utils_gen
 level1_dirs = ["Scratch-Pretrained-FineTuned", "TL-Pretrained-FineTuned"]
 level2_dirs = ["predict_cmb_dou", "predict_cmb_crb", "predict_cmb_valid"]
 # level3_dirs = ["PPV", "F1macro", "valloss"]
-level3_dirs = [ "F1macro", "valloss"]
+level3_dirs = ["valloss"]
+
 
 # Dictionary specifying the DataFrame and the column to split the analysis by
 # splits = {
-#     "GT_metadata": "CMB_level",
-#     "GT_metadata_radiomics": "Sphericity",
+#     # "all_studies_df": "res_level",
+#     "all_studies_df": "seq_type",
 # }
+splits = {
+}
 
 
 # Base directory paths
 savedir_base = "/storage/evo1/jorge/MicrobleedNet/data-misc/evaluations"
-cmb_pred_metadata_dir_base = "/storage/evo1/jorge/datasets/cmb/evaluations"
+cmb_pred_metadata_dir_base = "/storage/evo1/jorge/datasets/cmb/evaluations_cmb"
 
 # CSV paths
 metadata_csv_path = "/storage/evo1/jorge/MicrobleedNet/data-misc/csv/CMB_metadata_all.csv"
@@ -51,6 +54,13 @@ def run_evals():
                 os.makedirs(savedir, exist_ok=True)
 
                 # Construct the command to run
+                print(".......................................................")
+                print("Running command with the following arguments:")
+                print("\t",l1,"-", l2,"-", l3)
+                print(".......................................................")
+
+                # utils_gen.confirm_action()
+
                 cmd = [
                     "python", "evaluate.py",
                     "--output_dir", savedir,
@@ -60,29 +70,8 @@ def run_evals():
                     "--all_studies_csv", all_studies_csv,
                     "--dataset", dataset,
                 ]
-                print(".......................................................")
-                print("Running command with the following arguments:")
-                print("\t",l1,"-", l2,"-", l3)
-                print(".......................................................")
-
-                utils_gen.confirm_action()
                 run_evaluation(cmd)
-                
-                # for split_df, split_column in splits.items():
-                #     # Construct the command to run
-                #     cmd = [
-                #         "python", "evaluate.py",
-                #         "--output_dir", savedir,
-                #         "--cmb_pred_metadata_dir", predictions_dir,
-                #         "--gt_radiomics_metadata_csv", gt_radiomics_metadata_csv,
-                #         "--gt_cmb_metadata_csv", gt_cmb_metadata_csv,
-                #         "--all_studies_csv", all_studies_csv,
-                #         "--dataset", dataset,
-                #         "--split_column", split_column,
-                #         "--split_df", split_df
-                #     ]
-                #     yield cmd
-
+             
 if __name__ == "__main__":
 
     run_evals() 

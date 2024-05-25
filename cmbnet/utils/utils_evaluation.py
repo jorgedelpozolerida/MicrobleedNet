@@ -392,12 +392,14 @@ def get_detection_metrics_from_call_counts(
     if (TP + FN) != 0:
         TPR = TP / (TP + FN)
     else:
+        _logger.warning(f"TPR is None. {summary}")
         TPR = fill_val
 
     # Precision
     if (TP + FP) != 0:
         PPV = TP / (TP + FP)
     else:
+        _logger.warning(f"TPR is None. {summary}")
         PPV = fill_val
 
     # F1
@@ -407,6 +409,7 @@ def get_detection_metrics_from_call_counts(
         else:
             F1 = fill_val
     else:
+        _logger.warning(f"TPR is None. {summary}")
         F1 = fill_val
 
     # FPavg - per scan
@@ -457,21 +460,42 @@ def evaluate_detection_from_cmb_data(all_studies_df, GT_metadata_all, pred_metad
     overlap_global = 0
     n_voxels_pred_global = 0
     n_voxels_GT_global = 0
+    
+
+    all_cmbs_tracking = []
 
     # Process each study
-    for study in GT_metadata_all["seriesUID"].unique():
-        true_positives, false_positives, false_negatives = 0, 0, 0
+    for study in all_studies_df["seriesUID"].unique():
+        true_positives, false_positives, false_negatives, true_negatives = 0, 0, 0, 0
+        
         gt_CM_hitted = []
 
         pred_metadata_df_study = pred_metadata_df[pred_metadata_df["seriesUID"] == study]
         gt_metadata_study = GT_metadata_all[GT_metadata_all["seriesUID"] == study]
 
+        if gt_metadata_study.shape[0] == 0:
+            continue
+            # for i, row in pred_metadata_df[pred_metadata_df["seriesUID"] == study].iterrows():
+            #     false_positives += 1
+            #     false_positives_global += 1
+            # if false_positives == 0:
+            #     true_negatives_global += 1
+            # detection_metrics_study = get_detection_metrics_from_call_counts(
+            #     true_positives, false_positives, false_negatives,
+            #     len(gt_metadata_study), len(pred_metadata_df_study), 1, fill_val=None, study=study
+            # )
+            # study_results_detection.append({"seriesUID": study, **detection_metrics_study})
+
         # Evaluate predictions for each study
         for i, row in pred_metadata_df_study.iterrows():
             matched_GT = row[match_col]
-            if matched_GT is None or pd.isnull(matched_GT):
+            gt_metadata_study_cm = gt_metadata_study[gt_metadata_study['CM'] == matched_GT]
+            if matched_GT is None or pd.isnull(matched_GT) or gt_metadata_study_cm.shape[0] == 0:
                 false_positives += 1
                 false_positives_global += 1
+                all_cmbs_tracking.append(
+                    {"seriesUID": study, "CM": row["pred_CM"], "call": "FP", "type": "pred","matched_CM": None}
+                )
                 continue
 
             if matched_GT in gt_CM_hitted:
@@ -479,6 +503,12 @@ def evaluate_detection_from_cmb_data(all_studies_df, GT_metadata_all, pred_metad
 
             true_positives += 1
             true_positives_global += 1
+            all_cmbs_tracking.append(
+                    {"seriesUID": study, "CM": row["pred_CM"], "call": "TP", "type": "pred", "matched_CM": matched_GT}
+                )
+            all_cmbs_tracking.append(
+                    {"seriesUID": study, "CM": matched_GT, "call": "TP", "type": "GT", "matched_CM": row["pred_CM"]}
+                )
             gt_CM_hitted.append(matched_GT)
 
             # Compute and accumulate Dice Score components
@@ -489,13 +519,13 @@ def evaluate_detection_from_cmb_data(all_studies_df, GT_metadata_all, pred_metad
                 overlap_global += overlap
                 n_voxels_pred = row['n_voxels']
                 n_voxels_pred_global += n_voxels_pred
-                n_voxels_GT = gt_metadata_study[gt_metadata_study['CM'] == matched_GT]['size'].values[0]
+                n_voxels_GT = gt_metadata_study_cm['size'].values[0]
                 n_voxels_GT_global += n_voxels_GT
                 
                 dice_score = 2 * overlap / (n_voxels_pred + n_voxels_GT)
                 study_results_dice.append({"seriesUID": study, "dice_score": dice_score})
 
-            except KeyError as e:
+            except Exception as e:
                 print(f"Error in study {study}: Key error {e} in Dice score calculation.")
 
         # Check for false negatives
@@ -503,6 +533,9 @@ def evaluate_detection_from_cmb_data(all_studies_df, GT_metadata_all, pred_metad
             if gt_CM not in gt_CM_hitted:
                 false_negatives += 1
                 false_negatives_global += 1
+                all_cmbs_tracking.append(
+                    {"seriesUID": study, "CM": gt_CM, "call": "FN", "type": "GT", "matched_CM": None}
+                )
 
         # Store study-specific detection metrics
         detection_metrics_study = get_detection_metrics_from_call_counts(
@@ -530,7 +563,7 @@ def evaluate_detection_from_cmb_data(all_studies_df, GT_metadata_all, pred_metad
     dice_score_micro = pd.DataFrame({"Mean": dice_score_micro}, index=["Micro - Dice Score"])
     all_dice_score_results = pd.concat([dice_score_macro, dice_score_micro])
 
-    return detection_results, all_dice_score_results, study_results_detection, study_results_detection
+    return detection_results, all_dice_score_results, study_results_detection, study_results_detection, all_cmbs_tracking
 
 
 

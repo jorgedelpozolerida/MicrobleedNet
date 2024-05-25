@@ -744,6 +744,8 @@ def create_boxplot(
     column,
     group_by,
     ax,
+    hue=None,
+    order = None,
     title=None,
     xlabel=None,
     ylabel=None,
@@ -752,6 +754,7 @@ def create_boxplot(
     fontsize_labels=14,
     fontsize_ticks=12,
     y_lim=None,
+
 ):
     """
     Creates a boxplot on a given axis for a specified column grouped by a specified group column.
@@ -769,8 +772,10 @@ def create_boxplot(
     - fontsize_labels (int): Font size for the axis labels.
     - fontsize_ticks (int): Font size for the tick labels.
     - y_lim (tuple, optional): A tuple of (min, max) for y-axis limits.
+    - hue (str, optional): Column name to create separate boxplots for each unique value.
+    - order (list, optional): Order in which to plot the groups.
     """
-    sns.boxplot(x=group_by, y=column, data=data, ax=ax)
+    sns.boxplot(data=data, x=group_by, y=column, hue=hue, order=order, ax=ax)
     ax.set_title(title, fontsize=fontsize_title)
     ax.set_xlabel(xlabel, fontsize=fontsize_labels)
     ax.set_ylabel(ylabel, fontsize=fontsize_labels)
@@ -791,7 +796,8 @@ def create_violin_plot(
     data,
     column,
     group_by,
-    ax,  # Accepting an axis argument to plot on
+    ax,  
+    order=None,
     title=None,
     xlabel=None,
     ylabel=None,
@@ -805,6 +811,8 @@ def create_violin_plot(
     showmeans=False,  # Optionally display the means
     inner="quartile",  # Show quartiles within the violin
     y_lim=None,
+    hue=None,
+    split = False,
 ):
     """
     Creates a violin plot on a given axis for a specified column grouped by a specified group column.
@@ -827,13 +835,16 @@ def create_violin_plot(
     - showfliers (bool): Whether to show outliers.
     - showmeans (bool): Whether to display mean values.
     - inner (str): What to display inside the violin plot ('quartile', 'point', 'stick', None).
-    - y_lim
+    - y_lim (tuple, optional): A tuple of (min, max) for y-axis limits.
+    - hue (str, optional): Column name to create separate violins for each unique value.
+    - split (bool): Whether to split the violins based on hue.
     """
     sns.violinplot(
         x=group_by,
         y=column,
         data=data,
         ax=ax,
+        order=order,
         palette=palette,
         cut=cut,
         inner=inner,
@@ -844,6 +855,8 @@ def create_violin_plot(
             "markeredgecolor": "black",
             "markersize": "10",
         },
+        hue=hue,
+        split=split,
     )
 
     ax.set_title(title, fontsize=fontsize_title)

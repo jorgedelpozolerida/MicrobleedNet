@@ -113,16 +113,21 @@ def process_study(study_data):
             
             all_CMS  = [tuple(map(int, ast.literal_eval(cm))) for cm in cmbs_df["CM"]]
 
-            assert num_features == len(all_CMS), f"Number of CMBs in metadata ({len(all_CMS)}) does not match the number of CMBs in the image ({num_features})"
+            if not (num_features == len(all_CMS)):
+                _logger.warning(f"Number of CMBs in metadata ({len(all_CMS)}) does not match the number of CMBs in the image ({num_features})")
 
             # Label the components in the predicted data and find their centers of mass
             centers_of_mass = center_of_mass(cmb_data, labeled_array, range(1, num_features + 1))
             mappings_label2gt = match_cm_to_nearest_label(centers_of_mass, all_CMS)
+
             # Get center of mass for each CC
             results = []            
             
             for i in range(1, num_features + 1):
                 # print(f"label {i} .....")
+                if i not in mappings_label2gt:
+                    _logger.warning(f"Label {i} not found in mappings")
+                    continue
                 CM = mappings_label2gt[int(i)]
                 cmb_mask_individual = labeled_array == i
                 # patch for cases with only 1 CMBs that fail to be processed

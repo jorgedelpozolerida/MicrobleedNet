@@ -1,0 +1,42 @@
+
+2024-05-25 11:57:41.298500
+Starting evaluation at 25052024_115741
+
+
+2024-05-25 11:57:41.637685
+
+Segmentation Metrics:
+
+2024-05-25 11:57:41.638552
+                        Mean      Std.
+Macro - Dice Score  0.706806  0.116322
+Micro - Dice Score  0.726077       NaN
+2024-05-25 11:57:41.638619
+
+Classification metrics:
+
+2024-05-25 11:57:41.640071
+   threshold  Precision  Recall  F1-Score  Specificity
+0          1   1.000000     1.0  1.000000          1.0
+1          2   0.987654     1.0  0.993789          0.5
+2          5   1.000000     1.0  1.000000          NaN
+2024-05-25 11:57:41.640132
+
+Detection metrics:
+
+2024-05-25 11:57:41.641101
+                       Mean      Std.
+Micro - Precision  1.000000       NaN
+Micro - Recall     0.888889       NaN
+Micro - F1         0.941176       NaN
+Micro - FPavg      0.000000       NaN
+Micro - FPcmb      0.000000       NaN
+Macro - Precision  1.000000  0.000000
+Macro - Recall     0.928571  0.188982
+Macro - F1         0.952381  0.125988
+Macro - FPavg      0.000000  0.000000
+Macro - FPcmb      0.000000  0.000000
+2024-05-25 11:57:41.643567
+Results saved in /storage/evo1/jorge/MicrobleedNet/data-misc/evaluations/TL-Pretrained-FineTuned/predict_cmb_valid/valloss/Cerebellum
+2024-05-25 11:57:41.643608
+Finished evaluation
