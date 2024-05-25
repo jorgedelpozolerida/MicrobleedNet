@@ -7,7 +7,7 @@ import cmbnet.utils.utils_general as utils_gen
 level1_dirs = ["Scratch-Pretrained-FineTuned", "TL-Pretrained-FineTuned"]
 level2_dirs = ["predict_cmb_dou", "predict_cmb_crb", "predict_cmb_valid"]
 # level3_dirs = ["PPV", "F1macro", "valloss"]
-level3_dirs = ["valloss"]
+level3_dirs = ["valloss", "F1macro"]
 
 
 # Dictionary specifying the DataFrame and the column to split the analysis by

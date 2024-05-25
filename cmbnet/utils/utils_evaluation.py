@@ -22,6 +22,9 @@ import ast
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 
+THISFILE_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_DIR = os.path.abspath(os.path.join(THISFILE_DIR, os.pardir, os.pardir))
+
 from scipy.ndimage import generate_binary_structure
 from scipy.ndimage import label as nd_label
 from sklearn.metrics import confusion_matrix as sklearn_confusion_matrix
@@ -445,14 +448,19 @@ def perform_macro_averaging(metrics_list, id="seriesUID"):
     return result_df
 
 
-def evaluate_detection_from_cmb_data(all_studies_df, GT_metadata_all, pred_metadata_df, match_col="matched_GT_DistancesToAllCMs"):
+def evaluate_detection_from_cmb_data(
+    all_studies_df,
+    GT_metadata_all,
+    pred_metadata_df,
+    match_col="matched_GT_DistancesToAllCMs",
+):
     """
     Computes detection metrics from the metadata of GT and predicted CMBs,
     including overall detection accuracy and segmentation performance using Dice scores.
     """
     study_results_detection = []
     study_results_dice = []
-    
+
     # Initialize counters for global metrics
     true_positives_global = 0
     false_positives_global = 0
@@ -460,17 +468,18 @@ def evaluate_detection_from_cmb_data(all_studies_df, GT_metadata_all, pred_metad
     overlap_global = 0
     n_voxels_pred_global = 0
     n_voxels_GT_global = 0
-    
 
     all_cmbs_tracking = []
 
     # Process each study
     for study in all_studies_df["seriesUID"].unique():
         true_positives, false_positives, false_negatives, true_negatives = 0, 0, 0, 0
-        
+
         gt_CM_hitted = []
 
-        pred_metadata_df_study = pred_metadata_df[pred_metadata_df["seriesUID"] == study]
+        pred_metadata_df_study = pred_metadata_df[
+            pred_metadata_df["seriesUID"] == study
+        ]
         gt_metadata_study = GT_metadata_all[GT_metadata_all["seriesUID"] == study]
 
         if gt_metadata_study.shape[0] == 0:
@@ -489,12 +498,24 @@ def evaluate_detection_from_cmb_data(all_studies_df, GT_metadata_all, pred_metad
         # Evaluate predictions for each study
         for i, row in pred_metadata_df_study.iterrows():
             matched_GT = row[match_col]
-            gt_metadata_study_cm = gt_metadata_study[gt_metadata_study['CM'] == matched_GT]
-            if matched_GT is None or pd.isnull(matched_GT) or gt_metadata_study_cm.shape[0] == 0:
+            gt_metadata_study_cm = gt_metadata_study[
+                gt_metadata_study["CM"] == matched_GT
+            ]
+            if (
+                matched_GT is None
+                or pd.isnull(matched_GT)
+                or gt_metadata_study_cm.shape[0] == 0
+            ):
                 false_positives += 1
                 false_positives_global += 1
                 all_cmbs_tracking.append(
-                    {"seriesUID": study, "CM": row["pred_CM"], "call": "FP", "type": "pred","matched_CM": None}
+                    {
+                        "seriesUID": study,
+                        "CM": row["pred_CM"],
+                        "call": "FP",
+                        "type": "pred",
+                        "matched_CM": None,
+                    }
                 )
                 continue
 
@@ -504,29 +525,45 @@ def evaluate_detection_from_cmb_data(all_studies_df, GT_metadata_all, pred_metad
             true_positives += 1
             true_positives_global += 1
             all_cmbs_tracking.append(
-                    {"seriesUID": study, "CM": row["pred_CM"], "call": "TP", "type": "pred", "matched_CM": matched_GT}
-                )
+                {
+                    "seriesUID": study,
+                    "CM": row["pred_CM"],
+                    "call": "TP",
+                    "type": "pred",
+                    "matched_CM": matched_GT,
+                }
+            )
             all_cmbs_tracking.append(
-                    {"seriesUID": study, "CM": matched_GT, "call": "TP", "type": "GT", "matched_CM": row["pred_CM"]}
-                )
+                {
+                    "seriesUID": study,
+                    "CM": matched_GT,
+                    "call": "TP",
+                    "type": "GT",
+                    "matched_CM": row["pred_CM"],
+                }
+            )
             gt_CM_hitted.append(matched_GT)
 
             # Compute and accumulate Dice Score components
-            OverlapCMCounts = row['OverlapCMCounts']
+            OverlapCMCounts = row["OverlapCMCounts"]
             matched_CM = row[match_col]
             try:
                 overlap = OverlapCMCounts[matched_CM]
                 overlap_global += overlap
-                n_voxels_pred = row['n_voxels']
+                n_voxels_pred = row["n_voxels"]
                 n_voxels_pred_global += n_voxels_pred
-                n_voxels_GT = gt_metadata_study_cm['size'].values[0]
+                n_voxels_GT = gt_metadata_study_cm["size"].values[0]
                 n_voxels_GT_global += n_voxels_GT
-                
+
                 dice_score = 2 * overlap / (n_voxels_pred + n_voxels_GT)
-                study_results_dice.append({"seriesUID": study, "dice_score": dice_score})
+                study_results_dice.append(
+                    {"seriesUID": study, "dice_score": dice_score}
+                )
 
             except Exception as e:
-                print(f"Error in study {study}: Key error {e} in Dice score calculation.")
+                print(
+                    f"Error in study {study}: Key error {e} in Dice score calculation."
+                )
 
         # Check for false negatives
         for gt_CM in gt_metadata_study["CM"].unique():
@@ -534,22 +571,40 @@ def evaluate_detection_from_cmb_data(all_studies_df, GT_metadata_all, pred_metad
                 false_negatives += 1
                 false_negatives_global += 1
                 all_cmbs_tracking.append(
-                    {"seriesUID": study, "CM": gt_CM, "call": "FN", "type": "GT", "matched_CM": None}
+                    {
+                        "seriesUID": study,
+                        "CM": gt_CM,
+                        "call": "FN",
+                        "type": "GT",
+                        "matched_CM": None,
+                    }
                 )
 
         # Store study-specific detection metrics
         detection_metrics_study = get_detection_metrics_from_call_counts(
-            true_positives, false_positives, false_negatives,
-            len(gt_metadata_study), len(pred_metadata_df_study), 1, fill_val=None, study=study
+            true_positives,
+            false_positives,
+            false_negatives,
+            len(gt_metadata_study),
+            len(pred_metadata_df_study),
+            1,
+            fill_val=None,
+            study=study,
         )
         study_results_detection.append({"seriesUID": study, **detection_metrics_study})
 
     # Compute global and macro metrics
     global_metrics = get_detection_metrics_from_call_counts(
-        true_positives_global, false_positives_global, false_negatives_global,
-        len(GT_metadata_all), len(pred_metadata_df), GT_metadata_all["seriesUID"].nunique()
+        true_positives_global,
+        false_positives_global,
+        false_negatives_global,
+        len(GT_metadata_all),
+        len(pred_metadata_df),
+        GT_metadata_all["seriesUID"].nunique(),
     )
-    micro_metrics = pd.DataFrame({"Mean": global_metrics.values()}, index=global_metrics.keys())
+    micro_metrics = pd.DataFrame(
+        {"Mean": global_metrics.values()}, index=global_metrics.keys()
+    )
     micro_metrics.index = ["Micro - " + name for name in micro_metrics.index]
 
     macro_metrics = perform_macro_averaging(study_results_detection)
@@ -560,11 +615,18 @@ def evaluate_detection_from_cmb_data(all_studies_df, GT_metadata_all, pred_metad
     dice_score_macro = perform_macro_averaging(study_results_dice)
     dice_score_macro.index = ["Macro - Dice Score"]
     dice_score_micro = 2 * overlap_global / (n_voxels_pred_global + n_voxels_GT_global)
-    dice_score_micro = pd.DataFrame({"Mean": dice_score_micro}, index=["Micro - Dice Score"])
+    dice_score_micro = pd.DataFrame(
+        {"Mean": dice_score_micro}, index=["Micro - Dice Score"]
+    )
     all_dice_score_results = pd.concat([dice_score_macro, dice_score_micro])
 
-    return detection_results, all_dice_score_results, study_results_detection, study_results_detection, all_cmbs_tracking
-
+    return (
+        detection_results,
+        all_dice_score_results,
+        study_results_detection,
+        study_results_detection,
+        all_cmbs_tracking,
+    )
 
 
 def evaluate_classification_from_cmb_data(
@@ -653,7 +715,6 @@ def evaluate_segmentation_from_cmb_data(
     """
     Segmentation metrics for matching microbleeds
     """
-    
 
 
 ###############################################################################
@@ -893,3 +954,179 @@ def combine_evaluate_segmentation(df_cms, zero_division=np.nan):
     )
 
     return macro_df, micro_df
+
+
+##############################################################################
+# Syntseg Location
+##############################################################################
+
+BRAIN_LABELS = [
+    2,  # left cerebral white matter
+    3,  # left cerebral cortex
+    7,  # left cerebellum white matter
+    8,  # left cerebellum cortex
+    10,  # left thalamus
+    11,  # left caudate
+    12,  # left putamen
+    13,  # left pallidum
+    16,  # brain-stem
+    17,  # left hippocampus
+    18,  # left amygdala
+    26,  # left accumbens area
+    41,  # right cerebral white matter
+    42,  # right cerebral cortex
+    46,  # right cerebellum white matter
+    47,  # right cerebellum cortex
+    49,  # right thalamus
+    50,  # right caudate
+    51,  # right putamen
+    52,  # right pallidum
+    53,  # right hippocampus
+    54,  # right amygdala
+    58,  # right accumbens area
+]
+
+
+def read_synthseg_labels(
+    file_path=os.path.abspath(
+        os.path.join(REPO_DIR, "data-misc/cmb_analysis/labels table.txt")
+    )
+):
+    labels_dict = {}
+    with open(file_path, "r") as file:
+        # Skip header lines until we reach the line starting with 'labels'
+        for line in file:
+            if line.strip().lower().startswith("labels"):
+                break
+
+        # Process the label lines
+        for line in file:
+            parts = line.strip().split()
+            if len(parts) >= 2:
+                label_num = int(parts[0])
+                label_name = " ".join(parts[1:])
+                labels_dict[label_num] = label_name
+    return labels_dict
+
+
+def read_synth2BOMBs_mappings(
+    filepath=os.path.abspath(
+        os.path.join(REPO_DIR, "data-misc/cmb_analysis/synth_labels_mappedSilvia.csv")
+    )
+):
+    return pd.read_csv(filepath)
+
+
+def get_max_key(x: pd.Series, filter_brain=False):
+
+    # Check if there is any non-brain region
+    if filter_brain:
+        x_filt = {k: v for k, v in x.items() if k in BRAIN_LABELS}
+    else:
+        x_filt = x
+    if len(x_filt) > 0:
+        x = x_filt
+
+    max_key = max(x, key=x.get)
+
+    return max_key
+
+
+def assig_likely_brain_label(x: pd.Series, max_key: int):
+    
+    # If max brain key is still non-brain, or dubious SynthSeg segmentation
+    # then assign the most likely (thought for GT data only, in the case of non-brain)
+    
+    
+    # 1. If is cortex (L/R) and also white matter present, assign to white matter
+    if max_key in [3, 42]:
+        # get second max key
+        if len(x) > 1:
+            x.pop(max_key)
+            try:
+                second_max_key = max(x, key=x.get)
+                if second_max_key in [2, 41]:
+                    max_key = second_max_key
+            except Exception as e:
+                print(f"Exception in second max key: {e}")
+    return max_key
+
+
+def get_percentages(x: pd.Series):
+
+    total = sum(x.values())
+    x = {k: v / total for k, v in x.items()}
+    return x
+
+
+def filter_background(x: pd.Series):
+    if len(x) > 1:
+        x.pop(0)
+
+    return x
+
+
+def add_location(df_location, Isdfloaded=False):
+    """
+    Accepts seriesUID-CM dataframe with 'count_dict' column
+    and returns the dataframe with additional columns for location information:
+
+    - counts_names: dictionary with synthseg label names
+    - percentages_name: dictionary with percentages of total for each label
+    - max_key: key with the maximum count
+    - label: label name corresponding to the max_key
+    - max_key_generic: key with the maximum count ignoring non-brain regions
+    - label_generic: label name corresponding to the max_key_generic
+    - BOMBS_label: BOMBS label corresponding to the max_key
+
+    """
+    df_location_c = df_location.copy()
+    synth_labels = read_synthseg_labels()
+    synthseg_mappings = read_synth2BOMBs_mappings()
+
+    if not Isdfloaded:
+        # If df has been loaded with pandas ''count_dict'' needs to be turned into dict
+        df_location_c["count_dict"] = df_location_c["count_dict"].apply(
+            lambda x: ast.literal_eval(x)
+        )
+
+    # Convert count_dict to numeric
+    df_location_c["count_dict"] = df_location_c["count_dict"].apply(
+        lambda x: {int(k): v for k, v in x.items()}
+    )
+    # Filter background as overlap will always assign that label with max counts
+    # unless only background is present
+    df_location_c["count_dict"] = df_location_c["count_dict"].apply(filter_background)
+    # Get SynthSeg label names and counts
+    df_location_c["name_counts_dict"] = df_location_c["count_dict"].apply(
+        lambda x: {synth_labels[int(k)]: v for k, v in x.items()}
+    )
+    df_location_c["percentages_dict"] = df_location_c["count_dict"].apply(get_percentages)
+
+    # Get max key considering brain and not considering brain
+    df_location_c["max_key"] = df_location_c["count_dict"].apply(get_max_key, args=(False,))
+    df_location_c["max_brain_key"] = df_location_c["count_dict"].apply(
+        get_max_key, args=(True,)
+    )
+
+    df_location_c["max_label"] = (
+        df_location_c["max_key"].astype(int).apply(lambda x: synth_labels[x])
+    )
+    df_location_c["max_brain_label"] = (
+        df_location_c["max_brain_key"].astype(int).apply(lambda x: synth_labels[x])
+    )
+
+    # Generate most likely label in brain region
+    df_location_c["likely_brain_key"] = df_location_c.apply(
+        lambda x: assig_likely_brain_label(x["count_dict"], x["max_brain_key"]), axis=1
+    )
+    df_location_c["likely_brain_label"] = (
+        df_location_c["likely_brain_key"].astype(int).apply(lambda x: synth_labels[x])
+    )
+
+    # Get BOMBS label
+    df_location_c["BOMBS_label"] = df_location_c["likely_brain_key"].apply(
+        lambda x: synthseg_mappings[synthseg_mappings["labels"] == synth_labels[x]]["BOMBS"].values[0]
+    )
+
+    return df_location_c

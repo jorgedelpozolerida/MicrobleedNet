@@ -1,11 +1,11 @@
 Metric,Mean,Std.
 Micro - Precision,1.0,
-Micro - Recall,0.4,
-Micro - F1,0.5714285714285715,
+Micro - Recall,0.4444444444444444,
+Micro - F1,0.6153846153846153,
 Micro - FPavg,0.0,
 Micro - FPcmb,0.0,
 Macro - Precision,1.0,0.0
-Macro - Recall,0.4444444444444444,0.5018484351393874
+Macro - Recall,0.5333333333333333,0.5055250296034367
 Macro - F1,0.9333333333333332,0.11547005383792512
 Macro - FPavg,0.0,0.0
 Macro - FPcmb,0.0,0.0

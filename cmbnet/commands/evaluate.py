@@ -66,38 +66,10 @@ import pickle
 import cmbnet.utils.utils_plotting as utils_plotting
 import cmbnet.utils.utils_general as utils_general
 import cmbnet.utils.utils_evaluation as utils_eval
+from cmbnet.utils.utils_evaluation import BRAIN_LABELS
 
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
-
-BRAIN_LABELS = set(
-    [
-        2,  # left cerebral white matter
-        3,  # left cerebral cortex
-        7,  # left cerebellum white matter
-        8,  # left cerebellum cortex
-        10,  # left thalamus
-        11,  # left caudate
-        12,  # left putamen
-        13,  # left pallidum
-        17,  # left hippocampus
-        18,  # left amygdala
-        26,  # left accumbens area
-        28,  # left ventral DC (Diencephalon)
-        41,  # right cerebral white matter
-        42,  # right cerebral cortex
-        46,  # right cerebellum white matter
-        47,  # right cerebellum cortex
-        49,  # right thalamus
-        50,  # right caudate
-        51,  # right putamen
-        52,  # right pallidum
-        53,  # right hippocampus
-        54,  # right amygdala
-        58,  # right accumbens area
-        60,  # right ventral DC (Diencephalon)
-    ]
-)
 
 
 def get_predictions_df(pred_metadata_dir):
@@ -166,85 +138,7 @@ def evaluate_from_dataframes(args, all_studies_df, GT_metadata_all, pred_metadat
         study_results_segmentation,
         all_cmbs_tracking
     )
-    
-def read_synthseg_labels(file_path):
-    labels_dict = {}
-    with open(file_path, "r") as file:
-        # Skip header lines until we reach the line starting with 'labels'
-        for line in file:
-            if line.strip().lower().startswith("labels"):
-                break
 
-        # Process the label lines
-        for line in file:
-            parts = line.strip().split()
-            if len(parts) >= 2:
-                label_num = int(parts[0])
-                label_name = " ".join(parts[1:])
-                labels_dict[label_num] = label_name
-    return labels_dict
-    
-def add_location(df_location, pred=True):
-    synth_labels  = read_synthseg_labels("/storage/evo1/jorge/MicrobleedNet/data-misc/cmb_analysis/labels table.txt")
-    
-    synthseg_mappings = pd.read_csv("/storage/evo1/jorge/MicrobleedNet/data-misc/cmb_analysis/synth_labels_mappedSilvia.csv")
-    def get_max_key(x: pd.Series):
-        
-        x = {int(k):v for k, v in x.items()}
-        
-        # Check if there is any non-brain region
-        x_filt = {k: v for k, v in x.items() if k in BRAIN_LABELS}
-        if len(x_filt) > 0:
-            x = x_filt
-        if 0 in x and len(x) > 1:
-            x.pop(0)
-        if 24 in x and len(x) > 1:
-            x.pop(24)
-
-        # ignore the key with the value 0
-        max_key = max(x, key=x.get) 
-        
-        # if is cortex but also white matter present, then choose white matter
-        if max_key in [3, 42]:
-            # get second max key
-            if len(x) > 1:
-                x.pop(max_key)
-                try:
-                    second_max_key = max(x, key=x.get)
-                    if second_max_key in [2, 41]:
-                        max_key = second_max_key
-                except:
-                    print(x)
-        
-        return max_key
-
-    def get_percentages(x: pd.Series):
-        
-        x = {int(k):v for k, v in x.items()}
-        
-        if len(x) > 1:
-            x.pop(0)
-        # get percentages of total
-        total = sum(x.values())
-        x = {k: v/total for k, v in x.items()}
-        return x
-
-    def get_synthlabel_names(x: pd.Series, synth_labels):
-        
-        x = {int(k):v for k, v in x.items()}
-        x.pop(0)
-        x = {synth_labels[int(k)]: v for k, v in x.items()} 
-        return x
-
-    if not pred:
-        df_location['count_dict'] = df_location['count_dict'].apply(lambda x: ast.literal_eval(x))
-    df_location['counts_names'] = df_location['count_dict'].apply(get_synthlabel_names, args=(synth_labels,))
-    df_location['percentages_name'] = df_location['count_dict'].apply(get_percentages)
-    df_location['max_key'] = df_location['count_dict'].apply(get_max_key)
-    df_location['label'] = df_location['max_key'].astype(int).apply(lambda x: synth_labels[x])
-    df_location['BOMBS_label'] = df_location['label'].apply(lambda x: synthseg_mappings[synthseg_mappings['labels'] == x]['BOMBS'].values[0])
-    
-    return df_location
 
 def load_and_prepare_data(args):
     all_studies_df = pd.read_csv(args.all_studies_csv)
@@ -256,7 +150,7 @@ def load_and_prepare_data(args):
     pred_metadata_df['radius'] = pred_metadata_df['n_voxels'].apply(
         lambda x: ((x * (0.5**3)) / (4 / 3 * np.pi)) ** (1 / 3)
     )
-    pred_metadata_df = add_location(pred_metadata_df) # add locations
+    pred_metadata_df = utils_eval.add_location(pred_metadata_df, Isdfloaded=True) # add locations
 
     # Convert string representations of tuples to actual tuples
     GT_metadata["CM"] = GT_metadata["CM"].apply(lambda x: tuple(ast.literal_eval(x)))
@@ -267,7 +161,7 @@ def load_and_prepare_data(args):
     GT_metadata_all = pd.merge(
         GT_metadata, GT_metadata_radiomics, on=["seriesUID", "CM"], how="inner"
     )
-    GT_metadata_all = add_location(GT_metadata_all, False) # add locations
+    GT_metadata_all = utils_eval.add_location(GT_metadata_all, Isdfloaded=False) # add locations
     
     
     
@@ -394,9 +288,12 @@ def main(args):
         pred_metadata_df["seriesUID"].isin(args.studies)
     ]
 
+    # POST-PROCESSING 1: remove predicitons out-of-brain clearly
+    pred_metadata_df = pred_metadata_df[
+        pred_metadata_df['max_brain_key'].isin(BRAIN_LABELS) # filter out non-brain labels, for cases where no other brain label could be found
+    ]
+
     # Check validity of data
-    # jorge = GT_metadata[~(GT_metadata['seriesUID'].isin(GT_metadata_radiomics['seriesUID']) & GT_metadata['CM'].isin(GT_metadata_radiomics['CM']))]
-    # print(jorge)
     assert len(GT_metadata) == len(
         GT_metadata_radiomics
     ), f"Different number of studies in GT metadata {len(GT_metadata)} and radiomics metadata {len(GT_metadata_radiomics)}"
@@ -429,6 +326,37 @@ def main(args):
         pred_metadata_df_filt=pred_metadata_df,
         suffix="",
     )
+
+    # By Locations
+    for loc in [
+    'Cortex / grey-white junction ', 'Subcortical white matter', 
+        'Basal ganglia grey matter', 'Thalamus', 'Brainstem', 'Cerebellum', 
+    ]:
+        print("-----------------------------")
+        print(f"Location: {loc}")
+        # utils_general.confirm_action()
+        GT_metadata_all_location = GT_metadata_all[
+                (
+                    GT_metadata_all['BOMBS_label'] == loc
+                )
+            ]
+        pred_metadata_df_location = pred_metadata_df[
+                (
+                pred_metadata_df['BOMBS_label'] == loc
+                )
+        ]
+        print(f"GT metadata size before : {len(GT_metadata_all)}")
+        print(f"GT metadata size after : {len(GT_metadata_all_location)}")
+        print(f"Pred metadata size before : {len(pred_metadata_df)}")
+        print(f"Pred metadata size after : {len(pred_metadata_df_location)}")
+        
+        evaluate_group(
+            os.path.join(args.output_dir, loc.replace(" ", "").replace("/", "OR")),
+            GT_metadata_all_filt=GT_metadata_all_location,
+            all_studies_df_filt=all_studies_df,
+            pred_metadata_df_filt=pred_metadata_df_location,
+            suffix="",
+        )
 
     # # Remove Anatomically impossible microbleeds, either too small or too big
     # GT_metadata_all_minimum_size = GT_metadata_all[
@@ -482,37 +410,14 @@ def main(args):
     #             pred_metadata_df['radius'].between(0.5, 5)
     #         )
     # ]
-
-    for loc in [
-    'Cortex / grey-white junction ', 'Subcortical white matter', 
-        'Basal ganglia grey matter', 'Thalamus', 'Brainstem', 'Cerebellum', 
-    ]:
-        print("-----------------------------")
-        print(f"Location: {loc}")
-        utils_general.confirm_action()
-        GT_metadata_all_location = GT_metadata_all[
-                (
-                    GT_metadata_all['BOMBS_label'] == loc
-                )
-            ]
-        pred_metadata_df_location = pred_metadata_df[
-                (
-                pred_metadata_df['BOMBS_label'] == loc
-                )
-        ]
-        print(f"GT metadata size before : {len(GT_metadata_all)}")
-        print(f"GT metadata size after : {len(GT_metadata_all_location)}")
-        print(f"Pred metadata size before : {len(pred_metadata_df)}")
-        print(f"Pred metadata size after : {len(pred_metadata_df_location)}")
-        
-        evaluate_group(
-            os.path.join(args.output_dir, loc.replace(" ", "").replace("/", "OR")),
-            GT_metadata_all_filt=GT_metadata_all_location,
-            all_studies_df_filt=all_studies_df,
-            pred_metadata_df_filt=pred_metadata_df_location,
-            suffix="",
-        )
-
+    
+    
+    
+    
+    
+    
+    
+    
 def parse_args():
     """
     Parses all script arguments.

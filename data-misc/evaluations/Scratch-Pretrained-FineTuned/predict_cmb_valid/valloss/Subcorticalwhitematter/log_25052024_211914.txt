@@ -1,0 +1,42 @@
+
+2024-05-25 21:19:14.048502
+Starting evaluation at 25052024_211914
+
+
+2024-05-25 21:19:14.432306
+
+Segmentation Metrics:
+
+2024-05-25 21:19:14.433209
+                        Mean      Std.
+Macro - Dice Score  0.614111  0.181251
+Micro - Dice Score  0.669464       NaN
+2024-05-25 21:19:14.433272
+
+Classification metrics:
+
+2024-05-25 21:19:14.434614
+   threshold  Precision    Recall  F1-Score  Specificity
+0          1   0.939394  0.984127  0.961240     0.789474
+1          2   0.935065  1.000000  0.966443     0.500000
+2          5   0.951220  1.000000  0.975000     0.000000
+2024-05-25 21:19:14.434677
+
+Detection metrics:
+
+2024-05-25 21:19:14.435621
+                       Mean      Std.
+Micro - Precision  0.714286       NaN
+Micro - Recall     0.568182       NaN
+Micro - F1         0.632911       NaN
+Micro - FPavg      0.526316       NaN
+Micro - FPcmb      0.227273       NaN
+Macro - Precision  0.846875  0.286047
+Macro - Recall     0.589474  0.385389
+Macro - F1         0.795960  0.207183
+Macro - FPavg      0.526316  1.020263
+Macro - FPcmb      0.182456  0.474064
+2024-05-25 21:19:14.438437
+Results saved in /storage/evo1/jorge/MicrobleedNet/data-misc/evaluations/Scratch-Pretrained-FineTuned/predict_cmb_valid/valloss/Subcorticalwhitematter
+2024-05-25 21:19:14.438481
+Finished evaluation
