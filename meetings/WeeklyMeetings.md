@@ -8,6 +8,7 @@
 * [18 March 2024](#date-18-march-2024)
 * [25 March 2024](#date-25-march-2024)
 * [29 April 2024](#date-29-april-2024)
+* [27 May 2024](#date-27-may-2024)
 
 
 <!-- *
@@ -634,7 +635,7 @@ All configs used for all experiments found in here: [experiments folder](../expe
 ### Date: 27 May 2024
 
 #### What did you achieve/do?
-* n/a
+* Almost finihed writing, trying to nicely present results and add more reflection on every discussion point
 
 #### What did you struggle with?
 * n/a
@@ -643,7 +644,8 @@ All configs used for all experiments found in here: [experiments folder](../expe
 * n/a
 
 #### Where do you need help from Veronika?
-* n/a
+* I need help in micro and macro averaging of metrics, whe this is not done for 
+different classes in multi class classification, but rather when doing across subjects/patients/scans
 
 #### Others
 
