@@ -334,7 +334,7 @@ def main(args):
     ]:
         print("-----------------------------")
         print(f"Location: {loc}")
-        # utils_general.confirm_action()
+        # utils_general.confirkm_action()
         GT_metadata_all_location = GT_metadata_all[
                 (
                     GT_metadata_all['BOMBS_label'] == loc

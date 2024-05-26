@@ -3,7 +3,7 @@
 """ Script for running all needed predictions
 
 
-{Long Description of Script}
+NOTE: sent to clearml
 
 
 @author: jorgedelpozolerida
