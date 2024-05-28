@@ -1,0 +1,42 @@
+
+2024-05-27 00:28:13.440005
+Starting evaluation at 27052024_002813
+
+
+2024-05-27 00:28:13.583448
+
+Segmentation Metrics:
+
+2024-05-27 00:28:13.585100
+                        Mean    Std.
+Macro - Dice Score  0.673791  0.1007
+Micro - Dice Score  0.671594     NaN
+2024-05-27 00:28:13.585204
+
+Classification metrics:
+
+2024-05-27 00:28:13.587786
+   threshold  Precision    Recall  F1-Score  Specificity
+0          1   0.833333  1.000000  0.909091          0.8
+1          2   0.933333  0.933333  0.933333          0.8
+2          5   1.000000  1.000000  1.000000          1.0
+2024-05-27 00:28:13.587883
+
+Detection metrics:
+
+2024-05-27 00:28:13.589485
+                       Mean      Std.
+Micro - Precision  0.809524       NaN
+Micro - Recall     0.629630       NaN
+Micro - F1         0.708333       NaN
+Micro - FPavg      0.400000       NaN
+Micro - FPcmb      0.148148       NaN
+Macro - Precision  0.875000  0.194161
+Macro - Recall     0.633333  0.406733
+Macro - F1         0.796429  0.200368
+Macro - FPavg      0.400000  0.699206
+Macro - FPcmb      0.141667  0.314392
+2024-05-27 00:28:13.593779
+Results saved in /storage/evo1/jorge/MicrobleedNet/data-misc/evaluations/Scratch-Pretrained-FineTuned/predict_cmb_dou/F1macro/CortexORgrey-whitejunction
+2024-05-27 00:28:13.593846
+Finished evaluation

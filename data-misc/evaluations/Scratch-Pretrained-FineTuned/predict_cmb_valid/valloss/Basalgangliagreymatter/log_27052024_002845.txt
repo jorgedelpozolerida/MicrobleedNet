@@ -1,0 +1,42 @@
+
+2024-05-27 00:28:45.051543
+Starting evaluation at 27052024_002845
+
+
+2024-05-27 00:28:45.706768
+
+Segmentation Metrics:
+
+2024-05-27 00:28:45.708974
+                        Mean      Std.
+Macro - Dice Score  0.751700  0.063058
+Micro - Dice Score  0.748428       NaN
+2024-05-27 00:28:45.709223
+
+Classification metrics:
+
+2024-05-27 00:28:45.712595
+   threshold  Precision    Recall  F1-Score  Specificity
+0          1   0.987179  0.987179  0.987179         0.75
+1          2   1.000000  0.987805  0.993865          NaN
+2          5   1.000000  1.000000  1.000000          NaN
+2024-05-27 00:28:45.712851
+
+Detection metrics:
+
+2024-05-27 00:28:45.714941
+                       Mean  Std.
+Micro - Precision  1.000000   NaN
+Micro - Recall     0.750000   NaN
+Micro - F1         0.857143   NaN
+Micro - FPavg      0.000000   NaN
+Micro - FPcmb      0.000000   NaN
+Macro - Precision  1.000000   0.0
+Macro - Recall     0.750000   0.5
+Macro - F1         1.000000   0.0
+Macro - FPavg      0.000000   0.0
+Macro - FPcmb      0.000000   0.0
+2024-05-27 00:28:45.722406
+Results saved in /storage/evo1/jorge/MicrobleedNet/data-misc/evaluations/Scratch-Pretrained-FineTuned/predict_cmb_valid/valloss/Basalgangliagreymatter
+2024-05-27 00:28:45.722539
+Finished evaluation

@@ -4,6 +4,11 @@ Micro - Recall,0.6296296296296297,
 Micro - F1,0.7083333333333334,
 Micro - FPavg,0.4,
 Micro - FPcmb,0.14814814814814814,
+Micro - TP,17.0,
+Micro - FP,4.0,
+Micro - FN,10.0,
+Micro - n_true_cmb,27.0,
+Micro - n_pred_cmb,21.0,
 Macro - Precision,0.875,0.19416079083690582
 Macro - Recall,0.6333333333333334,0.40673344928273614
 Macro - F1,0.7964285714285714,0.20036814190446903

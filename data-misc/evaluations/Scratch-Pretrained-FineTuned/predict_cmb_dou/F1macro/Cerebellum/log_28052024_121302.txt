@@ -1,0 +1,47 @@
+
+2024-05-28 12:13:02.277989
+Starting evaluation at 28052024_121302
+
+
+2024-05-28 12:13:02.378550
+
+Segmentation Metrics:
+
+2024-05-28 12:13:02.379428
+                         Mean  Std.
+Macro - DiceTP Score  0.52027   NaN
+Micro - DiceTP Score  0.52027   NaN
+2024-05-28 12:13:02.379495
+
+Classification metrics:
+
+2024-05-28 12:13:02.381104
+   threshold  Precision  Recall  F1-Score  Specificity
+0          1        1.0     1.0       1.0          1.0
+1          2        1.0     1.0       1.0          NaN
+2          5        1.0     1.0       1.0          NaN
+2024-05-28 12:13:02.381165
+
+Detection metrics:
+
+2024-05-28 12:13:02.382475
+                    Mean  Std.
+Micro - Precision    1.0   NaN
+Micro - Recall       1.0   NaN
+Micro - F1           1.0   NaN
+Micro - FPavg        0.0   NaN
+Micro - FPcmb        0.0   NaN
+Micro - TP           1.0   NaN
+Micro - FP           0.0   NaN
+Micro - FN           0.0   NaN
+Micro - n_true_cmb   1.0   NaN
+Micro - n_pred_cmb   1.0   NaN
+Macro - Precision    1.0   NaN
+Macro - Recall       1.0   NaN
+Macro - F1           1.0   NaN
+Macro - FPavg        0.0   NaN
+Macro - FPcmb        0.0   NaN
+2024-05-28 12:13:02.385030
+Results saved in /storage/evo1/jorge/MicrobleedNet/data-misc/evaluations/Scratch-Pretrained-FineTuned/predict_cmb_dou/F1macro/Cerebellum
+2024-05-28 12:13:02.385075
+Finished evaluation

@@ -1,0 +1,42 @@
+
+2024-05-27 00:28:32.093891
+Starting evaluation at 27052024_002832
+
+
+2024-05-27 00:28:32.253705
+
+Segmentation Metrics:
+
+2024-05-27 00:28:32.255543
+                       Mean      Std.
+Macro - Dice Score  0.40054  0.076375
+Micro - Dice Score  0.36965       NaN
+2024-05-27 00:28:32.255687
+
+Classification metrics:
+
+2024-05-27 00:28:32.258912
+   threshold  Precision  Recall  F1-Score  Specificity
+0          1   1.000000  0.9375  0.967742          1.0
+1          2   0.888889  1.0000  0.941176          0.0
+2          5   0.944444  1.0000  0.971429          0.0
+2024-05-27 00:28:32.259099
+
+Detection metrics:
+
+2024-05-27 00:28:32.261384
+                       Mean      Std.
+Micro - Precision  1.000000       NaN
+Micro - Recall     0.250000       NaN
+Micro - F1         0.400000       NaN
+Micro - FPavg      0.000000       NaN
+Micro - FPcmb      0.000000       NaN
+Macro - Precision  1.000000  0.000000
+Macro - Recall     0.333333  0.235702
+Macro - F1         0.476190  0.269374
+Macro - FPavg      0.000000  0.000000
+Macro - FPcmb      0.000000  0.000000
+2024-05-27 00:28:32.266648
+Results saved in /storage/evo1/jorge/MicrobleedNet/data-misc/evaluations/Scratch-Pretrained-FineTuned/predict_cmb_crb/F1macro/Brainstem
+2024-05-27 00:28:32.266756
+Finished evaluation

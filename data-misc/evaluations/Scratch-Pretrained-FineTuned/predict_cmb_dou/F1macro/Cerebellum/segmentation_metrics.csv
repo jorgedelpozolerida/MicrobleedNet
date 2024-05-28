@@ -1,3 +1,3 @@
 Metric,Mean,Std.
-Macro - Dice Score,0.5202702702702703,
-Micro - Dice Score,0.5202702702702703,
+Macro - DiceTP Score,0.5202702702702703,
+Micro - DiceTP Score,0.5202702702702703,

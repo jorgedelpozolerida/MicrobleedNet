@@ -4,10 +4,12 @@ from multiprocessing import Pool
 import cmbnet.utils.utils_general as utils_gen
 
 # Define the base directories for the three levels
-level1_dirs = ["Scratch-Pretrained-FineTuned", "TL-Pretrained-FineTuned"]
-level2_dirs = ["predict_cmb_dou", "predict_cmb_crb", "predict_cmb_valid"]
+# level1_dirs = ["Scratch-Pretrained-FineTuned", "TL-Pretrained-FineTuned"]
+level1_dirs = ["Scratch-Pretrained-FineTuned"]
+level2_dirs = ["predict_cmb_crb", "predict_cmb_valid", "predict_cmb_dou"]
 # level3_dirs = ["PPV", "F1macro", "valloss"]
-level3_dirs = ["valloss", "F1macro"]
+# level3_dirs = ["valloss", "F1macro"]
+level3_dirs = ["valloss"]
 
 
 # Dictionary specifying the DataFrame and the column to split the analysis by

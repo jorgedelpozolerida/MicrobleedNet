@@ -1,0 +1,42 @@
+
+2024-05-27 00:29:18.749361
+Starting evaluation at 27052024_002918
+
+
+2024-05-27 00:29:18.952826
+
+Segmentation Metrics:
+
+2024-05-27 00:29:18.954526
+                        Mean      Std.
+Macro - Dice Score  0.662505  0.139564
+Micro - Dice Score  0.692705       NaN
+2024-05-27 00:29:18.954816
+
+Classification metrics:
+
+2024-05-27 00:29:18.957172
+   threshold  Precision    Recall  F1-Score  Specificity
+0          1   0.714286  0.833333  0.769231     0.857143
+1          2   1.000000  0.882353  0.937500     1.000000
+2          5   1.000000  1.000000  1.000000     1.000000
+2024-05-27 00:29:18.957277
+
+Detection metrics:
+
+2024-05-27 00:29:18.959141
+                       Mean      Std.
+Micro - Precision  0.894737       NaN
+Micro - Recall     0.772727       NaN
+Micro - F1         0.829268       NaN
+Micro - FPavg      0.142857       NaN
+Micro - FPcmb      0.090909       NaN
+Macro - Precision  0.875000  0.310791
+Macro - Recall     0.750000  0.427425
+Macro - F1         0.939394  0.134840
+Macro - FPavg      0.142857  0.363137
+Macro - FPcmb      0.142857  0.363137
+2024-05-27 00:29:18.964879
+Results saved in /storage/evo1/jorge/MicrobleedNet/data-misc/evaluations/TL-Pretrained-FineTuned/predict_cmb_dou/F1macro/Subcorticalwhitematter
+2024-05-27 00:29:18.965015
+Finished evaluation

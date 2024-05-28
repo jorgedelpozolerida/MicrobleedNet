@@ -108,7 +108,7 @@ def evaluate_from_dataframes(args, all_studies_df, GT_metadata_all, pred_metadat
         study_results_detection,
         study_results_segmentation,
         all_cmbs_tracking
-    ) = utils_eval.evaluate_detection_from_cmb_data(
+    ) = utils_eval.evaluate_detection_and_segment_from_cmb_data(
         all_studies_df,
         GT_metadata_all,
         pred_metadata_df,
@@ -332,9 +332,11 @@ def main(args):
     'Cortex / grey-white junction ', 'Subcortical white matter', 
         'Basal ganglia grey matter', 'Thalamus', 'Brainstem', 'Cerebellum', 
     ]:
-        print("-----------------------------")
+        print("---------------------------------------------------------------")
         print(f"Location: {loc}")
-        # utils_general.confirkm_action()
+        print("---------------------------------------------------------------")
+
+        utils_general.confirm_action()
         GT_metadata_all_location = GT_metadata_all[
                 (
                     GT_metadata_all['BOMBS_label'] == loc

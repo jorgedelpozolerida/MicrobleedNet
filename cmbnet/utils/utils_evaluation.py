@@ -30,6 +30,9 @@ from scipy.ndimage import label as nd_label
 from sklearn.metrics import confusion_matrix as sklearn_confusion_matrix
 from scipy.ndimage import center_of_mass, labeled_comprehension
 
+import pandas as pd
+import pickle
+
 from cmbnet.utils.utils_general import (
     calculate_radiomics_features,
     calculate_synthseg_features,
@@ -429,15 +432,20 @@ def get_detection_metrics_from_call_counts(
         "F1": F1,
         "FPavg": FPavg_scan,
         "FPcmb": FPavg_true_cmb,
+        "TP": TP,
+        "FP": FP,
+        "FN": FN,
+        "n_true_cmb": n_true_cmb,
+        "n_pred_cmb": n_pred_cmb,
     }
 
 
-def perform_macro_averaging(metrics_list, id="seriesUID"):
+def perform_macro_averaging(metrics_list, id="seriesUID", cols_selected = ["seriesUID", "Precision", "Recall", "F1", "FPavg", "FPcmb"]):
     """
     Average metrics over all studies
     """
-
     metrics_df = pd.DataFrame(metrics_list)
+    metrics_df = metrics_df[cols_selected]
 
     # Compute average for all columsn execept id column
     metrics_df = metrics_df.drop(id, axis=1)
@@ -448,7 +456,7 @@ def perform_macro_averaging(metrics_list, id="seriesUID"):
     return result_df
 
 
-def evaluate_detection_from_cmb_data(
+def evaluate_detection_and_segment_from_cmb_data(
     all_studies_df,
     GT_metadata_all,
     pred_metadata_df,
@@ -482,18 +490,9 @@ def evaluate_detection_from_cmb_data(
         ]
         gt_metadata_study = GT_metadata_all[GT_metadata_all["seriesUID"] == study]
 
-        if gt_metadata_study.shape[0] == 0:
+        if gt_metadata_study.shape[0] == 0 and pred_metadata_df_study.shape[0] == 0:
+            # Continue if study has been filtered out from CMB level metadata
             continue
-            # for i, row in pred_metadata_df[pred_metadata_df["seriesUID"] == study].iterrows():
-            #     false_positives += 1
-            #     false_positives_global += 1
-            # if false_positives == 0:
-            #     true_negatives_global += 1
-            # detection_metrics_study = get_detection_metrics_from_call_counts(
-            #     true_positives, false_positives, false_negatives,
-            #     len(gt_metadata_study), len(pred_metadata_df_study), 1, fill_val=None, study=study
-            # )
-            # study_results_detection.append({"seriesUID": study, **detection_metrics_study})
 
         # Evaluate predictions for each study
         for i, row in pred_metadata_df_study.iterrows():
@@ -520,8 +519,10 @@ def evaluate_detection_from_cmb_data(
                 continue
 
             if matched_GT in gt_CM_hitted:
+                # double checking for double assignments
                 continue
 
+            # If it made it until this point, the prediction is a true positive
             true_positives += 1
             true_positives_global += 1
             all_cmbs_tracking.append(
@@ -544,8 +545,8 @@ def evaluate_detection_from_cmb_data(
             )
             gt_CM_hitted.append(matched_GT)
 
-            # Compute and accumulate Dice Score components
-            OverlapCMCounts = row["OverlapCMCounts"]
+            # Compute and accumulate Dice Score components, which is only done for TPs
+            OverlapCMCounts = dict(row["OverlapCMCounts"])
             matched_CM = row[match_col]
             try:
                 overlap = OverlapCMCounts[matched_CM]
@@ -557,13 +558,18 @@ def evaluate_detection_from_cmb_data(
 
                 dice_score = 2 * overlap / (n_voxels_pred + n_voxels_GT)
                 study_results_dice.append(
-                    {"seriesUID": study, "dice_score": dice_score}
+                    {
+                        "seriesUID": study,
+                        "CM": matched_CM,
+                        "dice_score": dice_score,
+                        "overlap": overlap,
+                        "n_voxels_pred": n_voxels_pred,
+                        "n_voxels_GT": n_voxels_GT,
+                    }
                 )
 
             except Exception as e:
-                print(
-                    f"Error in study {study}: Key error {e} in Dice score calculation."
-                )
+                print(f"Error in study {study}for Dice score calculation (likely two CMB very closed whose asingation is flipped). ErrorException {e}")
 
         # Check for false negatives
         for gt_CM in gt_metadata_study["CM"].unique():
@@ -593,7 +599,7 @@ def evaluate_detection_from_cmb_data(
         )
         study_results_detection.append({"seriesUID": study, **detection_metrics_study})
 
-    # Compute global and macro metrics
+    # Detection evaluation
     global_metrics = get_detection_metrics_from_call_counts(
         true_positives_global,
         false_positives_global,
@@ -606,25 +612,25 @@ def evaluate_detection_from_cmb_data(
         {"Mean": global_metrics.values()}, index=global_metrics.keys()
     )
     micro_metrics.index = ["Micro - " + name for name in micro_metrics.index]
-
     macro_metrics = perform_macro_averaging(study_results_detection)
     macro_metrics.index = ["Macro - " + name for name in macro_metrics.index]
-
     detection_results = pd.concat([micro_metrics, macro_metrics])
 
-    dice_score_macro = perform_macro_averaging(study_results_dice)
-    dice_score_macro.index = ["Macro - Dice Score"]
+    # Segmentation evaluation
+    dice_score_macro = perform_macro_averaging(study_results_dice, cols_selected=["seriesUID", "dice_score"])
+    dice_score_macro.index = ["Macro - DiceTP Score"]
     dice_score_micro = 2 * overlap_global / (n_voxels_pred_global + n_voxels_GT_global)
     dice_score_micro = pd.DataFrame(
-        {"Mean": dice_score_micro}, index=["Micro - Dice Score"]
+        {"Mean": dice_score_micro}, index=["Micro - DiceTP Score"]
     )
+
     all_dice_score_results = pd.concat([dice_score_macro, dice_score_micro])
 
     return (
         detection_results,
         all_dice_score_results,
         study_results_detection,
-        study_results_detection,
+        study_results_dice,
         all_cmbs_tracking,
     )
 
@@ -677,8 +683,8 @@ def evaluate_classification_from_cmb_data(
             ), f"Study {study} has CMBs in GT metadata but shoud not"
 
         gt_group = n_gt >= threshold
-        # pred_group = n_pred >= threshold
-        pred_group = n_pred_TP >= threshold
+        pred_group = n_pred >= threshold
+        # pred_group = n_pred_TP >= threshold
 
         if gt_group == pred_group:
             if not gt_group:
@@ -1033,11 +1039,10 @@ def get_max_key(x: pd.Series, filter_brain=False):
 
 
 def assig_likely_brain_label(x: pd.Series, max_key: int):
-    
+
     # If max brain key is still non-brain, or dubious SynthSeg segmentation
     # then assign the most likely (thought for GT data only, in the case of non-brain)
-    
-    
+
     # 1. If is cortex (L/R) and also white matter present, assign to white matter
     if max_key in [3, 42]:
         # get second max key
@@ -1101,10 +1106,14 @@ def add_location(df_location, Isdfloaded=False):
     df_location_c["name_counts_dict"] = df_location_c["count_dict"].apply(
         lambda x: {synth_labels[int(k)]: v for k, v in x.items()}
     )
-    df_location_c["percentages_dict"] = df_location_c["count_dict"].apply(get_percentages)
+    df_location_c["percentages_dict"] = df_location_c["count_dict"].apply(
+        get_percentages
+    )
 
     # Get max key considering brain and not considering brain
-    df_location_c["max_key"] = df_location_c["count_dict"].apply(get_max_key, args=(False,))
+    df_location_c["max_key"] = df_location_c["count_dict"].apply(
+        get_max_key, args=(False,)
+    )
     df_location_c["max_brain_key"] = df_location_c["count_dict"].apply(
         get_max_key, args=(True,)
     )
@@ -1126,7 +1135,261 @@ def add_location(df_location, Isdfloaded=False):
 
     # Get BOMBS label
     df_location_c["BOMBS_label"] = df_location_c["likely_brain_key"].apply(
-        lambda x: synthseg_mappings[synthseg_mappings["labels"] == synth_labels[x]]["BOMBS"].values[0]
+        lambda x: synthseg_mappings[synthseg_mappings["labels"] == synth_labels[x]][
+            "BOMBS"
+        ].values[0]
     )
 
     return df_location_c
+
+
+##############################################################################
+# Evaluation results loading
+##############################################################################
+
+
+def load_evaluation_data(eval_dir, l1_dirs, l2_dirs, l3_dirs):
+    """
+    Load evaluation metrics from structured directories and concatenate into DataFrames.
+
+    Args:
+    eval_dir (str): Base directory for evaluations.
+    l1_dirs (list): First level directories.
+    l2_dirs (list): Second level directories, typically dataset names.
+    l3_dirs (list): Third level directories, typically evaluation criteria.
+
+    Returns:
+    pd.DataFrame: Requested metrics DataFrame.
+    """
+    classification_data = []
+    detection_data = []
+    segmentation_data = []
+
+    classification_fname = "classification_metrics.csv"
+    detection_metrics_fname = "detection_metrics.csv"
+    segmentation_metrics_fname = "segmentation_metrics.csv"
+
+    study_results_det_fname = "study_results_detection.pkl"
+    study_results_seg_fname = "study_results_segmentation.pkl"
+
+    cmb_results_det_fname = "all_cmbs_tracking.pkl"
+    # Loop through directories and load metrics
+    for l1 in l1_dirs:
+        for l2 in l2_dirs:
+            dataset = l2.split("_")[-1]
+            for l3 in l3_dirs:
+                base_path = os.path.join(eval_dir, l1, l2, l3)
+                class_path = os.path.join(base_path, classification_fname)
+                detect_path = os.path.join(base_path, detection_metrics_fname)
+                seg_path = os.path.join(base_path, segmentation_metrics_fname)
+
+                # Load classification metrics
+                if os.path.exists(class_path):
+                    df_class = pd.read_csv(class_path)
+                    df_class["Model"] = l1
+                    df_class["Criteria"] = l3
+                    df_class["Dataset"] = dataset
+                    classification_data.append(df_class)
+
+                # Load detection metrics
+                if os.path.exists(detect_path):
+                    df_detect = pd.read_csv(detect_path)
+                    df_detect["Model"] = l1
+                    df_detect["Criteria"] = l3
+                    df_detect["Dataset"] = dataset
+                    detection_data.append(df_detect)
+
+                # Load segmentation metrics
+                if os.path.exists(seg_path):
+                    df_seg = pd.read_csv(seg_path)
+                    df_seg["Model"] = l1
+                    df_seg["Criteria"] = l3
+                    df_seg["Dataset"] = dataset
+                    segmentation_data.append(df_seg)
+
+    # Concatenate all collected data
+    df_classification = (
+        pd.concat(classification_data, ignore_index=True)
+        if classification_data
+        else pd.DataFrame()
+    )
+    df_detection = (
+        pd.concat(detection_data, ignore_index=True)
+        if detection_data
+        else pd.DataFrame()
+    )
+    df_segmentation = (
+        pd.concat(segmentation_data, ignore_index=True)
+        if segmentation_data
+        else pd.DataFrame()
+    )
+
+    # Dictionaries to store detailed study data
+    detection_details = {}
+    segmentation_details = {}
+    cmb_results = {}
+
+    for l1 in l1_dirs:
+        for l2 in l2_dirs:
+            dataset = l2.split("_")[-1]  # Extract dataset name from l2
+            for l3 in l3_dirs:
+                base_path = os.path.join(eval_dir, l1, l2, l3)
+                # File paths
+                class_path = os.path.join(base_path, classification_fname)
+                detect_path = os.path.join(base_path, detection_metrics_fname)
+                seg_path = os.path.join(base_path, segmentation_metrics_fname)
+                detect_study_path = os.path.join(base_path, study_results_det_fname)
+                seg_study_path = os.path.join(base_path, study_results_seg_fname)
+                cmb_results_path = os.path.join(base_path, cmb_results_det_fname)
+
+                # Load study result details if available
+                if os.path.exists(detect_study_path):
+                    with open(detect_study_path, "rb") as file:
+                        detection_details[(l1, dataset, l3)] = pickle.load(file)
+                if os.path.exists(seg_study_path):
+                    with open(seg_study_path, "rb") as file:
+                        segmentation_details[(l1, dataset, l3)] = pickle.load(file)
+                if os.path.exists(cmb_results_path):
+                    with open(cmb_results_path, "rb") as file:
+                        cmb_results[(l1, dataset, l3)] = pickle.load(file)
+
+    return (
+        df_classification,
+        df_detection,
+        df_segmentation,
+        detection_details,
+        segmentation_details,
+        cmb_results,
+    )
+
+
+def load_csv_data_extralevel(
+    file_path, model, criteria, dataset, extralevel, extralevel_name="Location"
+):
+    """Load CSV data if it exists and return a list containing a single DataFrame with additional metadata."""
+    try:
+        if os.path.exists(file_path):
+            df = pd.read_csv(file_path)
+            df["Model"] = model
+            df["Criteria"] = criteria
+            df["Dataset"] = dataset
+            df[extralevel_name] = extralevel
+            return [df]
+    except Exception as e:
+        print(f"Failed to load or process {file_path}: {str(e)}")
+    return []
+
+
+def load_pickle_data(file_path):
+    """Load pickle data if it exists."""
+    try:
+        if os.path.exists(file_path):
+            with open(file_path, "rb") as file:
+                return pickle.load(file)
+    except Exception as e:
+        print(f"Failed to load {file_path}: {str(e)}")
+    return None
+
+
+def load_evaluation_data_advanced(
+    eval_dir, l1_dirs, l2_dirs, l3_dirs, l4_dirs, l4_names
+):
+    """
+    Load evaluation metrics and details from structured directories with multiple levels,
+    including CMB tracking data.
+
+    Args:
+        eval_dir (str): Base directory for evaluation data.
+        l1_dirs (list): Level 1 directories (model names).
+        l2_dirs (list): Level 2 directories (dataset names).
+        l3_dirs (list): Level 3 directories (criteria names).
+        l4_dirs (list): Level 4 directories (specific locations or conditions).
+        l4_names (list): Human-readable names corresponding to level 4 directories.
+
+    Returns:
+        tuple: DataFrames for classification, detection, segmentation, and dictionaries with detailed study and CMB data.
+    """
+    # Define file names for metrics and details
+    classification_fname = "classification_metrics.csv"
+    detection_metrics_fname = "detection_metrics.csv"
+    segmentation_metrics_fname = "segmentation_metrics.csv"
+    study_results_det_fname = "study_results_detection.pkl"
+    study_results_seg_fname = "study_results_segmentation.pkl"
+    cmb_results_fname = "all_cmbs_tracking.pkl"
+
+    # Containers for data
+    classification_data = []
+    detection_data = []
+    segmentation_data = []
+    detection_details = {}
+    segmentation_details = {}
+    cmb_results = {}
+
+    # Loop through all directory levels
+    for l1 in l1_dirs:
+        for l2 in l2_dirs:
+            for l3 in l3_dirs:
+                for i, l4 in enumerate(l4_dirs):
+                    dataset = l2.split("_")[-1]
+                    extra_level = l4_names[i]
+                    base_path = os.path.join(eval_dir, l1, l2, l3, l4)
+
+                    # File paths
+                    class_path = os.path.join(base_path, classification_fname)
+                    detect_path = os.path.join(base_path, detection_metrics_fname)
+                    seg_path = os.path.join(base_path, segmentation_metrics_fname)
+                    detect_study_path = os.path.join(base_path, study_results_det_fname)
+                    seg_study_path = os.path.join(base_path, study_results_seg_fname)
+                    cmb_results_path = os.path.join(base_path, cmb_results_fname)
+
+                    # Load CSV data
+                    classification_data.extend(
+                        load_csv_data_extralevel(
+                            class_path, l1, l3, dataset, extra_level
+                        )
+                    )
+                    detection_data.extend(
+                        load_csv_data_extralevel(
+                            detect_path, l1, l3, dataset, extra_level
+                        )
+                    )
+                    segmentation_data.extend(
+                        load_csv_data_extralevel(seg_path, l1, l3, dataset, extra_level)
+                    )
+
+                    # Load detailed study and CMB results
+                    detection_details[(l1, dataset, l3, extra_level)] = (
+                        load_pickle_data(detect_study_path)
+                    )
+                    segmentation_details[(l1, dataset, l3, extra_level)] = (
+                        load_pickle_data(seg_study_path)
+                    )
+                    cmb_results[(l1, dataset, l3, extra_level)] = load_pickle_data(
+                        cmb_results_path
+                    )
+
+    # Combine data into DataFrames
+    df_classification = (
+        pd.concat(classification_data, ignore_index=True)
+        if classification_data
+        else pd.DataFrame()
+    )
+    df_detection = (
+        pd.concat(detection_data, ignore_index=True)
+        if detection_data
+        else pd.DataFrame()
+    )
+    df_segmentation = (
+        pd.concat(segmentation_data, ignore_index=True)
+        if segmentation_data
+        else pd.DataFrame()
+    )
+
+    return (
+        df_classification,
+        df_detection,
+        df_segmentation,
+        detection_details,
+        segmentation_details,
+        cmb_results,
+    )
