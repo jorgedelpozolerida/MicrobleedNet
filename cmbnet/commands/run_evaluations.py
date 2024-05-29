@@ -5,7 +5,7 @@ import cmbnet.utils.utils_general as utils_gen
 
 # Define the base directories for the three levels
 # level1_dirs = ["Scratch-Pretrained-FineTuned", "TL-Pretrained-FineTuned"]
-level1_dirs = ["Scratch-Pretrained-FineTuned"]
+level1_dirs = ["Scratch-Pretrained-FineTuned", "TL-Pretrained-FineTuned"]
 level2_dirs = ["predict_cmb_crb", "predict_cmb_valid", "predict_cmb_dou"]
 # level3_dirs = ["PPV", "F1macro", "valloss"]
 # level3_dirs = ["valloss", "F1macro"]
@@ -53,7 +53,7 @@ def run_evals():
                 elif l2 == "predict_cmb_crb":
                     dataset = "CRB"
                 # Ensure the savedir exists
-                os.makedirs(savedir, exist_ok=True)
+                # os.makedirs(savedir, exist_ok=True)
 
                 # Construct the command to run
                 print(".......................................................")

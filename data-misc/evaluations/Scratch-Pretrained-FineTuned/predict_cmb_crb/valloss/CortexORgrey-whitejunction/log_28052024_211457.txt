@@ -1,0 +1,47 @@
+
+2024-05-28 21:14:57.322353
+Starting evaluation at 28052024_211457
+
+
+2024-05-28 21:14:57.430527
+
+Segmentation Metrics:
+
+2024-05-28 21:14:57.431433
+                          Mean     Std.
+Macro - DiceTP Score  0.438058  0.20111
+Micro - DiceTP Score  0.499649      NaN
+2024-05-28 21:14:57.431503
+
+Classification metrics:
+
+2024-05-28 21:14:57.432899
+   threshold  Precision    Recall  F1-Score  Specificity
+0          1   0.555556  0.714286  0.625000     0.636364
+1          2   0.714286  0.909091  0.800000     0.428571
+2          5   0.823529  1.000000  0.903226     0.250000
+2024-05-28 21:14:57.432962
+
+Detection metrics:
+
+2024-05-28 21:14:57.434014
+                         Mean      Std.
+Micro - Precision    0.592593       NaN
+Micro - Recall       0.285714       NaN
+Micro - F1           0.385542       NaN
+Micro - FPavg        1.000000       NaN
+Micro - FPcmb        0.196429       NaN
+Micro - TP          16.000000       NaN
+Micro - FP          11.000000       NaN
+Micro - FN          40.000000       NaN
+Micro - n_true_cmb  56.000000       NaN
+Micro - n_pred_cmb  27.000000       NaN
+Macro - Precision    0.664021  0.441030
+Macro - Recall       0.304917  0.378949
+Macro - F1           0.555477  0.324536
+Macro - FPavg        0.846154  1.573010
+Macro - FPcmb        0.052712  0.117292
+2024-05-28 21:14:57.437018
+Results saved in /storage/evo1/jorge/MicrobleedNet/data-misc/evaluations/Scratch-Pretrained-FineTuned/predict_cmb_crb/valloss/CortexORgrey-whitejunction
+2024-05-28 21:14:57.437061
+Finished evaluation

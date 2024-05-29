@@ -1,0 +1,47 @@
+
+2024-05-28 21:15:01.767579
+Starting evaluation at 28052024_211501
+
+
+2024-05-28 21:15:02.203217
+
+Segmentation Metrics:
+
+2024-05-28 21:15:02.204126
+                          Mean      Std.
+Macro - DiceTP Score  0.602377  0.180556
+Micro - DiceTP Score  0.644914       NaN
+2024-05-28 21:15:02.204189
+
+Classification metrics:
+
+2024-05-28 21:15:02.205571
+   threshold  Precision    Recall  F1-Score  Specificity
+0          1   0.976744  0.750000  0.848485     0.961538
+1          2   0.950820  0.828571  0.885496     0.750000
+2          5   1.000000  0.986842  0.993377     1.000000
+2024-05-28 21:15:02.205635
+
+Detection metrics:
+
+2024-05-28 21:15:02.206675
+                          Mean      Std.
+Micro - Precision     0.510791       NaN
+Micro - Recall        0.731959       NaN
+Micro - F1            0.601695       NaN
+Micro - FPavg         2.615385       NaN
+Micro - FPcmb         0.701031       NaN
+Micro - TP           71.000000       NaN
+Micro - FP           68.000000       NaN
+Micro - FN           26.000000       NaN
+Micro - n_true_cmb   97.000000       NaN
+Micro - n_pred_cmb  139.000000       NaN
+Macro - Precision     0.501448  0.450193
+Macro - Recall        0.809707  0.304481
+Macro - F1            0.802766  0.203760
+Macro - FPavg         1.700000  2.802929
+Macro - FPcmb         0.428871  0.747836
+2024-05-28 21:15:02.215054
+Results saved in /storage/evo1/jorge/MicrobleedNet/data-misc/evaluations/Scratch-Pretrained-FineTuned/predict_cmb_valid/valloss
+2024-05-28 21:15:02.215105
+Finished evaluation

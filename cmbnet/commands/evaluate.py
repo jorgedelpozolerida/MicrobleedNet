@@ -107,7 +107,7 @@ def evaluate_from_dataframes(args, all_studies_df, GT_metadata_all, pred_metadat
         segmentation_metrics,
         study_results_detection,
         study_results_segmentation,
-        all_cmbs_tracking
+        all_cmbs_tracking,
     ) = utils_eval.evaluate_detection_and_segment_from_cmb_data(
         all_studies_df,
         GT_metadata_all,
@@ -117,7 +117,7 @@ def evaluate_from_dataframes(args, all_studies_df, GT_metadata_all, pred_metadat
     ##############################################################################
     # Classification metrics: uses TP, FP, FN, TN at study-level
     ##############################################################################
-    thresholds = [1, 2, 5]
+    thresholds = [1, 3, 5, 11]
     all_classifications = []
     for th in thresholds:
         classification_metrics = utils_eval.evaluate_classification_from_cmb_data(
@@ -136,7 +136,7 @@ def evaluate_from_dataframes(args, all_studies_df, GT_metadata_all, pred_metadat
         classification_metrics,
         study_results_detection,
         study_results_segmentation,
-        all_cmbs_tracking
+        all_cmbs_tracking,
     )
 
 
@@ -147,10 +147,12 @@ def load_and_prepare_data(args):
     pred_metadata_df = get_predictions_df(args.cmb_pred_metadata_dir)
 
     # Compute extra metrics for pred
-    pred_metadata_df['radius'] = pred_metadata_df['n_voxels'].apply(
+    pred_metadata_df["radius"] = pred_metadata_df["n_voxels"].apply(
         lambda x: ((x * (0.5**3)) / (4 / 3 * np.pi)) ** (1 / 3)
     )
-    pred_metadata_df = utils_eval.add_location(pred_metadata_df, Isdfloaded=True) # add locations
+    pred_metadata_df = utils_eval.add_location(
+        pred_metadata_df, Isdfloaded=True
+    )  # add locations
 
     # Convert string representations of tuples to actual tuples
     GT_metadata["CM"] = GT_metadata["CM"].apply(lambda x: tuple(ast.literal_eval(x)))
@@ -161,10 +163,9 @@ def load_and_prepare_data(args):
     GT_metadata_all = pd.merge(
         GT_metadata, GT_metadata_radiomics, on=["seriesUID", "CM"], how="inner"
     )
-    GT_metadata_all = utils_eval.add_location(GT_metadata_all, Isdfloaded=False) # add locations
-    
-    
-    
+    GT_metadata_all = utils_eval.add_location(
+        GT_metadata_all, Isdfloaded=False
+    )  # add locations
 
     return (
         all_studies_df,
@@ -198,7 +199,7 @@ def evaluate_group(
         classification_metrics,
         study_results_detection,
         study_results_segmentation,
-        all_cmbs_tracking
+        all_cmbs_tracking,
     ) = evaluate_from_dataframes(
         args, all_studies_df_filt, GT_metadata_all_filt, pred_metadata_df_filt
     )
@@ -237,11 +238,9 @@ def evaluate_group(
         os.path.join(output_dir, f"study_results_segmentation{suffix}.pkl"), "wb"
     ) as file:
         pickle.dump(study_results_segmentation, file)
-        
+
     # Save cmb-level results with pickle
-    with open(
-        os.path.join(output_dir, f"all_cmbs_tracking{suffix}.pkl"), "wb"
-    ) as file:
+    with open(os.path.join(output_dir, f"all_cmbs_tracking{suffix}.pkl"), "wb") as file:
         pickle.dump(all_cmbs_tracking, file)
 
     utils_general.write_to_log_file(f"Results saved in {output_dir}", log_file_path)
@@ -290,7 +289,9 @@ def main(args):
 
     # POST-PROCESSING 1: remove predicitons out-of-brain clearly
     pred_metadata_df = pred_metadata_df[
-        pred_metadata_df['max_brain_key'].isin(BRAIN_LABELS) # filter out non-brain labels, for cases where no other brain label could be found
+        pred_metadata_df["max_brain_key"].isin(
+            BRAIN_LABELS
+        )  # filter out non-brain labels, for cases where no other brain label could be found
     ]
 
     # Check validity of data
@@ -329,29 +330,29 @@ def main(args):
 
     # By Locations
     for loc in [
-    'Cortex / grey-white junction ', 'Subcortical white matter', 
-        'Basal ganglia grey matter', 'Thalamus', 'Brainstem', 'Cerebellum', 
+        "Cortex / grey-white junction ",
+        "Subcortical white matter",
+        "Basal ganglia grey matter",
+        "Thalamus",
+        "Brainstem",
+        "Cerebellum",
     ]:
         print("---------------------------------------------------------------")
         print(f"Location: {loc}")
         print("---------------------------------------------------------------")
 
-        utils_general.confirm_action()
+        # utils_general.confirm_action()
         GT_metadata_all_location = GT_metadata_all[
-                (
-                    GT_metadata_all['BOMBS_label'] == loc
-                )
-            ]
+            (GT_metadata_all["BOMBS_label"] == loc)
+        ]
         pred_metadata_df_location = pred_metadata_df[
-                (
-                pred_metadata_df['BOMBS_label'] == loc
-                )
+            (pred_metadata_df["BOMBS_label"] == loc)
         ]
         print(f"GT metadata size before : {len(GT_metadata_all)}")
         print(f"GT metadata size after : {len(GT_metadata_all_location)}")
         print(f"Pred metadata size before : {len(pred_metadata_df)}")
         print(f"Pred metadata size after : {len(pred_metadata_df_location)}")
-        
+
         evaluate_group(
             os.path.join(args.output_dir, loc.replace(" ", "").replace("/", "OR")),
             GT_metadata_all_filt=GT_metadata_all_location,
@@ -412,14 +413,8 @@ def main(args):
     #             pred_metadata_df['radius'].between(0.5, 5)
     #         )
     # ]
-    
-    
-    
-    
-    
-    
-    
-    
+
+
 def parse_args():
     """
     Parses all script arguments.
