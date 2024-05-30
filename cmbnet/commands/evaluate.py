@@ -140,11 +140,12 @@ def evaluate_from_dataframes(args, all_studies_df, GT_metadata_all, pred_metadat
     )
 
 
-def load_and_prepare_data(args):
-    all_studies_df = pd.read_csv(args.all_studies_csv)
-    GT_metadata = pd.read_csv(args.gt_cmb_metadata_csv)
-    GT_metadata_radiomics = pd.read_csv(args.gt_radiomics_metadata_csv)
-    pred_metadata_df = get_predictions_df(args.cmb_pred_metadata_dir)
+def load_and_prepare_data(all_studies_csv, gt_cmb_metadata_csv, gt_radiomics_metadata_csv, cmb_pred_metadata_dir):
+    
+    all_studies_df = pd.read_csv(all_studies_csv)
+    GT_metadata = pd.read_csv(gt_cmb_metadata_csv)
+    GT_metadata_radiomics = pd.read_csv(gt_radiomics_metadata_csv)
+    pred_metadata_df = get_predictions_df(cmb_pred_metadata_dir)
 
     # Compute extra metrics for pred
     pred_metadata_df["radius"] = pred_metadata_df["n_voxels"].apply(
@@ -256,7 +257,12 @@ def main(args):
         GT_metadata_radiomics,
         pred_metadata_df,
         GT_metadata_all,
-    ) = load_and_prepare_data(args)
+    ) = load_and_prepare_data(
+        args.all_studies_csv,
+        args.gt_cmb_metadata_csv,
+        args.gt_radiomics_metadata_csv,
+        args.cmb_pred_metadata_dir,
+    )
 
     if args.dataset == ["cmb_valid"]:
         args.datasets = ["VALDO", "MOMENI", "RODEJA"]
