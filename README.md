@@ -39,16 +39,20 @@ The following folders exist in the repository:
 This folder is structured as a Python package with several modules and submodules. 
 Scripts have many interdependencies and some are simply utility functions for other scripts. 
 
-Most important commands are the following:
+Some of the main scripts are the following:
 
 - [data_preprocessing.py](cmbnet/commands/data_preprocessing.py): preprocess a full dataset
 - [data_post-processing.py](cmbnet/commands/data_post-processing.py): postprocesses predictions from model
-- [evaluate.py](cmbnet/commands/evaluate.py): Used to evaluate the performance of the trained model.
+- [evaluate_CMBlevel.py](cmbnet/commands/evaluate_CMBlevel.py): Used to evaluate the performance of the trained model at a CMB level.
+- [generate_radiomics_metadata.py](cmbnet/analysis/generate_radiomics_metadata.py)
 
-Note: so far training and prediction are perfomed as part of a bigger MLOps codebase which could not be included in repo, so no specific scripts exists for that. Will add in the future functionality to run predict command as a Docker image (which preprocesses, predicts and postprocesses in one call)
+
+Many other scripts exist for various purposes the project, all of whih are docuemnted with self-explanatory name.
+
+Note: training and prediction are perfomed as part of a bigger MLOps codebase which could not be included in repo
 
 ### [data-misc](data-misc/)
-Contains metadata form datasets preprocessing, splits files, training config files, images for report, CSVs generated for analysis...etc
+Contains metadata from datasets preprocessing, splits files, training config files, images for report, CSVs generated for analysis...etc
 
 
 ### [notebooks](notebooks/)
