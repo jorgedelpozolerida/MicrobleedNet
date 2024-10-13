@@ -1,7 +1,7 @@
 # MicrobleedNet
 
-Repository containing source code, data and results for paper "MicrobleedNet: A robust Deep Learning model to segment and
-detect cerebral microbleeds on MRI", which is going to be presented at [MICCAI 2024](https://conferences.miccai.org/2024/en/) Workshop. This project was conducted as part of my 30 ECTS Master's thesis done in collaboration with [CEREBRIU company](https://cerebriu.com/) during my MSc in Data Science at [IT University of Copenhagen (ITU)](https://en.itu.dk/).
+Repository containing source code, data and results for project "MicrobleedNet: A robust Deep Learning model to segment and
+detect cerebral microbleeds on MRI". This project was conducted as part of my 30 ECTS Master's thesis done in collaboration with [CEREBRIU company](https://cerebriu.com/) during my MSc in Data Science at [IT University of Copenhagen (ITU)](https://en.itu.dk/).
 
 To read full report please go to [report.pdf](report.pdf)
 
