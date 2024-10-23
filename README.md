@@ -66,11 +66,10 @@ Contains R code used for different data anlysis and processing purposes
 
 ## Some results
 
-Comparison with other published methods on CMB object detection ([link here](https://www.cse.cuhk.edu.hk/~qdou/cmb-3dcnn/cmb-3dcnn.html)) and task:
+**Detection performance** on the [DOU](https://www.cse.cuhk.edu.hk/~qdou/cmb-3dcnn/cmb-3dcnn.html) test set compared to the best-performing published methods for this dataset. Metrics are computed globally for all CMB detections. FPscan is $n_{FP}/n_{scans}$. DOU is a public dataset with 20 scans and 74 CMBs.
 
 ![](data-misc/img/comparison_Results_tab.png)
 
+*Note: To see the results in more detail, please refer to the [Full Report](report.pdf).*
 
-
-
-To see results from preliminary work (7.5 ECTS research course) please go to [Segmentation_CMB](https://github.com/jorgedelpozolerida/Segmentation_CMB)
+*Note: To see results from preliminary work (7.5 ECTS research course), please visit [Segmentation_CMB](https://github.com/jorgedelpozolerida/Segmentation_CMB).*
