@@ -24,7 +24,7 @@ Cerebral Microbleeds (CMBs) are neuroimaging biomarkers visible as small round h
 - MRI **sequence agnostic** (GRE T2* or SWI)
 - Standardization of **7 different datasets** (public & private)
 - **Transfer Learning** from thousands of clinical studies
-- Intense and diverse **data augmentatio**n**
+- Intense and diverse **data augmentation**
 - Pretraining on a large dataset of synthetic CMBs and negative scans with a wide range of acquisition parameters
 - Location-based post-processing (SynthSeg)
 - **Comprehensive evaluation** on 2 unbiased datasets and 3 tasks: segmentation, detection, and classification
