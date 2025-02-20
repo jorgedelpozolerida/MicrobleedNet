@@ -112,7 +112,8 @@ def evaluate_from_dataframes(args, all_studies_df, GT_metadata_all, pred_metadat
         all_studies_df,
         GT_metadata_all,
         pred_metadata_df,
-        match_col="matched_GT_DistancesToAllCMs",
+        # match_col="matched_GT_DistancesToAllCMs",
+        match_col="matched_GT_OverlapCMCounts",
     )
     ##############################################################################
     # Classification metrics: uses TP, FP, FN, TN at study-level
@@ -125,7 +126,8 @@ def evaluate_from_dataframes(args, all_studies_df, GT_metadata_all, pred_metadat
             GT_metadata_all,
             pred_metadata_df,
             threshold=th,
-            match_col="matched_GT_DistancesToAllCMs",
+            # match_col="matched_GT_DistancesToAllCMs",
+            match_col="matched_GT_OverlapCMCounts",
         )
         all_classifications.append({"threshold": th, **classification_metrics})
     classification_metrics = pd.DataFrame(all_classifications)

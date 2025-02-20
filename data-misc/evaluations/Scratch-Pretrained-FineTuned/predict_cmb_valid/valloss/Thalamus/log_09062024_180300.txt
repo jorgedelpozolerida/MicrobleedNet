@@ -1,0 +1,48 @@
+
+2024-06-09 18:03:00.165494
+Starting evaluation at 09062024_180300
+
+
+2024-06-09 18:03:00.621838
+
+Segmentation Metrics:
+
+2024-06-09 18:03:00.622721
+                          Mean      Std.
+Macro - DiceTP Score  0.660101  0.123345
+Micro - DiceTP Score  0.652917       NaN
+2024-06-09 18:03:00.622789
+
+Classification metrics:
+
+2024-06-09 18:03:00.624166
+   threshold  Precision    Recall  F1-Score  Specificity
+0          1   0.986842  0.986842  0.986842     0.833333
+1          3   1.000000  0.962963  0.981132     1.000000
+2          5   0.987805  1.000000  0.993865     0.000000
+3         11   1.000000  1.000000  1.000000          NaN
+2024-06-09 18:03:00.624228
+
+Detection metrics:
+
+2024-06-09 18:03:00.625260
+                         Mean      Std.
+Micro - Precision    0.687500       NaN
+Micro - Recall       0.846154       NaN
+Micro - F1           0.758621       NaN
+Micro - FPavg        0.833333       NaN
+Micro - FPcmb        0.384615       NaN
+Micro - TP          11.000000       NaN
+Micro - FP           5.000000       NaN
+Micro - FN           2.000000       NaN
+Micro - n_true_cmb  13.000000       NaN
+Micro - n_pred_cmb  16.000000       NaN
+Macro - Precision    0.722222  0.389682
+Macro - Recall       0.800000  0.400000
+Macro - F1           0.897778  0.100123
+Macro - FPavg        0.714286  1.112697
+Macro - FPcmb        0.166667  0.258199
+2024-06-09 18:03:00.627989
+Results saved in /storage/evo1/jorge/MicrobleedNet/data-misc/evaluations/Scratch-Pretrained-FineTuned/predict_cmb_valid/valloss/Thalamus
+2024-06-09 18:03:00.628033
+Finished evaluation
